@@ -1,0 +1,45 @@
+Run docker:
+
+sudo docker run --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_rl --net host --cpuset-cpus="0-7" -v ~/:/daniel -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --user=$(id -u $USER):$(id -g $USER) --privileged docker_rl
+
+--gpus all
+
+
+-------- TFM ---------
+
+Pasos iniciales:
+    - Dejar estar el modelo que hice en las prácticas; es orientativo y servirá para copiar algunas funciones pero es
+para el tema del TFM necesito otras funcionalidades como la cámara
+
+    - Importar el modelo URDF del UR5e en GeoGrasp a Pybullet 
+--> hay que generar un único URDF para TODO el modelo
+
+    - Importar el modelo URDF del objeto (MasterChef Can o Chips Can, es lo mismo)
+
+    - Estudiar las opciones para la cámara:
+        - Cámara montada en el robot: 
+            - Fácil en el real (ya está montada)
+            - Difícil en la simulación (habría que generar un punto de vista a cada TimeStamp)
+        - Cámara fija
+            - Dificultad para conseguir las transformaciones
+                - Esto se puede solucionar: con un QR se puede obtener la transformacion entre dos cámaras si las dos
+                ven la imagen desde diferentes puntos de vista -> se obtiene la transformada de cada uno respecto del QR,
+                se hacen coincidir los sistemas de coordenadas respecot a una base ortonormal en el QR y ya se pueden hacer
+                transformaciones entre los frames de la cámara fija y los de la móvil, que por consecuencia se extrapolan
+                a la base del robot.
+            - En simulación supongo que se pueden coger directamente las referencias de los objetos
+
+
+
+----- 16 / 12 / 23
+    Se ha creado el URDF con todo el entorno: mesa, pedestal, robot y pinza con las camaras.
+
+    Modificar el entorno de Gym para que solo acepte entradas en las articulaciones del robot, sin tocar la pinza.
+    La pinza se piensa en dejarla a parte
+        Habría que cambiar el entorno para aceptar las 6 entradas
+        Habría que mirar como afecta eso a los métodos de control de la clase robot.
+    Meter la cámara externa y un QR en la mesa, donde está el real más o menos
+
+    Meter la extensión para objetos deformables
+
+    OPCIONAL: mirar de introducir una camara funcional en el extremo --> ayudarse del Chat si eso

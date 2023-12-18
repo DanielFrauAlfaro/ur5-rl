@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot name="tuna_fish_can">
+  <link name="tuna_fish_can">
+    <contact>
+      <friction_anchor/>
+      <lateral_friction value="0.6"/>
+      <spinning_friction value="0.0005"/>
+      <rolling_friction value="0.0005"/>
+      <contact_cfm value="0.0"/>
+      <contact_erp value="1.0"/>
+    </contact>
+    <visual>
+      <origin xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="textured_simple.obj" scale="1.0 1.0 1.0"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="textured_simple.obj" scale="1.0 1.0 1.0"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.171"/> 
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+</robot>

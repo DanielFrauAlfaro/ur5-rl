@@ -1,0 +1,234 @@
+#!/usr/bin/env python3
+
+import pybullet as p
+import collections
+import os
+from spatialmath import SE3
+import roboticstoolbox as rtb
+from math import pi
+import numpy as np
+
+# Class for the UR5
+class UR5e:
+    def __init__(self, client):
+        
+        # Internal UR5 DH model
+        self.__ur5 = rtb.DHRobot([
+            rtb.RevoluteDH(d=0.1625, alpha=pi/2.0),
+            rtb.RevoluteDH(a=-0.425),
+            rtb.RevoluteDH(a = -0.3922),
+            rtb.RevoluteDH(d = 0.1333, alpha=pi/2.0),
+            rtb.RevoluteDH(d = 0.0997, alpha=-pi/2.0),
+            rtb.RevoluteDH(d = 0.0996)
+        ], name="UR5e")
+    
+        self.__ur5.base = SE3.RPY(0,0,-pi)      # Rotate robot base so it matches Gazebo model
+        self.__ur5.tool = SE3(0.0, 0.0, 0.03)
+
+        # Client ID of the Pybullet server
+        self.client = client
+
+        # Load the UR5 URDF
+        self.ur5 = p.loadURDF(fileName=os.path.dirname(__file__) + '/models/models/ur5_env.urdf',
+                              basePosition=[0, 0, 0], 
+                              physicsClientId=client, 
+                              useFixedBase=1)
+
+        # Name of the gripper and UR5 joint (all joints are included on the same body)
+        gripperJoints = ["robotiq_finger_1_joint_1", "robotiq_finger_2_joint_1", "robotiq_finger_middle_joint_1"]
+        gripperMimicJoints = ["robotiq_finger_1_joint_1", "robotiq_finger_1_joint_2", "robotiq_finger_1_joint_3", 
+                              "robotiq_finger_2_joint_1", "robotiq_finger_2_joint_2", "robotiq_finger_2_joint_3", 
+                              "robotiq_finger_middle_joint_1", "robotiq_finger_middle_joint_2", "robotiq_finger_middle_joint_3"]
+        controlJoints = ["shoulder_pan_joint","shoulder_lift_joint",
+                     "elbow_joint", "wrist_1_joint",
+                     "wrist_2_joint", "wrist_3_joint"]
+        palmJoints = ["palm_finger_1_joint", "palm_finger_2_joint"]
+        
+        # Get info from joints and enable joint torque sensor
+        self.joints = []
+        self.ur5_joints_id = []
+        self.gripper_joints_id = []
+        self.gripper_mimic_joints_id = []
+        self.palm_joint_id = []
+        numJoints = p.getNumJoints(self.ur5)
+        jointInfo = collections.namedtuple("jointInfo",["id","name","type",'damping','friction',"lowerLimit","upperLimit","maxForce","maxVelocity","controllable"])
+        
+        # Iterates for each joint
+        for i in range(numJoints):
+            info = p.getJointInfo(self.ur5, i)
+            jointID = info[0]
+            jointName = info[1].decode("utf-8")
+            jointType = info[2]
+            jointDamping = info[6]
+            jointFriction = info[7]
+            jointLowerLimit = info[8]
+            jointUpperLimit = info[9]
+            jointMaxForce = info[10]
+            jointMaxVelocity = info[11]
+            controllable = (jointType != p.JOINT_FIXED)
+
+            # If a joint is controllable ...
+            if controllable:
+                # ... enables torque sensors, ...
+                p.enableJointForceTorqueSensor(bodyUniqueId=self.ur5, 
+                                               jointIndex=jointID, 
+                                               enableSensor=1,
+                                               physicsClientId=self.client)
+
+                # ... saves its properties, ...
+                info = jointInfo(jointID,jointName,jointType,jointDamping,jointFriction,jointLowerLimit,
+                            jointUpperLimit,jointMaxForce,jointMaxVelocity,controllable)
+                self.joints.append(info)
+
+                # ... saves the IDs of the UR5 joints, ...
+                if jointName in controlJoints:
+                    self.ur5_joints_id.append(jointID)
+                
+                # ... saves the IDs of the Gripper joints and ...
+                if jointName in gripperJoints:
+                    self.gripper_joints_id.append(jointID)
+
+                if jointName in gripperMimicJoints:
+                    self.gripper_mimic_joints_id.append(jointID)
+
+                # saves the ID of the Palm joint
+                if jointName in palmJoints:
+                    self.palm_joint_id.append(jointID)
+
+            
+        # Setups mimic joints for the fingers
+        
+        # self.gripperControl('1')
+        # self.gripperControl('2')
+        # self.gripperControl('middle')
+
+        # Starting joint positions for the robot and the gripper
+        self.q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785]
+
+        # Brings the robot to a starting position
+        self.apply_action(self.q)
+
+
+    ####################################################################
+    # Define mimic joints for the 3f gripper
+    def gripperControl(self, n):
+        # Establish parent and children names for the mimic configuration
+        mimic_parent_name = 'robotiq_finger_' + n + '_joint_1'
+        mimic_children_names = {'robotiq_finger_' + n + '_joint_2': 1,
+                                'robotiq_finger_' + n + '_joint_3': 1}
+
+        # Applies constraints to the children joints
+        self.setup_mimic_joints(self.ur5, mimic_parent_name, mimic_children_names)
+
+    # Apply constraints to each finger
+    def setup_mimic_joints(self, robot, mimic_parent_name, mimic_children_names):
+
+        keys = list(mimic_children_names.keys())
+        
+        
+        
+        # Iterates joints to find the IDs of the parent and childrens
+        for i in self.joints:
+            for j in mimic_children_names:
+                if mimic_parent_name == i[1]:
+                    parent_id = i[0]
+                elif i[1] == keys[0]:
+                    child1 = i[0]
+                elif i[1] == keys[1]:
+                    child2 = i[0]
+
+        mimic_parent_id = parent_id
+        mimic_child_multiplier = {child1, child2}
+
+        # Applies the constraints
+        c = []
+        for joint_id in mimic_child_multiplier:
+            c.append(p.createConstraint(robot, mimic_parent_id, robot, joint_id, jointType=p.JOINT_GEAR, jointAxis=[0, 0, 1], parentFramePosition=[0, 0, 0], childFramePosition=[0, 0, 0]))
+
+        # Modifies the constraints properties
+        cont = 0
+        for i in mimic_children_names:
+            p.changeConstraint(c[cont], gearRatio=-mimic_children_names[i], maxForce=100, erp=1)  # Note: the mysterious `erp` is of EXTREME importance
+            cont=cont+1
+
+    # Apply constraint to the palm joints
+    def palmControl(self):
+        # Parent and child names
+        mimic_parent_name = 'palm_finger_1_joint'
+        mimic_children_name = 'palm_finger_2_joint'
+        
+        # Iterates to find the parent and child IDs
+        for i in self.joints:
+            for j in mimic_children_name:
+                if mimic_parent_name == i[1]:
+                    mimic_parent_id = i[0]
+                elif i[1] == mimic_children_name:
+                    joint_id = i[0]
+        
+        # Applies and modifies the constraint
+        c = p.createConstraint(self.ur5, mimic_parent_id, self.ur5, joint_id, jointType=p.JOINT_GEAR, jointAxis=[0, 1, 0], parentFramePosition=[0, 0, 0], childFramePosition=[0, 0, 0])
+        p.changeConstraint(c, gearRatio=1, maxForce=100, erp=1)  # Note: the mysterious `erp` is of EXTREME importance
+    #####################################################################
+   
+    # Return the client and robot's IDs
+    def get_ids(self):
+        return self.client, self.ur5
+    
+
+    # Moves the robot to a desired position
+    def apply_action(self, action):
+        # Decodes the action in robot joint position, gripper position and palm state
+        q = action
+
+        # En principio no haría falta, el controlador interno de la simulación
+        #  es bastante preciso
+        ####################################################################
+        ## TODO: aquí iría una algoritmo de control con sus ganancias PID ##
+        ####################################################################
+
+
+        # Assigns the action to the internal values of the robot
+        self.q = q
+
+        # UR5 control
+        p.setJointMotorControlArray(bodyUniqueId=self.ur5, 
+                                    jointIndices=self.ur5_joints_id, 
+                                    controlMode=p.POSITION_CONTROL,
+                                    targetPositions=self.q,
+                                    physicsClientId=self.client)
+
+
+    
+    # Returns observation of the robot state
+    def get_observation(self):
+        q = []
+        qd = []
+        q_t = []
+
+
+        # UR5 joint values
+        for i in self.ur5_joints_id:
+            aux = p.getJointState(bodyUniqueId=self.ur5, 
+                                jointIndex=i,
+                                physicsClientId=self.client)
+
+            q.append(aux[0])
+            qd.append(aux[1])
+            q_t.append(aux[2][-1])
+
+        # End effector position and orientation
+        T = self.__ur5.fkine(q, order='yxz')
+        ee_pos = T.t
+        ee_or = T.eul('yxz')
+
+        ee = np.array([ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]])
+
+        # Builds and returns the message
+        observation = [q, qd, q_t,  ee]
+
+        return observation
+            
+        
+
+
+        
