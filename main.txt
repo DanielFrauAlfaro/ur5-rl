@@ -2,7 +2,7 @@ Run docker:
 
 sudo docker run --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_rl --net host --cpuset-cpus="0-7" -v ~/:/daniel -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --user=$(id -u $USER):$(id -g $USER) --privileged docker_rl
 
---gpus all
+--gpus all --pid=host
 
 
 -------- TFM ---------
