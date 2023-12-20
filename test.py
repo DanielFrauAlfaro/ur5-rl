@@ -21,8 +21,8 @@ for j in range(3):
 
         # env.render()
         
-        if truncated:
-            obs, __ = env.reset(seed=0, options={})
+        # if truncated:
+        #     obs, __ = env.reset(seed=0, options={})
         
         # TODO: actualizar estado del agente --> después o durante el episodio
 
