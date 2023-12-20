@@ -86,4 +86,7 @@ para el tema del TFM necesito otras funcionalidades como la cámara
 
     
 
-    
+----- 20 / 12 / 23
+    - Se ha incluido la segunda camara y parametrizado para meter cualquier numero de camaras
+    - IMPORTANTE: se ha girado la muñeca 180º del original para que pueda ver el QR. Luego se puede girar porque solo hace falta para el inicio, es decir,
+    para calcular la transformada entre la camara y la base del robot (que no varia)
