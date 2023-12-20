@@ -107,55 +107,43 @@ class UR5Env(gym.Env):
         self._incr = 0.2
         self._q_incr = [0, self._incr, -self._incr]
 
-        # Camera positions variables
-        self._cam_roll = 0.5
-        self._cam_pitch = 0.0
-        self._cam_yaw = -pi/2
-
-        self._cam_pos = [0.2, 1.1, 1.1]
 
 
-        # Rotation matrices
-        rot_x = np.array([[1, 0, 0], 
-                          [0, math.cos(self._cam_roll), -math.sin(self._cam_roll)], 
-                          [0, math.sin(self._cam_roll), math.cos(self._cam_roll)]])
-        
-        rot_y = np.array([[math.cos(self._cam_pitch),0, math.sin(self._cam_pitch)], 
-                          [0, 1, 0], 
-                          [-math.sin(self._cam_pitch),0,math.cos(self._cam_pitch)]])
-        
-        rot_z = np.array([[math.cos(self._cam_yaw), -math.sin(self._cam_yaw), 0], 
-                          [math.sin(self._cam_yaw), math.cos(self._cam_yaw), 0], 
-                          [0, 0, 1]])
+        # --- Cameras ---
+        # Camera positions variables: [[Position], [Orientation]]
 
-        # Position and orientation
-        self.pos = self._cam_pos
-        rot_mat = np.matmul(np.matmul(rot_x, rot_y), rot_z)
-        
-        # Calculates the camera vector and the up vector
-        self.camera_vec = np.matmul(rot_mat, [1, 0, 0])
-        self.up_vec = np.matmul(rot_mat, np.array([0, 0, 1]))
+        # Frame height and width
+        self.frame_h = 300
+        self.frame_w = 300
 
-        # Computes the view matrix
-        self.view_matrix = p.computeViewMatrix(cameraEyePosition = self.pos, 
-                                          cameraTargetPosition = self.pos + self.camera_vec,
-                                          cameraUpVector = self.up_vec,
-                                          physicsClientId = self._client)
-        
-        # Computes projection matrix
-        self.proj_matrix = p.computeProjectionMatrixFOV(fov = 80, 
-                                                   aspect = 1, 
-                                                   nearVal = 0.01, 
-                                                   farVal = 100,
-                                                   physicsClientId = self._client)
-        
+        # Coordinates of the cameras
+        cameras_coord = [[[0.2, 1.1, 1.1], [0.5, 0.0, -pi/2]],                         # External Camera 1
+                         [[-0.021634534277420597, 0.45595843471926517, 1.179405616204087], [3.1339317605594474 + pi/2, -0.02402511411086113, 1.5830796026753562]]]       # Robot camera
+
+
+        self.camera_params = []
+
+        # For each camera ...
+        for camera in cameras_coord[:]:
+            # Obtain rotations
+            rot_x = np.array([[1, 0, 0], [0, math.cos(camera[1][0]), -math.sin(camera[1][0])], [0, math.sin(camera[1][0]), math.cos(camera[1][0])]])
+            rot_y = np.array([[math.cos(camera[1][1]),0, math.sin(camera[1][1])], [0, 1, 0], [-math.sin(camera[1][1]),0,math.cos(camera[1][1])]])
+            rot_z = np.array([[math.cos(camera[1][2]), -math.sin(camera[1][2]), 0], [math.sin(camera[1][2]), math.cos(camera[1][2]), 0], [0, 0, 1]])
+            
+            rot_mat = np.matmul(np.matmul(rot_x, rot_y), rot_z)
+            camera_vec = np.matmul(rot_mat, [1, 0, 0])
+            up_vec = np.matmul(rot_mat, np.array([0, 0, 1]))
+
+            # Computes the view matrix
+            view_matrix = p.computeViewMatrix(cameraEyePosition = camera[0], cameraTargetPosition = camera[0] + camera_vec, cameraUpVector = up_vec, physicsClientId = self._client)
+            
+            # Computes projection matrix
+            proj_matrix = p.computeProjectionMatrixFOV(fov = 80, aspect = 1, nearVal = 0.01, farVal = 100, physicsClientId = self._client)
+            
+            # Saves parameters
+            self.camera_params.append([view_matrix, proj_matrix])
 
         
-        
-        
-
-
-
 
     # Step function
     def step(self, action):
@@ -186,6 +174,23 @@ class UR5Env(gym.Env):
         #######################################################
         # TODO: establecer función de recompensa ##############
         #######################################################
+        # Collisions --> knowing that exists "self.dict_ids". It is created on the first call to "env.reset"
+        '''
+            Las colisiones se detectan con dos funciones:
+                - p.getAABB: se le pasa un idx y se obtiene el bounding box del objeto como un rectangulo (coordenadas minimas y maximas)
+                - p.getOverlappingObjects: se le pasan un rectangulo (el bounding box anterior) y devuelve una tupla con los IDs de los
+                objetos con los que colisiona 
+                    (1, 40) --> indica que choca con el objeto 40 dentro del mismo cuerpo
+                    (0, -1) --> indica que choca con un objeto que no está dentro del cuerpo --> el objeto a manipular
+        '''
+        # print()
+        # print()
+        aabb_table = p.getAABB(bodyUniqueId = self._ur5.id, linkIndex = self.dict_ids[b'world_table_joint'])
+
+        ov_id = p.getOverlappingObjects(aabbMin = aabb_table[0], aabbMax = aabb_table[1])[:][1]
+        # print(ov_id)
+        # print(self.dict_ids_rev[ov_id[1]])
+
         reward = 0
 
 
@@ -232,9 +237,14 @@ class UR5Env(gym.Env):
 
 
         # Creates a plane and the robot
-        # Plane(self._client)
-        Object(self._client, object=0, position=[0.2, 0.55, 1.15], orientation=[0, 0, 0, 1])
+        self._object = Object(self._client, object=0, position=[0.2, 0.55, 1.15], orientation=[0, 0, 0, 1])
         self._ur5 = UR5(self._client)
+
+        # From each body, obtains every joint and stores them in a dictionary
+        bodies = [self._ur5, self._object]
+
+        self.dict_ids ={p.getJointInfo(body.id, joint)[1]: p.getJointInfo(body.id, joint)[0] for body in bodies for joint in range(p.getNumJoints(body.id))}
+        self.dict_ids_rev = {value: key for key, value in self.dict_ids.items()}
 
 
         # Reset the 'terminated' flag
@@ -266,21 +276,22 @@ class UR5Env(gym.Env):
     def render(self):
         # if it is the first time that 'render' is called ...
         if self._rendered_img is None:
-            # ... initializes the image variable
-            self.figure, self._rendered_img = plt.subplots()
-            self._rendered_img = self._rendered_img.imshow(np.zeros((200, 200, 3)))
+            # ... initializes the image variables
+            self.figure, self._rendered_img = plt.subplots(1,len(self.camera_params))
+            self._rendered_img = [ax.imshow(np.zeros((self.frame_w, self.frame_h, 3))) for ax in self._rendered_img]
+
             plt.pause(0.01)
-
         
+        # Updates the viewed frame for each image
+        for idx, camera in enumerate(self.camera_params):
+            frame = p.getCameraImage(width = self.frame_w, 
+                                     height = self.frame_h, 
+                                     viewMatrix = camera[0], 
+                                     projectionMatrix = camera[1], 
+                                     physicsClientId = self._client)[2]
 
-        # Shows the image
-        frame = p.getCameraImage(width = 300, 
-                                 height = 300, 
-                                 viewMatrix = self.view_matrix, 
-                                 projectionMatrix = self.proj_matrix, 
-                                 physicsClientId = self._client)[2]
-
-        self._rendered_img.set_data(frame)
+            self._rendered_img[idx].set_data(frame)
+        
         plt.draw()
         plt.pause(1/self.metadata['render_fps'])
 
