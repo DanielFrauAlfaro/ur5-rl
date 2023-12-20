@@ -43,3 +43,47 @@ para el tema del TFM necesito otras funcionalidades como la cámara
     Meter la extensión para objetos deformables
 
     OPCIONAL: mirar de introducir una camara funcional en el extremo --> ayudarse del Chat si eso
+
+
+
+
+
+----- 19 / 12 / 23 --> Reunión con Santiago
+
+    - Entorno:
+        - Plantear una cámara fija como lo estaba haciendo con el QR
+        - Ver de hacer la comparación entre una y dos cámaras para el entrenamiento (estéreo)
+        - Hacerlo con el BLUE (más adelante)
+        
+        - Hacerlo en velocidad
+        - Hacerlo en cartesiano
+
+    - Entradas: la red puede tener varias entradas:
+        - La imagen de la vista sin procesar y la posición de la cámara --> convolucional + mlp?
+                                                                        --> YOLO + salida para la velocidad / posicion
+        - La imagen segmentada con los dedos, la pinza y el objeto --> misma que arriba
+        - Las posiciones de cada elemento en la imagen y la posición de la cámara --> MLP o alguna otra
+
+        - Ver si las imagenes usarlas con RGBd o RGB o d según tenga el caso 1, 2 o 3
+
+    - Arquitectura:
+        - Separarlo en módulos: acercarse, coger y levantar / manipular.
+        - Para el caso de la de tres dedos y cuatro dedos se puede omitir el agente del medio, porque solo cierran y ya
+        - Probar de hacer autogestion, que sepan cuando han terminado de hacer su tarea
+
+
+    - Sim to Real:
+        - Entrenar el algoritmo por refuerzo en simulación
+        - Conseguir demostraciones en el real para luego hacer un aprendizaje offline. Se coge la imagen y las trayectorias grabadas y 
+        las utilizo de alguna manera para ajustar el modelo.
+        
+
+    - Si se hace a lo bruto es probable que tarde mas
+    - Si se filtra la entrada, se debería hacer la segmentación
+        - En este caso se podría usar una YOLO para la pinza y los dedos en simulación y otra para el real
+        - O una YOLO para los objetos (para el dataset de YALE seguro que hay alguna) y otra para la de tres dedos
+        - También se podría probar con la imagen segmentada, con los elementos destacados con colorines
+
+    
+
+    
