@@ -23,10 +23,6 @@ RUN chmod 0440 /etc/sudoers.d/99_aptget && chown root:root /etc/sudoers.d/99_apt
 ENV HOME /home/daniel
 RUN mkdir -p ${HOME}/ros_ws/src
 
-# set up environment
-COPY ./update_bashrc /sbin/update_bashrc
-RUN sudo chmod +x /sbin/update_bashrc ; sudo chown ros /sbin/update_bashrc ; sync ; /bin/bash -c /sbin/update_bashrc ; sudo rm /sbin/update_bashrc
-
 # Install pip
 RUN apt-get update
 RUN apt-get install -y python3-pip
