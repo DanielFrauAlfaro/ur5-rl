@@ -194,7 +194,6 @@
     </link>
     <link name="wrist_1_link">
         <visual>
-        <!-- TODO: Move this to a parameter -->
         <origin xyz="0 0 -0.127" rpy="1.5708 0 0"/>
         <geometry>
             <mesh filename="./ur5e_description/meshes/ur5e/visual/wrist1.dae"/>
