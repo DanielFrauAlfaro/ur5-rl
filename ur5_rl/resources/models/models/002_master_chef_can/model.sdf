@@ -1,0 +1,51 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+  <model name="master_chef_can">
+    <static>false</static>
+    <link name="link">
+      <inertial>       
+        <pose>-0.01707072958296921 -0.009762855837207728 0.07058421978429177 0.0008027823824317601 0.0013536605031130087 0.2022337856188338</pose> 
+        <mass>0.0010545331012102948</mass>
+        <inertia>
+          <ixx>2.2661150547293195e-06</ixx>
+          <ixy>1.8006239658831286e-22</ixy>
+          <ixz>-3.0733301310289394e-22</ixz>
+          <iyy>2.261091292777374e-06</iyy>
+          <iyz>-5.962806044885196e-22</iyz>
+          <izz>1.3207509037839934e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <!-- Use a downsampled mesh for collisions -->
+            <uri>./downsampled.obj</uri>
+	        </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>80</mu>
+              <mu2>60</mu2>
+              <kp>100</kp>
+              <kd>100</kd>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>./google_16k/textured.obj</uri>
+	        </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>./master_chef_can.material</uri>
+            <name>master_chef_can</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
