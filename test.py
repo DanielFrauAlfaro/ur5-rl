@@ -2,8 +2,8 @@ import ur5_rl
 import gymnasium as gym
 
 print("|| Compiling ...")
-env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
-env_ = gym.vector.make("ur5_rl/Ur5Env-v0", num_envs=3)
+env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+env_ = gym.make_vec("ur5_rl/Ur5Env-v0", num_envs=3)
 print("|| Reseting environment ...")
 
 
@@ -19,7 +19,7 @@ for j in range(3):
         
         obs, reward, done, truncated, info = env.step(action)
 
-        # env.render()
+        env.render()
         
         # if truncated:
         #     obs, __ = env.reset(seed=0, options={})
