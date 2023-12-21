@@ -2,14 +2,17 @@
 
 import gymnasium as gym
 import pybullet as p
+import pyb_utils
 import numpy as np
 from ur5_rl.resources.ur5 import UR5e as UR5
 from ur5_rl.resources.plane import Plane
 from ur5_rl.resources.object import Object
+from ur5_rl.resources.table import Table
 import matplotlib.pyplot as plt
 from math import pi
 import math
 import time
+from cv2 import aruco
 import cv2 as cv
 
 
@@ -97,24 +100,29 @@ class UR5Env(gym.Env):
         self._truncated = False
         
         # Time limit of the episode (in seconds)
-        self._t_limit = 100
+        self._t_limit = 50
         self._t_act = time.time()
 
         # Image to be rendered
         self._rendered_img = None
 
         # Constant increment of joint values
-        self._incr = 0.2
+        self._incr = 0.1
         self._q_incr = [0, self._incr, -self._incr]
 
+
+        # Frame height and width
+        self.frame_h = 400
+        self.frame_w = 400
+
+        # Parameters
+        self.fov = 60
+        self.near_plane = 0.02
+        self.far_plane = 5.0
 
 
         # --- Cameras ---
         # Camera positions variables: [[Position], [Orientation]]
-
-        # Frame height and width
-        self.frame_h = 300
-        self.frame_w = 300
 
         # Coordinates of the cameras
         cameras_coord = [[[0.2, 1.1, 1.1], [0.5, 0.0, -pi/2]],                         # External Camera 1
@@ -174,23 +182,26 @@ class UR5Env(gym.Env):
         #######################################################
         # TODO: establecer función de recompensa ##############
         #######################################################
-        # Collisions --> knowing that exists "self.dict_ids". It is created on the first call to "env.reset"
         '''
-            Las colisiones se detectan con dos funciones:
-                - p.getAABB: se le pasa un idx y se obtiene el bounding box del objeto como un rectangulo (coordenadas minimas y maximas)
-                - p.getOverlappingObjects: se le pasan un rectangulo (el bounding box anterior) y devuelve una tupla con los IDs de los
-                objetos con los que colisiona 
-                    (1, 40) --> indica que choca con el objeto 40 dentro del mismo cuerpo
-                    (0, -1) --> indica que choca con un objeto que no está dentro del cuerpo --> el objeto a manipular
+            Collision
         '''
-        # print()
-        # print()
-        aabb_table = p.getAABB(bodyUniqueId = self._ur5.id, linkIndex = self.dict_ids[b'world_table_joint'])
+        # print(self.col_detector.in_collision(margin=0.0))
 
-        ov_id = p.getOverlappingObjects(aabbMin = aabb_table[0], aabbMax = aabb_table[1])[:][1]
-        # print(ov_id)
-        # print(self.dict_ids_rev[ov_id[1]])
 
+        '''
+            Camera intrinsic parameters
+        '''
+        p.resetDebugVisualizerCamera(cameraDistance=2, cameraYaw=45, cameraPitch=-30, cameraTargetPosition=[0, 0, 0])
+        # Get the camera information
+        camera_info = p.getDebugVisualizerCamera()
+
+        # Extract the intrinsic parameters
+        intrinsic_matrix = camera_info[3:12]
+        
+        # print(intrinsic_matrix)
+
+        
+        
         reward = 0
 
 
@@ -239,13 +250,27 @@ class UR5Env(gym.Env):
         # Creates a plane and the robot
         self._object = Object(self._client, object=0, position=[0.2, 0.55, 1.15], orientation=[0, 0, 0, 1])
         self._ur5 = UR5(self._client)
+        self._table = Table(self._client)
 
         # From each body, obtains every joint and stores them in a dictionary
-        bodies = [self._ur5, self._object]
+        bodies = [self._ur5, self._object, self._table]
 
         self.dict_ids ={p.getJointInfo(body.id, joint)[1]: p.getJointInfo(body.id, joint)[0] for body in bodies for joint in range(p.getNumJoints(body.id))}
         self.dict_ids_rev = {value: key for key, value in self.dict_ids.items()}
 
+        '''
+            Colisiones relevantes:
+                - Colision Robot (cuerpo) - Mesa
+                - Colision Dedos Pinza - Objeto
+
+            Se podria usar:
+                - contacts = p.getContactPoints(bodyA=body1, bodyB=body2)
+            Para obtener la posicion del punto de contacto y lograr que sea por encima del objeto (mas adelante)
+        '''
+        robot = pyb_utils.Robot(self._ur5.id, client_id=self._client)
+        
+        self.col_detector = pyb_utils.CollisionDetector(self._client,
+                                                    [((self._ur5.id, "wrist_1_link"), (self._ur5.id, "base_link"))])
 
         # Reset the 'terminated' flag
         self._terminated = False
@@ -291,9 +316,76 @@ class UR5Env(gym.Env):
                                      physicsClientId = self._client)[2]
 
             self._rendered_img[idx].set_data(frame)
+
+            b, g, r, a = cv.split(frame)
+            frame = cv.merge([b, g, r])
+            gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+            dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250) # DICT_6X6_250
+            parameters =  cv.aruco.DetectorParameters()
+            detector = cv.aruco.ArucoDetector(dictionary, parameters)
+
+            markerCorners, markerIds, rejectedCandidates = detector.detectMarkers(frame)
+
+            # plt.figure()
+            # plt.imshow(frame)
+            # for i in range(len(markerIds)):
+            #     c = markerCorners[i][0]
+            #     plt.plot([c[:, 0].mean()], [c[:, 1].mean()], "o", label = "id={0}".format(markerIds[i]))
+            #     print(c)
+            #     for j in range(4):
+            #         plt.plot([c[j, 0]], [c[j, 1]], "o", label = "punto_"+str(j))
+
+            # plt.legend()
+            # plt.show()
+            # print(markerCorners)
+        # aruco_dict = aruco.Dictionary(aruco.DICT_6X6_250)
+        # parameters =  aruco.DetectorParameters_create()
+        # corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+        # frame_markers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
         
         plt.draw()
         plt.pause(1/self.metadata['render_fps'])
+            
+        '''
+        import cv2
+import numpy as np
+
+# Load camera calibration parameters and images
+K1 = np.array([[focal_length_x1, 0, principal_point_x1],
+               [0, focal_length_y1, principal_point_y1],
+               [0, 0, 1]])
+
+K2 = np.array([[focal_length_x2, 0, principal_point_x2],
+               [0, focal_length_y2, principal_point_y2],
+               [0, 0, 1]])
+
+R1 = np.array([[rotation_matrix_elements1]])
+t1 = np.array([[translation_vector_elements1]])
+
+R2 = np.array([[rotation_matrix_elements2]])
+t2 = np.array([[translation_vector_elements2]])
+
+# Assuming corners1[0][0] and corners2[0][0] are lists of multiple points
+points1 = np.array([corner[0] for corner in corners1[0]])
+points2 = np.array([corner[0] for corner in corners2[0]])
+
+# Normalize 2D points
+P1_normalized = np.linalg.inv(K1) @ np.vstack((points1.T, np.ones((1, points1.shape[0]))))
+P2_normalized = np.linalg.inv(K2) @ np.vstack((points2.T, np.ones((1, points2.shape[0]))))
+
+# Calculate Essential Matrix
+E, mask = cv2.findEssentialMat(P1_normalized[:2].T, P2_normalized[:2].T, K1[:2, :2], method=cv2.RANSAC, prob=0.999, threshold=1.0)
+
+# Decompose Essential Matrix to R and t
+points, R, t, mask = cv2.recoverPose(E, P1_normalized[:2].T, P2_normalized[:2].T, K1[:2, :2])
+
+# Display or use the rotation matrix R and translation vector t
+print("Rotation Matrix R:")
+print(R)
+print("Translation Vector t:")
+print(t)
+        '''
 
      
 
