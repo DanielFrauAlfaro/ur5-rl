@@ -93,3 +93,18 @@ para el tema del TFM necesito otras funcionalidades como la cámara
 
     - Se esta intentando hacer la deteccion de colisiones. Con la mesa va bien pero con el objeto ya no.
         - Mirar de incluir el objeto en el URDF pero faltaria aleatoriedad en las muestras
+
+
+---- 21 / 12 / 23
+
+    Distancia QR: 37.5 desde la parte cercana a mi / alejada del robot           
+                  32.5 desde la parte cercana al robot
+                  10 x 10 de tamaño
+
+                  21.5 cm desde la base del robot a la mesa
+
+    Se ha probado a hacer las colisiones con objetos separados, es decir, teniendo 3 cuerpos simulados (robot, objeto, mesa) de manera que se puedan
+obtener las colisiones entre los cuerpos completos y entre los eslabones de cada uno y entre ellos.
+
+    Se va a obtener la posicion de la camara en el mundo a partir de las imagenes que catpuran las dos camaras
+    El codigo esta, faltaria probarlo
