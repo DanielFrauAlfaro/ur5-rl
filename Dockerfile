@@ -40,7 +40,9 @@ RUN pip3 install roboticstoolbox-python
 RUN pip3 install pynput
 
 # Update Numpy
-RUN pip3 install -U numpy
+RUN pip3 install numpy==1.24
+
+RUN pip3 install pyb_utils  
 
 # GPU configuration
 RUN export CUDA_VISIBLE_DEVICES=[0]
