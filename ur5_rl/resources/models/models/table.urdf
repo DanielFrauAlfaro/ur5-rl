@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<robot name="ur5e_robot" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <link name="table">
+    <visual>
+      <geometry>
+        <mesh filename="./stl/mesa_lab.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="./stl/mesa_lab.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="50"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <link name="aruco">
+    <visual>
+      <geometry>
+        <mesh filename="./untitled.obj" scale="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    <inertial>
+        <mass value="0.0" />
+        <origin xyz="0.0 0.0 0.0"/>
+        <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+    </inertial>
+  </link>
+
+  <joint name="aruco_table_joint" type="fixed">
+    <parent link="table"/>
+    <child link="aruco"/>
+    <origin rpy="0.0 0.0 -1.57" xyz="0.30 -0.01 0.055"/>
+  </joint> 
+
+</robot>
