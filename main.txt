@@ -108,3 +108,21 @@ obtener las colisiones entre los cuerpos completos y entre los eslabones de cada
 
     Se va a obtener la posicion de la camara en el mundo a partir de las imagenes que catpuran las dos camaras
     El codigo esta, faltaria probarlo
+
+
+---- 26 / 12 / 23
+
+    Se ha implementado el cálculo de las transformaciones.
+        Por lo pronto, solamente se tiene el cálculo de la transformacion relativa entre las dos cámaras.
+        Se supone que la imagen de la cámara del robot es fija, es decir, la transformacion se realiza respecto al sistema de referencia original de la 
+      cámara del robot y la externa esté donde esté --> esto se hace así por varios motivos:
+            - En simulación para no generar las posiciones de la cámara mientras se mueve el robot.
+            - Porque hay momentos de la manipulacion en los que no se captura el ARUCO con la camara del robot.
+
+        Se espera que esto sea suficiente, pues la transformacion que quedaria seria respecto a la base, que seria siempre la misma al tener la vista del 
+      robot fija.
+
+        Se pasan las dos imágenes como realimentación junto con los vectores de realimentación, aunque se espera que solamente sea necesaria la
+      externa, aunque se podrían utilizar ambas. 
+        Si se usan las dos, se podría calcular por un lado la transformación relativa con la posición original de la camara del robot y tener la imagen
+      online de la misma.
