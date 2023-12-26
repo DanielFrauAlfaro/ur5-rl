@@ -39,17 +39,11 @@ class UR5Env(gym.Env):
 
         '''
         Multi-Discrete space in action space:
-            - Robot joints and gripper: 6 robot joints + 3 gripper joints
-            - Palm: 1 joint
+            - Robot joints and gripper: 6 robot joints
 
             - 0: do not move
             - 1: increase position of i-joint z axis
             - 2: decrease position of i-joint z axis
-
-            - Palm:
-                · 0: palm closed
-                · 1: normal position
-                · 2: palm opened
         ''' 
         self.action_space = gym.spaces.MultiDiscrete(nvec=[3,3,3,3,3,3])
 
@@ -59,11 +53,10 @@ class UR5Env(gym.Env):
 
         '''
         Dictionary of spaces in observation space:
-            - Joint Positions: 6 robot joint + 3 gripper joints
-            - Joint velocities: 6 robot joint + 3 gripper joints
-            - Joint torque: 6 robot joint + 3 gripper joints
+            - Joint Positions: 6 robot join
+            - Joint velocities: 6 robot joint
+            - Joint torque: 6 robot joint
             - End - effector poosition and orientation: XYZ RPY
-            - Palm state
         '''
         self.observation_space = gym.spaces.Dict({
             self._indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._q_limits[0])), 
@@ -130,6 +123,10 @@ class UR5Env(gym.Env):
 
 
         self.camera_params = []
+        self.markers = []
+        self.R = []
+        self.t = []
+        self.frames = []
 
         # For each camera ...
         for camera in cameras_coord[:]:
@@ -150,8 +147,10 @@ class UR5Env(gym.Env):
             
             # Saves parameters
             self.camera_params.append([view_matrix, proj_matrix])
+            
+            self.markers.append([])
+            self.frames.append([])
 
-        
 
     # Step function
     def step(self, action):
@@ -191,14 +190,6 @@ class UR5Env(gym.Env):
         '''
             Camera intrinsic parameters
         '''
-        p.resetDebugVisualizerCamera(cameraDistance=2, cameraYaw=45, cameraPitch=-30, cameraTargetPosition=[0, 0, 0])
-        # Get the camera information
-        camera_info = p.getDebugVisualizerCamera()
-
-        # Extract the intrinsic parameters
-        intrinsic_matrix = camera_info[3:12]
-        
-        # print(intrinsic_matrix)
 
         
         
@@ -228,7 +219,10 @@ class UR5Env(gym.Env):
             obs[self._indices[i]] = np.array(observation[i], dtype="float32")
 
         # Extra information
-        info = {}
+        info = {"frames_ext": self.frames[0], 
+                "frames_rob": self.frames[1],
+                "R": self.R,
+                "t": self.t}
 
 
         # observations --> obs --> sensors values
@@ -279,6 +273,8 @@ class UR5Env(gym.Env):
         for i in range(25):
             p.stepSimulation(self._client)
 
+            self.render(trans=True)
+
         # Gets starting observation
         observation = self._ur5.get_observation()
 
@@ -298,7 +294,7 @@ class UR5Env(gym.Env):
 
 
     # Render function
-    def render(self):
+    def render(self, trans=False):
         # if it is the first time that 'render' is called ...
         if self._rendered_img is None:
             # ... initializes the image variables
@@ -306,7 +302,8 @@ class UR5Env(gym.Env):
             self._rendered_img = [ax.imshow(np.zeros((self.frame_w, self.frame_h, 3))) for ax in self._rendered_img]
 
             plt.pause(0.01)
-        
+
+
         # Updates the viewed frame for each image
         for idx, camera in enumerate(self.camera_params):
             frame = p.getCameraImage(width = self.frame_w, 
@@ -315,6 +312,7 @@ class UR5Env(gym.Env):
                                      projectionMatrix = camera[1], 
                                      physicsClientId = self._client)[2]
 
+            self.frames[idx] = frame
             self._rendered_img[idx].set_data(frame)
 
             b, g, r, a = cv.split(frame)
@@ -325,7 +323,15 @@ class UR5Env(gym.Env):
             parameters =  cv.aruco.DetectorParameters()
             detector = cv.aruco.ArucoDetector(dictionary, parameters)
 
-            markerCorners, markerIds, rejectedCandidates = detector.detectMarkers(frame)
+            markerCorners, _, _ = detector.detectMarkers(frame)
+
+            
+            combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
+
+            self.markers[idx] = combined_array
+
+            if not trans:
+                break
 
             # plt.figure()
             # plt.imshow(frame)
@@ -338,55 +344,48 @@ class UR5Env(gym.Env):
 
             # plt.legend()
             # plt.show()
-            # print(markerCorners)
-        # aruco_dict = aruco.Dictionary(aruco.DICT_6X6_250)
-        # parameters =  aruco.DetectorParameters_create()
-        # corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
-        # frame_markers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
-        
+
         plt.draw()
         plt.pause(1/self.metadata['render_fps'])
-            
-        '''
-        import cv2
-import numpy as np
 
-# Load camera calibration parameters and images
-K1 = np.array([[focal_length_x1, 0, principal_point_x1],
-               [0, focal_length_y1, principal_point_y1],
-               [0, 0, 1]])
+        K1 = self.camera_params[0][1]
+        K2 = self.camera_params[1][1]
 
-K2 = np.array([[focal_length_x2, 0, principal_point_x2],
-               [0, focal_length_y2, principal_point_y2],
-               [0, 0, 1]])
+        points1 = np.vstack([corner for corner in self.markers[0]])
+        points2 = np.vstack([corner for corner in self.markers[1]])
+        
 
-R1 = np.array([[rotation_matrix_elements1]])
-t1 = np.array([[translation_vector_elements1]])
+        # Convert the tuple to a NumPy array
+        K1_array = np.array(K1)
+        K1 = K1_array.reshape(4, 4)[:-1, :-1]
 
-R2 = np.array([[rotation_matrix_elements2]])
-t2 = np.array([[translation_vector_elements2]])
+        K2_array = np.array(K2)
+        K2 = K2_array.reshape(4, 4)[:-1, :-1]
 
-# Assuming corners1[0][0] and corners2[0][0] are lists of multiple points
-points1 = np.array([corner[0] for corner in corners1[0]])
-points2 = np.array([corner[0] for corner in corners2[0]])
+        K1[-1][-1] = 1
+        K2[-1][-1] = 1
 
-# Normalize 2D points
-P1_normalized = np.linalg.inv(K1) @ np.vstack((points1.T, np.ones((1, points1.shape[0]))))
-P2_normalized = np.linalg.inv(K2) @ np.vstack((points2.T, np.ones((1, points2.shape[0]))))
+        points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
+        points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
 
-# Calculate Essential Matrix
-E, mask = cv2.findEssentialMat(P1_normalized[:2].T, P2_normalized[:2].T, K1[:2, :2], method=cv2.RANSAC, prob=0.999, threshold=1.0)
 
-# Decompose Essential Matrix to R and t
-points, R, t, mask = cv2.recoverPose(E, P1_normalized[:2].T, P2_normalized[:2].T, K1[:2, :2])
+        normalized_points1 = points1_ @ np.linalg.inv(K1)
+        normalized_points2 = points2_ @ np.linalg.inv(K1)
 
-# Display or use the rotation matrix R and translation vector t
-print("Rotation Matrix R:")
-print(R)
-print("Translation Vector t:")
-print(t)
-        '''
+        
+        normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
+        normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
 
+        # Calculate Essential Matrix
+        E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
+
+
+        # # Recover pose (rotation and translation)
+        _, self.R, self.t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
+
+        # print(R)
+        # print(t)
+        # print("--\n")
      
 
     # Close function: shutdowns the simulation
