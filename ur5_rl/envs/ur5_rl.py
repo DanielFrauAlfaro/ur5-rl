@@ -14,6 +14,7 @@ import math
 import time
 from cv2 import aruco
 import cv2 as cv
+import random
 
 
 # Gym environment
@@ -95,6 +96,9 @@ class UR5Env(gym.Env):
         # Time limit of the episode (in seconds)
         self._t_limit = 50
         self._t_act = time.time()
+
+        # Object coordinates
+        self.obj_pos = [0.2, 0.55, 0.9]
 
         # Image to be rendered
         self._rendered_img = None
@@ -185,13 +189,6 @@ class UR5Env(gym.Env):
             Collision
         '''
         # print(self.col_detector.in_collision(margin=0.0))
-
-
-        '''
-            Camera intrinsic parameters
-        '''
-
-        
         
         reward = 0
 
@@ -241,8 +238,11 @@ class UR5Env(gym.Env):
         p.setGravity(0, 0, -20, self._client)
 
 
+        # self.obj_pos = np.random.normal(self.obj_pos, [0.01, 0.01, 0.01])
+        rand_orientation = p.getQuaternionFromEuler(np.random.uniform([-3.1415,-3.1415,-3.1415], [3.1415, 3.1415, 3.1415]), physicsClientId=self._client)
+
         # Creates a plane and the robot
-        self._object = Object(self._client, object=0, position=[0.2, 0.55, 1.15], orientation=[0, 0, 0, 1])
+        self._object = Object(self._client, object=0, position=self.obj_pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
         self._table = Table(self._client)
 
@@ -273,7 +273,8 @@ class UR5Env(gym.Env):
         for i in range(25):
             p.stepSimulation(self._client)
 
-            self.render(trans=True)
+            if i < 3:
+                self.render(trans=True)
 
         # Gets starting observation
         observation = self._ur5.get_observation()
