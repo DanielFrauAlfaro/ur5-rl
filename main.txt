@@ -126,3 +126,13 @@ obtener las colisiones entre los cuerpos completos y entre los eslabones de cada
       externa, aunque se podrían utilizar ambas. 
         Si se usan las dos, se podría calcular por un lado la transformación relativa con la posición original de la camara del robot y tener la imagen
       online de la misma.
+
+    
+---- 27 / 12 / 23
+
+    Se ha introducido el fondo al entorno para que el entrenamiento sea lo mas cercano a la realidad
+
+    Se ha empezado a leer literatura sobre las redes neuronales y estrategias para utilizar agentes en el entrenamiento. Algunas ideas:
+        - Spatial softmax: en una softmax, se elevan las entradas de la capa para obtener probabilidades. En el spatial, se aplica a cada pixel por
+      separado, de manera que lo que se intenta es conseguir zonas de atención.
+        Se suele usar con mecansimso de atención y se aplica utilizando la softmax a lo largo de cada una de las dimensiones de la imagen
