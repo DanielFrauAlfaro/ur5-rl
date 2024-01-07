@@ -296,14 +296,6 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self, trans=False):
-        # if it is the first time that 'render' is called ...
-        if self._rendered_img is None:
-            # ... initializes the image variables
-            self.figure, self._rendered_img = plt.subplots(1,len(self.camera_params))
-            self._rendered_img = [ax.imshow(np.zeros((self.frame_w, self.frame_h, 3))) for ax in self._rendered_img]
-
-            plt.pause(0.01)
-
 
         # Updates the viewed frame for each image
         for idx, camera in enumerate(self.camera_params):
@@ -313,11 +305,13 @@ class UR5Env(gym.Env):
                                      projectionMatrix = camera[1], 
                                      physicsClientId = self._client)[2]
 
-            self.frames[idx] = frame
-            self._rendered_img[idx].set_data(frame)
-
             b, g, r, a = cv.split(frame)
             frame = cv.merge([b, g, r])
+
+
+            cv.imshow("Station", [r,g,b])
+            cv.waitKey(1)
+
             gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
             dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250) # DICT_6X6_250
@@ -333,21 +327,6 @@ class UR5Env(gym.Env):
 
             if not trans:
                 break
-
-            # plt.figure()
-            # plt.imshow(frame)
-            # for i in range(len(markerIds)):
-            #     c = markerCorners[i][0]
-            #     plt.plot([c[:, 0].mean()], [c[:, 1].mean()], "o", label = "id={0}".format(markerIds[i]))
-            #     print(c)
-            #     for j in range(4):
-            #         plt.plot([c[j, 0]], [c[j, 1]], "o", label = "punto_"+str(j))
-
-            # plt.legend()
-            # plt.show()
-
-        plt.draw()
-        plt.pause(1/self.metadata['render_fps'])
 
         K1 = self.camera_params[0][1]
         K2 = self.camera_params[1][1]
