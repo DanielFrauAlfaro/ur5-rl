@@ -15,6 +15,7 @@ import time
 from cv2 import aruco
 import cv2 as cv
 import random
+from scipy .spatial.transform import Rotation
 
 
 # Gym environment
@@ -26,12 +27,20 @@ class UR5Env(gym.Env):
     def __init__(self, render_mode="DIRECT"):    
 
         # Limit values
-        self._q_limits = [[-1.5, -3.1415, -3.1415, -3.1415, 0.0, -6.2831], [1.5, 0.0, 0.0, 0.0, 3.1415, 6.2831]]
+        self._q_limits = [[-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831], [1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831]]
         self._qd_limits = [[-5000, -5000, -5000, -5000, -5000, -5000], [5000,5000,5000,5000,5000,5000]]
         self._qdd_limits = [[-5000, -5000, -5000, -5000, -5000, -5000], [5000,5000,5000,5000,5000,5000]]
 
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi], [1,1,1,pi,pi,pi]]
 
+        self._object_limits = [np.ones(6) * -10, np.ones(6) * 10]
+
+        self._R_limits =  [np.ones(9) * -10, np.ones(9) * 10]
+        self._t_limits = [np.ones(3) * -10, np.ones(3) * 10] 
+
+        # Frame height and width
+        self.frame_h = 200
+        self.frame_w = 200
 
         self._limits = [self._q_limits,  
                        self._qd_limits,  
@@ -50,14 +59,16 @@ class UR5Env(gym.Env):
 
 
         # Dictionary indices
-        self._indices = ["q_position", "q_velocity", "q_torque", "ee"]
-
+        self._indices = ["q_position", "q_velocity", "q_torque", "ee", "object_position", "R_t"]
+        self._Rt_indices = ["R", "t"]
         '''
         Dictionary of spaces in observation space:
-            - Joint Positions: 6 robot join
+            - Joint Positions: 6 robot joint
             - Joint velocities: 6 robot joint
             - Joint torque: 6 robot joint
-            - End - effector poosition and orientation: XYZ RPY
+            - End - effector position and orientation: XYZ RPY
+            - Object Position
+            - R and t matrix between cameras
         '''
         self.observation_space = gym.spaces.Dict({
             self._indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._q_limits[0])), 
@@ -70,7 +81,18 @@ class UR5Env(gym.Env):
                                high= np.float32(np.array(self._qdd_limits[1]))),
 
             self._indices[3]: gym.spaces.box.Box(low=np.float32(np.array(self._ee_limits[0])), 
-                               high= np.float32(np.array(self._ee_limits[1])))
+                               high= np.float32(np.array(self._ee_limits[1]))),
+
+            self._indices[4]: gym.spaces.box.Box(low=np.float32(np.array(self._object_limits[0])), 
+                               high= np.float32(np.array(self._object_limits[1]))),
+
+            self._indices[5]: gym.spaces.Dict({
+                self._Rt_indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._R_limits[0])), 
+                               high= np.float32(np.array(self._R_limits[1]))),
+
+                self._Rt_indices[1]: gym.spaces.box.Box(low=np.float32(np.array(self._t_limits[0])), 
+                               high= np.float32(np.array(self._t_limits[1])))
+            })
         })
 
 
@@ -100,17 +122,18 @@ class UR5Env(gym.Env):
         # Object coordinates
         self.obj_pos = [0.2, 0.55, 0.9]
 
-        # Image to be rendered
-        self._rendered_img = None
-
         # Constant increment of joint values
         self._incr = 0.1
         self._q_incr = [0, self._incr, -self._incr]
 
+        # Image to be rendered
+        self.frame = [np.ones((self.frame_w, self.frame_h)), np.ones((self.frame_w, self.frame_h))]
 
-        # Frame height and width
-        self.frame_h = 400
-        self.frame_w = 400
+        # Aruco detectors
+        # 
+        dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250) # DICT_6X6_250
+        parameters =  cv.aruco.DetectorParameters()
+        self.detector = cv.aruco.ArucoDetector(dictionary, parameters)
 
         # Parameters
         self.fov = 60
@@ -128,9 +151,6 @@ class UR5Env(gym.Env):
 
         self.camera_params = []
         self.markers = []
-        self.R = []
-        self.t = []
-        self.frames = []
 
         # For each camera ...
         for camera in cameras_coord[:]:
@@ -149,11 +169,18 @@ class UR5Env(gym.Env):
             # Computes projection matrix
             proj_matrix = p.computeProjectionMatrixFOV(fov = 80, aspect = 1, nearVal = 0.01, farVal = 100, physicsClientId = self._client)
             
+            # Convert the tuple to a NumPy array and reshape
+            proj_matrix_3x3 = np.array(proj_matrix)
+            proj_matrix_3x3 = proj_matrix_3x3.reshape(4, 4)[:-1, :-1]
+
+            # Set a the [3][3] value of the matrix to 1 (is at)
+            proj_matrix_3x3[-1][-1] = 1
+
+
             # Saves parameters
-            self.camera_params.append([view_matrix, proj_matrix])
+            self.camera_params.append([view_matrix, proj_matrix, proj_matrix_3x3])
             
             self.markers.append([])
-            self.frames.append([])
 
 
     # Step function
@@ -177,10 +204,6 @@ class UR5Env(gym.Env):
         # Advances the simulation
         p.stepSimulation()
 
-        # Gets an observation
-        observation = self._ur5.get_observation()
-
-
 
         #######################################################
         # TODO: establecer función de recompensa ##############
@@ -192,6 +215,39 @@ class UR5Env(gym.Env):
         
         reward = 0
 
+
+
+        # -------- Wrist Position -------- --> Name:  tool0_ee_link Joint Index: 12 Link Index: b'ee_link'
+        # Get the position and orientation of the ee_link
+        link_state = p.getLinkState(self._ur5.id, 12, computeLinkVelocity=1, computeForwardKinematics=1)
+        pos, orn = link_state[0], link_state[1]
+
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn)).reshape((3, 3))
+
+        x_axis_local = rotation_matrix[:, 0]
+        y_axis_local = rotation_matrix[:, 1]
+        z_axis_local = rotation_matrix[:, 2]
+
+        # Euler angles in radians (replace with your actual values)
+        roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
+
+        # Create a rotation matrix from Euler angles
+        rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
+
+        # Rotate the vector using the rotation matrix
+        x_axis_local = np.dot(rotation_matrix, x_axis_local)
+        y_axis_local = np.dot(rotation_matrix, y_axis_local)
+        x_axis_local *= -1
+
+        # Draw lines representing the axes of the object
+        line_start = pos
+        line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
+        line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
+        line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
+
+        p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5)  # X-axis (red)
+        p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5)  # Y-axis (green)
+        p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5)  # Z-axis (blue)
 
 
         # If it has reached time limit, truncates the episode
@@ -210,16 +266,12 @@ class UR5Env(gym.Env):
                     break
 
 
-        # Arranges observation vectors into a dictionary
-        obs = {}
-        for i in range(len(self._indices)):
-            obs[self._indices[i]] = np.array(observation[i], dtype="float32")
+        obs = self.get_observation()
+        _ = self.get_object_pos_()
 
         # Extra information
-        info = {"frames_ext": self.frames[0], 
-                "frames_rob": self.frames[1],
-                "R": self.R,
-                "t": self.t}
+        info = {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY).flatten(), 
+                "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY).flatten()}
 
 
         # observations --> obs --> sensors values
@@ -230,13 +282,11 @@ class UR5Env(gym.Env):
 
         return obs, reward, self._terminated, self._truncated, info
 
-
     # Reset function
     def reset(self, seed=None, options={}):
         # Reset simulation and gravity establishment
         p.resetSimulation(self._client)
         p.setGravity(0, 0, -20, self._client)
-
 
         # self.obj_pos = np.random.normal(self.obj_pos, [0.01, 0.01, 0.01])
         rand_orientation = p.getQuaternionFromEuler(np.random.uniform([-3.1415,-3.1415,-3.1415], [3.1415, 3.1415, 3.1415]), physicsClientId=self._client)
@@ -273,17 +323,7 @@ class UR5Env(gym.Env):
         for i in range(25):
             p.stepSimulation(self._client)
 
-            if i < 3:
-                self.render(trans=True)
-
-        # Gets starting observation
-        observation = self._ur5.get_observation()
-
-        # Arranges observation vectors into a dictionary
-        obs = {}
-        for i in range(len(self._indices)):
-            obs[self._indices[i]] = np.array(observation[i], dtype="float32")
-
+        obs = self.get_observation()
 
         # Resets internal values
         self._truncated = False
@@ -293,85 +333,15 @@ class UR5Env(gym.Env):
 
         return obs, {}
 
-
     # Render function
     def render(self, trans=False):
 
-        # Updates the viewed frame for each image
-        for idx, camera in enumerate(self.camera_params):
-            frame = p.getCameraImage(width = self.frame_w, 
-                                     height = self.frame_h, 
-                                     viewMatrix = camera[0], 
-                                     projectionMatrix = camera[1], 
-                                     physicsClientId = self._client)[2]
-
-            b, g, r, a = cv.split(frame)
-            frame = cv.merge([b, g, r])
-
-
-            cv.imshow("Station", [r,g,b])
-            cv.waitKey(1)
-
-            gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-
-            dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250) # DICT_6X6_250
-            parameters =  cv.aruco.DetectorParameters()
-            detector = cv.aruco.ArucoDetector(dictionary, parameters)
-
-            markerCorners, _, _ = detector.detectMarkers(frame)
-
-            
-            combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
-
-            self.markers[idx] = combined_array
-
-            if not trans:
-                break
-
-        K1 = self.camera_params[0][1]
-        K2 = self.camera_params[1][1]
-
-        points1 = np.vstack([corner for corner in self.markers[0]])
-        points2 = np.vstack([corner for corner in self.markers[1]])
-        
-
-        # Convert the tuple to a NumPy array
-        K1_array = np.array(K1)
-        K1 = K1_array.reshape(4, 4)[:-1, :-1]
-
-        K2_array = np.array(K2)
-        K2 = K2_array.reshape(4, 4)[:-1, :-1]
-
-        K1[-1][-1] = 1
-        K2[-1][-1] = 1
-
-        points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
-        points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
-
-
-        normalized_points1 = points1_ @ np.linalg.inv(K1)
-        normalized_points2 = points2_ @ np.linalg.inv(K1)
-
-        
-        normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
-        normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
-
-        # Calculate Essential Matrix
-        E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
-
-
-        # # Recover pose (rotation and translation)
-        _, self.R, self.t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
-
-        # print(R)
-        # print(t)
-        # print("--\n")
-     
+        cv.imshow("Station", self.frame[0])
+        cv.waitKey(1)
 
     # Close function: shutdowns the simulation
     def close(self):
         p.disconnect(self._client) 
-
 
     # Setter for the camera position
     def set_cam(self, pos, rpy):
@@ -381,6 +351,118 @@ class UR5Env(gym.Env):
         self._cam_pitch = rpy[1]
         self._cam_yaw = rpy[2]
 
+    # Set seed
     def seed(self, seed=None): 
         self.np_random, seed = gym.utils.seeding.np_random(seed)
         return [seed]
+
+    # Getter for the object position
+    def get_object_pos(self):
+        # ------ Object Position ------
+        # Get the position and orientation of the object
+        pos, orn = p.getBasePositionAndOrientation(self._object.id)
+        # Convert quaternion to rotation matrix
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn)).reshape((3, 3))
+
+        # Get the directions of the axes in the object's local coordinate system
+        y_axis_local = [0,0,1]
+        z_axis_local = rotation_matrix[:, 2]
+        x_axis_local = np.cross(z_axis_local, y_axis_local)
+
+        y_aux = y_axis_local
+        y_axis_local = z_axis_local
+        z_axis_local = y_aux
+        
+
+        # Draw lines representing the axes of the object
+        line_start = pos
+        line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
+        line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
+        line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
+
+        p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5)  # X-axis (red)
+        p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5)  # Y-axis (green)
+        p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5)  # Z-axis (blue)
+
+        return pos + p.getEulerFromQuaternion(orn)
+
+   # Computes the Rotation matrix (R) and Translation (t)
+    #   between the two cameras
+    def retrieve_R_t(self):
+        # For each camera ...
+        for idx, camera in enumerate(self.camera_params):
+            # Obtains the view
+            self.frame[idx] = p.getCameraImage(width = self.frame_w, 
+                                     height = self.frame_h, 
+                                     viewMatrix = camera[0], 
+                                     projectionMatrix = camera[1], 
+                                     physicsClientId = self._client)[2]
+            
+            t = time.time()
+
+            # Generates the RGB representation
+            b, g, r, _ = cv.split(self.frame[idx])
+            self.frame[idx] = cv.merge([r, g, b])
+
+            # Gray conversion
+            gray = cv.cvtColor(self.frame[idx], cv.COLOR_BGR2GRAY)
+
+            # Detects the corners
+            markerCorners, _, _ = self.detector.detectMarkers(gray)
+
+            # Concatenates and saves the arrays . There are two sets of arucos            
+            combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
+            self.markers[idx] = combined_array
+
+            # If it has obtained the second image, breaks the loop
+            if self.markers[-1] != []: break
+        
+        # Intrinic parameters of the camera
+        K1 = self.camera_params[0][-1]
+
+        # Points rescalation
+        points1 = np.vstack([corner for corner in self.markers[0]])
+        points2 = np.vstack([corner for corner in self.markers[1]])
+
+        points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
+        points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
+
+        # Point normalization
+        normalized_points1 = points1_ @ np.linalg.inv(K1)
+        normalized_points2 = points2_ @ np.linalg.inv(K1)
+
+        normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
+        normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
+
+        # Calculate Essential Matrix: coordinates from K1 to K2
+        #  The points are obtained from K1
+        E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
+
+        # Recover pose (rotation and translation)
+        _, R, t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
+            
+        # print(self.R)
+        # print(self.t)
+        # print("--\n")
+
+        return R.flatten(), t[:,0]
+
+    # Getter for the observations
+    def get_observation(self):
+        # Gets starting observation
+        observation = self._ur5.get_observation()
+
+        # Arranges observation vectors into a dictionary
+        obs = {}
+        for i in range(len(self._indices[0:4])):
+            obs[self._indices[i]] = np.array(observation[i], dtype="float32")
+
+        obs[self._indices[4]] = np.array(self.get_object_pos(), dtype="float32")
+        
+        R, t = self.retrieve_R_t() # --> lo que tarda es la obtención de la imagen desde la simulación
+        
+        obs[self._indices[5]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
+
+        return obs
+
+ 
