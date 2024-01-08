@@ -71,6 +71,9 @@ class UR5e:
             
             list_attr[jointName] = jointID
 
+            # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
+            # print("--")
+
 
             # If a joint is controllable ...
             if controllable:
@@ -155,7 +158,8 @@ class UR5e:
         ee_or = T.eul('yxz')
 
         ee = np.array([ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]])
-
+        
+        
         # Builds and returns the message
         observation = [q, qd, q_t,  ee]
 
