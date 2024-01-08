@@ -136,3 +136,37 @@ obtener las colisiones entre los cuerpos completos y entre los eslabones de cada
         - Spatial softmax: en una softmax, se elevan las entradas de la capa para obtener probabilidades. En el spatial, se aplica a cada pixel por
       separado, de manera que lo que se intenta es conseguir zonas de atención.
         Se suele usar con mecansimso de atención y se aplica utilizando la softmax a lo largo de cada una de las dimensiones de la imagen
+
+
+----- 8 / 01 / 24
+
+    Se ha incluido la transformaciones entre cámaras dentro del espacio de observaciones.
+    Se ha creado funciones para obtener la posición y orientacion del objeto. También se ha creado el cambio de coordenadas para obtener los ejes de la 
+  orientación correctos para el agarre
+        Se debería hacer una metodologia que fuera generica para todos los objetos, sin tener en cuenta sus ejes.
+            En el MasterChef can y en los que son latas funciona lo que se ha hecho pero cuando se trata de otro tipo de objetos, como es el caso de las 
+          cajas no funciona, porque tienen otros ejes y el cambio ya no funciona
+            
+            FUERZA BRUTA: hacer una transformacion para cada objeto y tener en cuenta en el código cual se ha importado para hacer el cambio.
+
+            Este enfoque no tendría en cuenta otros agarres posibles que el robot pudiera generar, pero estabilizaría el entrenamiento
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------
+#   IDEA PARA EL ENTRENAMIENTO: una función de recompensa que de +1 si se ejecuta un movimiento que acerque al wrist a la posición indicada             #
+#                                                                +1 si se ejecuta un movimiento que acerque el wrist a la orientación indicada          #
+
+    OTRA IDEA: se puede hacer un agente y que primero intente llegar al objeto independientemente de su orientacion con la salida para avisar de que 
+            ya ha llegado a la posición (entrenándolo antes con la colisión)
+            
+                Luego, cuando ya esté entrenado con esta función de recompensa, se vuelva a entrenar con otra de manera que lo que realmente importe es que,
+            al cerrar la pinza los tres dedos choquen con el objeto primero. Luego se podría expandir para ver si, al subir, no se cae
+
+
+    Esto se podría hacer con entrenamiento completamente separados (rollo, la función de aproximación no se utiliza en la de choque o en la de coger el
+  objeto de manera eficiente) 
+    Otra opción es hacerlo incremental, tener la función de aproximación y choque, después añadirle la de colision de los dedos, luego añadirle la de subir
+  el objeto, ...
+# -------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
