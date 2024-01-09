@@ -117,6 +117,27 @@ class UR5e:
     def get_ids(self):
         return self.client, self.id
     
+    def apply_action_c(self, action):
+        x = action[0]                                 
+        y = action[1]
+        z = action[2]
+            
+        roll = action[3]
+        pitch = action[4]
+        yaw = action[5]
+
+        # Builds up homogeneus matrix
+        T = SE3(x, y, z)
+        T_ = SE3.RPY(roll, pitch, yaw, order='xyz')
+
+        self.T = T * T_
+
+        # Computes inverse kinematics
+        q = self.__ur5.ikine_LM(self.T,q0 = self.q)       # Inversa: obtiene las posiciones articulares a través de la posición
+
+
+        # Applies the joint action
+        self.apply_action(q.q)
 
     # Moves the robot to a desired position
     def apply_action(self, action):
@@ -124,20 +145,20 @@ class UR5e:
         q = action
 
         # Assigns the action to the internal values of the robot
-        self.q = q
+        # self.q = q
 
         # UR5 control
         p.setJointMotorControlArray(bodyUniqueId=self.id, 
                                     jointIndices=self.ur5_joints_id, 
                                     controlMode=p.POSITION_CONTROL,
-                                    targetPositions=self.q,
+                                    targetPositions=q,
                                     physicsClientId=self.client)
 
 
     
     # Returns observation of the robot state
     def get_observation(self):
-        q = []
+        self.q = []
         qd = []
         q_t = []
 
@@ -148,20 +169,20 @@ class UR5e:
                                 jointIndex=i,
                                 physicsClientId=self.client)
 
-            q.append(aux[0])
+            self.q.append(aux[0])
             qd.append(aux[1])
             q_t.append(aux[2][-1])
 
         # End effector position and orientation
-        T = self.__ur5.fkine(q, order='yxz')
+        T = self.__ur5.fkine(self.q, order='xyz')
         ee_pos = T.t
-        ee_or = T.eul('yxz')
+        ee_or = T.eul('xyz')
 
         ee = np.array([ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]])
         
         
         # Builds and returns the message
-        observation = [q, qd, q_t,  ee]
+        observation = [self.q, qd, q_t,  ee]
 
         return observation
             
