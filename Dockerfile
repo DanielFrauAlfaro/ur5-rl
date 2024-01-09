@@ -27,8 +27,15 @@ RUN mkdir -p ${HOME}/ros_ws/src
 RUN apt-get update
 RUN apt-get install -y python3-pip
 
+# Pytorch
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Pytorch with CUDA
+# RUN pip3 install torch torchvision
+
 # Install pybullet, gym and graphic interface
 RUN pip3 install pybullet
+RUN pip3 install pyb_utils  
 RUN pip3 install gymnasium
 RUN apt-get install -y libgl1-mesa-glx
 
@@ -42,7 +49,6 @@ RUN pip3 install pynput
 # Update Numpy
 RUN pip3 install numpy==1.24
 
-RUN pip3 install pyb_utils  
 
 # GPU configuration
 RUN export CUDA_VISIBLE_DEVICES=[0]
