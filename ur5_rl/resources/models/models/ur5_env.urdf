@@ -84,15 +84,7 @@
     <arg name="wrist_3_inertia_length" default="0.0458"/>
     <arg name="wrist_3_mass" default="0.1879"/>
 
-    <xacro:macro name="cylinder_inertial" params="radius length mass *origin">
-        <inertial>
-        <mass value="${mass}" />
-        <xacro:insert_block name="origin" />
-        <inertia ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0"
-            iyy="${0.0833333 * mass * (3 * radius * radius + length * length)}" iyz="0.0"
-            izz="${0.5 * mass * radius * radius}" />
-        </inertial>
-    </xacro:macro>
+    
 
     <link name="base_link">
         <inertial>
@@ -489,12 +481,6 @@
     </material>
 
   
-
-
-
-  
-  
-  
   <!-- other elements -->
   <link name="base_cylinder">
     <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -515,25 +501,7 @@
         <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
     </inertial>
   </link>
-  <link name="ground">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <visual>
-      <geometry>
-        <box size="0.01 3.0 3.0"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <colision>
-      <geometry>
-        <box size="0.01 3.0 3.0"/>
-      </geometry>
-    </colision>
-    <inertial>
-        <mass value="0.0" />
-        <origin xyz="0.0 0.0 0.0"/>
-        <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
-    </inertial>
-  </link>
+  
 
 
 
@@ -545,11 +513,7 @@
             <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
         </inertial>
     </link>
-  <joint name="world_ground_joint" type="fixed">
-    <parent link="world"/>
-    <child link="ground"/>
-    <origin rpy="0.0 1.57 0.0" xyz="0.0 0.0 0.0"/>
-  </joint>
+  
   <joint name="world_base_joint" type="fixed">
     <parent link="world"/>
     <child link="base_cylinder"/>
