@@ -33,8 +33,6 @@ class UR5Env(gym.Env):
 
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi], [1,1,1,pi,pi,pi]]
 
-        self._object_limits = [np.ones(6) * -10, np.ones(6) * 10]
-
         self._R_limits =  [np.ones(9) * -10, np.ones(9) * 10]
         self._t_limits = [np.ones(3) * -10, np.ones(3) * 10] 
 
@@ -47,6 +45,9 @@ class UR5Env(gym.Env):
                        self._qdd_limits, 
                        self._ee_limits]
 
+        self.max_action = 0.1
+        self._action_limits = [-np.ones(6)*self.max_action, np.ones(6)*self.max_action]
+
         '''
         Multi-Discrete space in action space:
             - Robot joints and gripper: 6 robot joints
@@ -55,38 +56,23 @@ class UR5Env(gym.Env):
             - 1: increase position of i-joint z axis
             - 2: decrease position of i-joint z axis
         ''' 
-        self.action_space = gym.spaces.MultiDiscrete(nvec=[3,3,3,3,3,3])
+        self.action_space = gym.spaces.box.Box(low=self._action_limits[0],
+                               high= self._action_limits[1], dtype=np.float32)
 
 
         # Dictionary indices
-        self._indices = ["q_position", "q_velocity", "q_torque", "ee", "object_position", "R_t"]
+        self._indices = ["q_position", "R_t"]
         self._Rt_indices = ["R", "t"]
         '''
         Dictionary of spaces in observation space:
             - Joint Positions: 6 robot joint
-            - Joint velocities: 6 robot joint
-            - Joint torque: 6 robot joint
-            - End - effector position and orientation: XYZ RPY
-            - Object Position
             - R and t matrix between cameras
         '''
         self.observation_space = gym.spaces.Dict({
             self._indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._q_limits[0])), 
                                high= np.float32(np.array(self._q_limits[1])), dtype=np.float32),
 
-            self._indices[1]: gym.spaces.box.Box(low=np.float32(np.array(self._qd_limits[0])), 
-                               high= np.float32(np.array(self._qd_limits[1]))),
-
-            self._indices[2]: gym.spaces.box.Box(low=np.float32(np.array(self._qdd_limits[0])), 
-                               high= np.float32(np.array(self._qdd_limits[1]))),
-
-            self._indices[3]: gym.spaces.box.Box(low=np.float32(np.array(self._ee_limits[0])), 
-                               high= np.float32(np.array(self._ee_limits[1]))),
-
-            self._indices[4]: gym.spaces.box.Box(low=np.float32(np.array(self._object_limits[0])), 
-                               high= np.float32(np.array(self._object_limits[1]))),
-
-            self._indices[5]: gym.spaces.Dict({
+            self._indices[1]: gym.spaces.Dict({
                 self._Rt_indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._R_limits[0])), 
                                high= np.float32(np.array(self._R_limits[1]))),
 
@@ -109,6 +95,7 @@ class UR5Env(gym.Env):
         elif render_mode == "GUI":
             self._client = p.connect(p.GUI)
 
+            
         self._ur5 = None
         
         # Terminated / Truncated flag
@@ -193,7 +180,7 @@ class UR5Env(gym.Env):
 
         # Applies increments according to action
         for i in range(len(q_act)):
-            q_act[i] = q_act[i] + self._q_incr[action[i]]
+            q_act[i] = q_act[i] + action[i]
 
 
         # Builds the message and sends it to the robot
@@ -267,11 +254,10 @@ class UR5Env(gym.Env):
 
 
         obs = self.get_observation()
-        _ = self.get_object_pos_()
 
         # Extra information
-        info = {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY).flatten(), 
-                "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY).flatten()}
+        info = {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY), 
+                "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY)}
 
 
         # observations --> obs --> sensors values
@@ -392,13 +378,13 @@ class UR5Env(gym.Env):
         # For each camera ...
         for idx, camera in enumerate(self.camera_params):
             # Obtains the view
+
             self.frame[idx] = p.getCameraImage(width = self.frame_w, 
                                      height = self.frame_h, 
                                      viewMatrix = camera[0], 
                                      projectionMatrix = camera[1], 
                                      physicsClientId = self._client)[2]
             
-            t = time.time()
 
             # Generates the RGB representation
             b, g, r, _ = cv.split(self.frame[idx])
@@ -454,14 +440,13 @@ class UR5Env(gym.Env):
 
         # Arranges observation vectors into a dictionary
         obs = {}
-        for i in range(len(self._indices[0:4])):
+        for i in range(len(self._indices[:1])):
             obs[self._indices[i]] = np.array(observation[i], dtype="float32")
 
-        obs[self._indices[4]] = np.array(self.get_object_pos(), dtype="float32")
-        
+
         R, t = self.retrieve_R_t() # --> lo que tarda es la obtención de la imagen desde la simulación
         
-        obs[self._indices[5]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
+        obs[self._indices[1]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
 
         return obs
 
