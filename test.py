@@ -1,6 +1,7 @@
 import ur5_rl
 import gymnasium as gym
 from buffer import ReplayBuffer
+import warnings
 
 print("|| Compiling ...")
 env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
@@ -10,29 +11,32 @@ print("|| Reseting environment ...")
 buffer = ReplayBuffer(max_size = 256)
 
 print("|| Sampling ...")
-for j in range(3):
+for j in range(100):
     print("--- Epoch ", j)
-    obs, __ = env.reset(seed=0, options={})
+    obs, info = env.reset(seed=0, options={})
+    obs.update(info)
 
-    while True:
+    with warnings.catch_warnings(record = True) as w:
+        while True:
 
-        # TODO: función del agente
-        action = env.action_space.sample()
+            # TODO: función del agente
+            action = env.action_space.sample()
 
-        obs_, reward, done, truncated, info = env.step(action)
-        
-        buffer.store_transition(obs, action, reward, obs_, (done or truncated))
+            env.set_warning(w)
+            obs_, reward, done, truncated, info = env.step(action)
+            obs_.update(info)
+            
 
-        env.render()
+            buffer.store_transition(obs, action, reward, obs_, (done or truncated))
+            
+            # env.render()
+            
+            if truncated or done:
+                break
 
-        # IMPORTANTE: a la hora de incluir el estado en el buffer, hacer obs.update(info) para incluir la imagen
-        
-        # if truncated:
-        #     break
+            obs = obs_
 
-        obs = obs_
-
-        # TODO: actualizar estado del agente --> después o durante el episodio
+            # TODO: actualizar estado del agente --> después o durante el episodio
 
 print("|| Success")
 env.close()
