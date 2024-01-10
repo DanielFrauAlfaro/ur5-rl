@@ -28,8 +28,8 @@ class UR5Env(gym.Env):
 
         # Limit values
         self._q_limits = [[-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831], [1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831]]
-        self._qd_limits = [[-5000, -5000, -5000, -5000, -5000, -5000], [5000,5000,5000,5000,5000,5000]]
-        self._qdd_limits = [[-5000, -5000, -5000, -5000, -5000, -5000], [5000,5000,5000,5000,5000,5000]]
+        self._qd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
+        self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
 
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi], [1,1,1,pi,pi,pi]]
 
@@ -37,8 +37,8 @@ class UR5Env(gym.Env):
         self._t_limits = [np.ones(3) * -10, np.ones(3) * 10] 
 
         # Frame height and width
-        self.frame_h = 200
-        self.frame_w = 200
+        self.frame_h = 400
+        self.frame_w = 400
 
         self._limits = [self._q_limits,  
                        self._qd_limits,  
@@ -81,7 +81,6 @@ class UR5Env(gym.Env):
             })
         })
 
-
         # Checks if the selected render mode is within the possibles
         assert render_mode is None or render_mode in self.metadata["render_modes"]
 
@@ -94,36 +93,31 @@ class UR5Env(gym.Env):
             self._client = p.connect(p.DIRECT)
         elif render_mode == "GUI":
             self._client = p.connect(p.GUI)
-
-            
+        
+        # UR5 object
         self._ur5 = None
         
         # Terminated / Truncated flag
-        self._terminated = False
-        self._truncated = False
+        terminated = False
+        truncated = False
         
         # Time limit of the episode (in seconds)
-        self._t_limit = 50
+        self._t_limit = 10
         self._t_act = time.time()
 
         # Object coordinates
         self.obj_pos = [0.2, 0.55, 0.9]
 
-        # Constant increment of joint values
-        self._incr = 0.1
-        self._q_incr = [0, self._incr, -self._incr]
-
         # Image to be rendered
         self.frame = [np.ones((self.frame_w, self.frame_h)), np.ones((self.frame_w, self.frame_h))]
 
         # Aruco detectors
-        # 
         dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250) # DICT_6X6_250
         parameters =  cv.aruco.DetectorParameters()
         self.detector = cv.aruco.ArucoDetector(dictionary, parameters)
 
-        # Parameters
-        self.fov = 60
+        # Camera Parameters
+        self.fov = 10
         self.near_plane = 0.02
         self.far_plane = 5.0
 
@@ -132,15 +126,38 @@ class UR5Env(gym.Env):
         # Camera positions variables: [[Position], [Orientation]]
 
         # Coordinates of the cameras
-        cameras_coord = [[[0.2, 1.1, 1.1], [0.5, 0.0, -pi/2]],                         # External Camera 1
+        self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],                         # External Camera 1
                          [[-0.021634534277420597, 0.45595843471926517, 1.179405616204087], [3.1339317605594474 + pi/2, -0.02402511411086113, 1.5830796026753562]]]       # Robot camera
 
+        self.std_cam = 0.01
+        self.set_cam(cameras_coord = self.cameras_coord, std = self.std_cam)
 
+        # Distance between object an wrist
+        self._dist_obj_wrist = math.inf
+
+        # Reward mask
+        self.mask = np.array([-100, 2, 2, 2])
+
+        self.w = []
+        
+        
+
+    # Adds noise to an array
+    def add_noise(self, array, std = 0.5):
+        noise = np.random.normal(loc=0, scale=std, size=np.array(array).shape)
+        
+        return noise
+
+    # Sets the camera with the class parameters and the desiresd coordiantes
+    def set_cam(self, cameras_coord, std = 0):
         self.camera_params = []
         self.markers = []
 
+        cameras_coord[0][0] += self.add_noise(cameras_coord[0][0], std = std)
+        
+        
         # For each camera ...
-        for camera in cameras_coord[:]:
+        for camera in cameras_coord:
             # Obtain rotations
             rot_x = np.array([[1, 0, 0], [0, math.cos(camera[1][0]), -math.sin(camera[1][0])], [0, math.sin(camera[1][0]), math.cos(camera[1][0])]])
             rot_y = np.array([[math.cos(camera[1][1]),0, math.sin(camera[1][1])], [0, 1, 0], [-math.sin(camera[1][1]),0,math.cos(camera[1][1])]])
@@ -169,44 +186,30 @@ class UR5Env(gym.Env):
             
             self.markers.append([])
 
+    # Getter for the object position
+    def get_object_pos(self, object):
+        # ------ Object Position ------
+        # Get the position and orientation of the object
+        pos, orn = p.getBasePositionAndOrientation(object.id)
+        # Convert quaternion to rotation matrix
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn)).reshape((3, 3))
 
-    # Step function
-    def step(self, action):
-        # Gets an observation of the robot
-        observation = self._ur5.get_observation()
+        # Get the directions of the axes in the object's local coordinate system
+        y_axis_local = [0,0,1]
+        z_axis_local = rotation_matrix[:, 2]
+        x_axis_local = np.cross(z_axis_local, y_axis_local)
+
+        y_aux = y_axis_local
+        y_axis_local = z_axis_local
+        z_axis_local = y_aux
         
-        # Gets joint positions of the robot and the gripper
-        q_act = observation[0]
+        return np.array(pos), np.array(p.getEulerFromQuaternion(orn))
 
-        # Applies increments according to action
-        for i in range(len(q_act)):
-            q_act[i] = q_act[i] + action[i]
-
-
-        # Builds the message and sends it to the robot
-        q = q_act
-
-        self._ur5.apply_action(q)
-
-        # Advances the simulation
-        p.stepSimulation()
-
-
-        #######################################################
-        # TODO: establecer función de recompensa ##############
-        #######################################################
-        '''
-            Collision
-        '''
-        # print(self.col_detector.in_collision(margin=0.0))
-        
-        reward = 0
-
-
-
+    # Getter for the wrist position
+    def get_wrist_pos(self):
         # -------- Wrist Position -------- --> Name:  tool0_ee_link Joint Index: 12 Link Index: b'ee_link'
         # Get the position and orientation of the ee_link
-        link_state = p.getLinkState(self._ur5.id, 12, computeLinkVelocity=1, computeForwardKinematics=1)
+        link_state = p.getLinkState(self._ur5.id, 11, computeLinkVelocity=1, computeForwardKinematics=1)
         pos, orn = link_state[0], link_state[1]
 
         rotation_matrix = np.array(p.getMatrixFromQuaternion(orn)).reshape((3, 3))
@@ -226,47 +229,89 @@ class UR5Env(gym.Env):
         y_axis_local = np.dot(rotation_matrix, y_axis_local)
         x_axis_local *= -1
 
-        # Draw lines representing the axes of the object
-        line_start = pos
-        line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
-        line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
-        line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
+        return np.array(pos), np.array(p.getEulerFromQuaternion(orn))
 
-        p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5)  # X-axis (red)
-        p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5)  # Y-axis (green)
-        p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5)  # Z-axis (blue)
+    # Computes the reward according the approximation to the object
+    def approx_reward(self, object):
+        obj_pos, obj_or = self.get_object_pos(object=object)
+        wrist_pos, wrist_or = self.get_wrist_pos()
 
+        distance = np.linalg.norm(wrist_pos - obj_pos)
+        reward = 1 if distance < self._dist_obj_wrist else -1
 
-        # If it has reached time limit, truncates the episode
-        if (time.time() - self._t_act) > self._t_limit:
-            self._truncated = True
+        self._dist_obj_wrist = distance
+
+        return reward
+    
+    # Check the collision between TWO objects IDs
+    def check_collision(self, objects):
+        col_detector = pyb_utils.CollisionDetector(self._client, [(objects[0], objects[1])])
+
+        return col_detector.in_collision(margin = 0.0)
         
-        # Else, it checks if the observation values are in bounds
-        else:
-            # Stop condition: values out of bounds
-            for i in range(len(self._limits)):
-                for j in range(len(observation[i])):
-                    if observation[i][j] < self._limits[i][0][j] or observation[i][j] > self._limits[i][1][j]:
-                        self._truncated = True
-                        break
-                if self._truncated:
-                    break
+    # Computes the reward associated with collision reward
+    def collision_reward(self, mask = np.array([0,0])):
 
+        checkers = np.array([int(self.check_collision(objects = objects)) for objects in self.collisions_to_check])
 
+        return np.sum(checkers * mask)
+
+    # Computes the whole reward
+    def compute_reward(self):
+        r = 0
+
+        # Object Approximation
+        r += self.approx_reward(object = self._object)
+
+        # Collisions
+        r += self.collision_reward(mask = self.mask)
+            
+        return r
+
+    def set_warning(self, w):
+        self.w = w
+
+    def out_of_bounds(self):
+        for warning in self.w:
+            if "method is not within the observation space" in str(warning.message):
+                return True
+        
+        return False
+
+    def get_terminal(self):
+        terminated = False
+        truncated = (time.time() - self._t_act) > self._t_limit \
+                    or self.out_of_bounds() \
+                    or self.check_collision(objects = [self._table.id, self._ur5.id])
+
+        return terminated, truncated
+
+    # Step function
+    def step(self, action):
+        # Computes the action
+        self._ur5.apply_action(self._ur5.q + action)
+        
+        # Advances the simulation
+        p.stepSimulation()
+
+        # Computes the rewards after applying the action
+        reward = self.compute_reward()
+
+        # Gets the terminal state
+        terminated, truncated = self.get_terminal()
+
+        # Get the new state after the action
         obs = self.get_observation()
 
-        # Extra information
-        info = {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY), 
-                "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY)}
-
+        # Extra information (images)
+        info = self.get_info()
 
         # observations --> obs --> sensors values
         # reward --> reward --> task well done
-        # self._terminated --> terminated --> terminal state, task complete
-        # self._truncated --> truncated --> time limit reached or observation out of bounds
+        # terminated --> terminated --> terminal state, task complete
+        # truncated --> truncated --> time limit reached or observation out of bounds
         # 'info' --> info --> extra useful information
-
-        return obs, reward, self._terminated, self._truncated, info
+        return obs, reward, terminated, truncated, info
 
     # Reset function
     def reset(self, seed=None, options={}):
@@ -274,50 +319,37 @@ class UR5Env(gym.Env):
         p.resetSimulation(self._client)
         p.setGravity(0, 0, -20, self._client)
 
+        # Adds the camera with noise in the positioning
+        self.set_cam(cameras_coord=self.cameras_coord, std = self.std_cam)
+
         # self.obj_pos = np.random.normal(self.obj_pos, [0.01, 0.01, 0.01])
         rand_orientation = p.getQuaternionFromEuler(np.random.uniform([-3.1415,-3.1415,-3.1415], [3.1415, 3.1415, 3.1415]), physicsClientId=self._client)
 
         # Creates a plane and the robot
         self._object = Object(self._client, object=0, position=self.obj_pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
-        self._table = Table(self._client)
+        self._table = Table(self._client)  
 
-        # From each body, obtains every joint and stores them in a dictionary
-        bodies = [self._ur5, self._object, self._table]
-
-        self.dict_ids ={p.getJointInfo(body.id, joint)[1]: p.getJointInfo(body.id, joint)[0] for body in bodies for joint in range(p.getNumJoints(body.id))}
-        self.dict_ids_rev = {value: key for key, value in self.dict_ids.items()}
-
-        '''
-            Colisiones relevantes:
-                - Colision Robot (cuerpo) - Mesa
-                - Colision Dedos Pinza - Objeto
-
-            Se podria usar:
-                - contacts = p.getContactPoints(bodyA=body1, bodyB=body2)
-            Para obtener la posicion del punto de contacto y lograr que sea por encima del objeto (mas adelante)
-        '''
-        robot = pyb_utils.Robot(self._ur5.id, client_id=self._client)
-        
-        self.col_detector = pyb_utils.CollisionDetector(self._client,
-                                                    [((self._ur5.id, "wrist_1_link"), (self._ur5.id, "base_link"))])
-
-        # Reset the 'terminated' flag
-        self._terminated = False
+        # Define collisions
+        self.collisions_to_check = [[self._ur5.id, self._table.id],
+                                    [self._object.id, (self._ur5.id, "robotiq_finger_1_link_3")], 
+                                    [self._object.id, (self._ur5.id, "robotiq_finger_2_link_3")], 
+                                    [self._object.id, (self._ur5.id, "robotiq_finger_middle_link_3")]]      
 
         # Advances the simulation to initial state
-        for i in range(25):
+        for i in range(40):
             p.stepSimulation(self._client)
 
-        obs = self.get_observation()
-
         # Resets internal values
-        self._truncated = False
-        self._terminated = False
+        self._dist_obj_wrist = math.inf
         self._t_act = time.time()
         __ = self.seed(seed=seed)
 
-        return obs, {}
+        # Gets initial state and information
+        obs = self.get_observation()
+        info = self.get_info()
+
+        return obs, info
 
     # Render function
     def render(self, trans=False):
@@ -329,48 +361,10 @@ class UR5Env(gym.Env):
     def close(self):
         p.disconnect(self._client) 
 
-    # Setter for the camera position
-    def set_cam(self, pos, rpy):
-        self._cam_pos = pos
-
-        self._cam_roll = rpy[0]
-        self._cam_pitch = rpy[1]
-        self._cam_yaw = rpy[2]
-
     # Set seed
     def seed(self, seed=None): 
         self.np_random, seed = gym.utils.seeding.np_random(seed)
         return [seed]
-
-    # Getter for the object position
-    def get_object_pos(self):
-        # ------ Object Position ------
-        # Get the position and orientation of the object
-        pos, orn = p.getBasePositionAndOrientation(self._object.id)
-        # Convert quaternion to rotation matrix
-        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn)).reshape((3, 3))
-
-        # Get the directions of the axes in the object's local coordinate system
-        y_axis_local = [0,0,1]
-        z_axis_local = rotation_matrix[:, 2]
-        x_axis_local = np.cross(z_axis_local, y_axis_local)
-
-        y_aux = y_axis_local
-        y_axis_local = z_axis_local
-        z_axis_local = y_aux
-        
-
-        # Draw lines representing the axes of the object
-        line_start = pos
-        line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
-        line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
-        line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
-
-        p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5)  # X-axis (red)
-        p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5)  # Y-axis (green)
-        p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5)  # Z-axis (blue)
-
-        return pos + p.getEulerFromQuaternion(orn)
 
    # Computes the Rotation matrix (R) and Translation (t)
     #   between the two cameras
@@ -385,7 +379,7 @@ class UR5Env(gym.Env):
                                      projectionMatrix = camera[1], 
                                      physicsClientId = self._client)[2]
             
-
+            
             # Generates the RGB representation
             b, g, r, _ = cv.split(self.frame[idx])
             self.frame[idx] = cv.merge([r, g, b])
@@ -450,4 +444,7 @@ class UR5Env(gym.Env):
 
         return obs
 
- 
+    # Get information from the environment
+    def get_info(self):
+        return {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY), 
+                "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY)}
