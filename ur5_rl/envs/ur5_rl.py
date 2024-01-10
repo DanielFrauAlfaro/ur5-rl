@@ -5,7 +5,7 @@ import pybullet as p
 import pyb_utils
 import numpy as np
 from ur5_rl.resources.ur5 import UR5e as UR5
-from ur5_rl.resources.plane import Plane
+from ur5_rl.resources.utils import *
 from ur5_rl.resources.object import Object
 from ur5_rl.resources.table import Table
 import matplotlib.pyplot as plt
@@ -15,9 +15,8 @@ import time
 from cv2 import aruco
 import cv2 as cv
 import random
-from scipy .spatial.transform import Rotation
-
-
+from scipy.spatial.transform import Rotation
+ 
 # Gym environment
 class UR5Env(gym.Env):
     # Environment Metadata
@@ -97,10 +96,6 @@ class UR5Env(gym.Env):
         # UR5 object
         self._ur5 = None
         
-        # Terminated / Truncated flag
-        terminated = False
-        truncated = False
-        
         # Time limit of the episode (in seconds)
         self._t_limit = 10
         self._t_act = time.time()
@@ -120,6 +115,7 @@ class UR5Env(gym.Env):
         self.fov = 10
         self.near_plane = 0.02
         self.far_plane = 5.0
+        self.aspect = 1
 
 
         # --- Cameras ---
@@ -130,7 +126,9 @@ class UR5Env(gym.Env):
                          [[-0.021634534277420597, 0.45595843471926517, 1.179405616204087], [3.1339317605594474 + pi/2, -0.02402511411086113, 1.5830796026753562]]]       # Robot camera
 
         self.std_cam = 0.01
-        self.set_cam(cameras_coord = self.cameras_coord, std = self.std_cam)
+        self.camera_params, self.markers = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
+                                                   near_val=self.near_plane, far_val=self.far_plane, 
+                                                   cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
         self._dist_obj_wrist = math.inf
@@ -140,152 +138,6 @@ class UR5Env(gym.Env):
 
         self.w = []
         
-        
-
-    # Adds noise to an array
-    def add_noise(self, array, std = 0.5):
-        noise = np.random.normal(loc=0, scale=std, size=np.array(array).shape)
-        
-        return noise
-
-    # Sets the camera with the class parameters and the desiresd coordiantes
-    def set_cam(self, cameras_coord, std = 0):
-        self.camera_params = []
-        self.markers = []
-
-        cameras_coord[0][0] += self.add_noise(cameras_coord[0][0], std = std)
-        
-        
-        # For each camera ...
-        for camera in cameras_coord:
-            # Obtain rotations
-            rot_x = np.array([[1, 0, 0], [0, math.cos(camera[1][0]), -math.sin(camera[1][0])], [0, math.sin(camera[1][0]), math.cos(camera[1][0])]])
-            rot_y = np.array([[math.cos(camera[1][1]),0, math.sin(camera[1][1])], [0, 1, 0], [-math.sin(camera[1][1]),0,math.cos(camera[1][1])]])
-            rot_z = np.array([[math.cos(camera[1][2]), -math.sin(camera[1][2]), 0], [math.sin(camera[1][2]), math.cos(camera[1][2]), 0], [0, 0, 1]])
-            
-            rot_mat = np.matmul(np.matmul(rot_x, rot_y), rot_z)
-            camera_vec = np.matmul(rot_mat, [1, 0, 0])
-            up_vec = np.matmul(rot_mat, np.array([0, 0, 1]))
-
-            # Computes the view matrix
-            view_matrix = p.computeViewMatrix(cameraEyePosition = camera[0], cameraTargetPosition = camera[0] + camera_vec, cameraUpVector = up_vec, physicsClientId = self._client)
-            
-            # Computes projection matrix
-            proj_matrix = p.computeProjectionMatrixFOV(fov = 80, aspect = 1, nearVal = 0.01, farVal = 100, physicsClientId = self._client)
-            
-            # Convert the tuple to a NumPy array and reshape
-            proj_matrix_3x3 = np.array(proj_matrix)
-            proj_matrix_3x3 = proj_matrix_3x3.reshape(4, 4)[:-1, :-1]
-
-            # Set a the [3][3] value of the matrix to 1 (is at)
-            proj_matrix_3x3[-1][-1] = 1
-
-
-            # Saves parameters
-            self.camera_params.append([view_matrix, proj_matrix, proj_matrix_3x3])
-            
-            self.markers.append([])
-
-    # Getter for the object position
-    def get_object_pos(self, object):
-        # ------ Object Position ------
-        # Get the position and orientation of the object
-        pos, orn = p.getBasePositionAndOrientation(object.id)
-        # Convert quaternion to rotation matrix
-        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn)).reshape((3, 3))
-
-        # Get the directions of the axes in the object's local coordinate system
-        y_axis_local = [0,0,1]
-        z_axis_local = rotation_matrix[:, 2]
-        x_axis_local = np.cross(z_axis_local, y_axis_local)
-
-        y_aux = y_axis_local
-        y_axis_local = z_axis_local
-        z_axis_local = y_aux
-        
-        return np.array(pos), np.array(p.getEulerFromQuaternion(orn))
-
-    # Getter for the wrist position
-    def get_wrist_pos(self):
-        # -------- Wrist Position -------- --> Name:  tool0_ee_link Joint Index: 12 Link Index: b'ee_link'
-        # Get the position and orientation of the ee_link
-        link_state = p.getLinkState(self._ur5.id, 11, computeLinkVelocity=1, computeForwardKinematics=1)
-        pos, orn = link_state[0], link_state[1]
-
-        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn)).reshape((3, 3))
-
-        x_axis_local = rotation_matrix[:, 0]
-        y_axis_local = rotation_matrix[:, 1]
-        z_axis_local = rotation_matrix[:, 2]
-
-        # Euler angles in radians (replace with your actual values)
-        roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
-
-        # Create a rotation matrix from Euler angles
-        rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
-
-        # Rotate the vector using the rotation matrix
-        x_axis_local = np.dot(rotation_matrix, x_axis_local)
-        y_axis_local = np.dot(rotation_matrix, y_axis_local)
-        x_axis_local *= -1
-
-        return np.array(pos), np.array(p.getEulerFromQuaternion(orn))
-
-    # Computes the reward according the approximation to the object
-    def approx_reward(self, object):
-        obj_pos, obj_or = self.get_object_pos(object=object)
-        wrist_pos, wrist_or = self.get_wrist_pos()
-
-        distance = np.linalg.norm(wrist_pos - obj_pos)
-        reward = 1 if distance < self._dist_obj_wrist else -1
-
-        self._dist_obj_wrist = distance
-
-        return reward
-    
-    # Check the collision between TWO objects IDs
-    def check_collision(self, objects):
-        col_detector = pyb_utils.CollisionDetector(self._client, [(objects[0], objects[1])])
-
-        return col_detector.in_collision(margin = 0.0)
-        
-    # Computes the reward associated with collision reward
-    def collision_reward(self, mask = np.array([0,0])):
-
-        checkers = np.array([int(self.check_collision(objects = objects)) for objects in self.collisions_to_check])
-
-        return np.sum(checkers * mask)
-
-    # Computes the whole reward
-    def compute_reward(self):
-        r = 0
-
-        # Object Approximation
-        r += self.approx_reward(object = self._object)
-
-        # Collisions
-        r += self.collision_reward(mask = self.mask)
-            
-        return r
-
-    def set_warning(self, w):
-        self.w = w
-
-    def out_of_bounds(self):
-        for warning in self.w:
-            if "method is not within the observation space" in str(warning.message):
-                return True
-        
-        return False
-
-    def get_terminal(self):
-        terminated = False
-        truncated = (time.time() - self._t_act) > self._t_limit \
-                    or self.out_of_bounds() \
-                    or self.check_collision(objects = [self._table.id, self._ur5.id])
-
-        return terminated, truncated
-
     # Step function
     def step(self, action):
         # Computes the action
@@ -295,16 +147,22 @@ class UR5Env(gym.Env):
         p.stepSimulation()
 
         # Computes the rewards after applying the action
-        reward = self.compute_reward()
+        reward, self._dist_obj_wrist = compute_reward(client = self._client, object = self._object, 
+                                                      dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id,
+                                                      collisions_to_check = self.collisions_to_check, mask = self.mask)
 
         # Gets the terminal state
-        terminated, truncated = self.get_terminal()
+        terminated, truncated = get_terminal(client = self._client, t_act=self._t_act, t_limit=self._t_limit, 
+                                             w = self.w, objects=[self._table.id, self._ur5.id])
 
         # Get the new state after the action
-        obs = self.get_observation()
+        self.frame, self.markers, obs = get_observation(client = self._client, robot = self._ur5, indices = self._indices, 
+                                                        Rt_indices = self._Rt_indices, camera_params = self.camera_params, 
+                                                        frame = self.frame, frame_h = self.frame_h, frame_w = self.frame_w, 
+                                                        detector = self.detector, markers = self.markers)
 
         # Extra information (images)
-        info = self.get_info()
+        info = get_info(frame = self.frame)
 
         # observations --> obs --> sensors values
         # reward --> reward --> task well done
@@ -320,7 +178,9 @@ class UR5Env(gym.Env):
         p.setGravity(0, 0, -20, self._client)
 
         # Adds the camera with noise in the positioning
-        self.set_cam(cameras_coord=self.cameras_coord, std = self.std_cam)
+        set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
+                near_val=self.near_plane, far_val=self.far_plane, 
+                cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # self.obj_pos = np.random.normal(self.obj_pos, [0.01, 0.01, 0.01])
         rand_orientation = p.getQuaternionFromEuler(np.random.uniform([-3.1415,-3.1415,-3.1415], [3.1415, 3.1415, 3.1415]), physicsClientId=self._client)
@@ -343,17 +203,19 @@ class UR5Env(gym.Env):
         # Resets internal values
         self._dist_obj_wrist = math.inf
         self._t_act = time.time()
-        __ = self.seed(seed=seed)
+        __ = self.seed(seed = seed)
 
         # Gets initial state and information
-        obs = self.get_observation()
-        info = self.get_info()
+        self.frame, self.markers, obs = get_observation(client = self._client, robot = self._ur5, indices = self._indices, 
+                                                        Rt_indices = self._Rt_indices, camera_params = self.camera_params, 
+                                                        frame = self.frame, frame_h = self.frame_h, frame_w = self.frame_w, 
+                                                        detector = self.detector, markers = self.markers)
+        info = get_info(self.frame)
 
         return obs, info
 
     # Render function
     def render(self, trans=False):
-
         cv.imshow("Station", self.frame[0])
         cv.waitKey(1)
 
@@ -366,85 +228,6 @@ class UR5Env(gym.Env):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
         return [seed]
 
-   # Computes the Rotation matrix (R) and Translation (t)
-    #   between the two cameras
-    def retrieve_R_t(self):
-        # For each camera ...
-        for idx, camera in enumerate(self.camera_params):
-            # Obtains the view
-
-            self.frame[idx] = p.getCameraImage(width = self.frame_w, 
-                                     height = self.frame_h, 
-                                     viewMatrix = camera[0], 
-                                     projectionMatrix = camera[1], 
-                                     physicsClientId = self._client)[2]
-            
-            
-            # Generates the RGB representation
-            b, g, r, _ = cv.split(self.frame[idx])
-            self.frame[idx] = cv.merge([r, g, b])
-
-            # Gray conversion
-            gray = cv.cvtColor(self.frame[idx], cv.COLOR_BGR2GRAY)
-
-            # Detects the corners
-            markerCorners, _, _ = self.detector.detectMarkers(gray)
-
-            # Concatenates and saves the arrays . There are two sets of arucos            
-            combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
-            self.markers[idx] = combined_array
-
-            # If it has obtained the second image, breaks the loop
-            if self.markers[-1] != []: break
-        
-        # Intrinic parameters of the camera
-        K1 = self.camera_params[0][-1]
-
-        # Points rescalation
-        points1 = np.vstack([corner for corner in self.markers[0]])
-        points2 = np.vstack([corner for corner in self.markers[1]])
-
-        points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
-        points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
-
-        # Point normalization
-        normalized_points1 = points1_ @ np.linalg.inv(K1)
-        normalized_points2 = points2_ @ np.linalg.inv(K1)
-
-        normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
-        normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
-
-        # Calculate Essential Matrix: coordinates from K1 to K2
-        #  The points are obtained from K1
-        E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
-
-        # Recover pose (rotation and translation)
-        _, R, t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
-            
-        # print(self.R)
-        # print(self.t)
-        # print("--\n")
-
-        return R.flatten(), t[:,0]
-
-    # Getter for the observations
-    def get_observation(self):
-        # Gets starting observation
-        observation = self._ur5.get_observation()
-
-        # Arranges observation vectors into a dictionary
-        obs = {}
-        for i in range(len(self._indices[:1])):
-            obs[self._indices[i]] = np.array(observation[i], dtype="float32")
-
-
-        R, t = self.retrieve_R_t() # --> lo que tarda es la obtención de la imagen desde la simulación
-        
-        obs[self._indices[1]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
-
-        return obs
-
-    # Get information from the environment
-    def get_info(self):
-        return {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY), 
-                "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY)}
+    # Setter for the warning message
+    def set_warning(self, w):
+        self.w = w
