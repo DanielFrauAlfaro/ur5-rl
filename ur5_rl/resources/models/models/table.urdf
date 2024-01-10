@@ -60,13 +60,13 @@
   <joint name="aruco_table_joint" type="fixed">
     <parent link="table"/>
     <child link="aruco"/>
-    <origin rpy="0.0 0.0 -1.57" xyz="0.30 -0.01 0.055"/>
+    <origin rpy="0.0 0.0 -1.57" xyz="0.35 -0.01 0.055"/>
   </joint> 
 
   <joint name="aruco2_table_joint" type="fixed">
     <parent link="table"/>
     <child link="aruco_2"/>
-    <origin rpy="0.0 0.0 -1.57" xyz="0.405 -0.01 0.055"/>
+    <origin rpy="0.0 0.0 -1.57" xyz="0.455 -0.01 0.055"/>
   </joint> 
 
   <joint name="background_table_joint" type="fixed">
