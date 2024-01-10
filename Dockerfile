@@ -27,11 +27,12 @@ RUN mkdir -p ${HOME}/ros_ws/src
 RUN apt-get update
 RUN apt-get install -y python3-pip
 
-# Pytorch
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+# Pytorch with CPU
+# RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
-# Pytorch with CUDA
-# RUN pip3 install torch torchvision
+# Pytorch with CUDA --> CUDA Pytorch Version: 12.1. // CUDA Nvidia Version: 12.2
+#                   --> NVIDIA-SMI 535.129.03 // Driver Version: 535.129.03 // NVIDIA GeForce RTX 3060
+RUN pip3 install torch torchvision
 
 # Install pybullet, gym and graphic interface
 RUN pip3 install pybullet
