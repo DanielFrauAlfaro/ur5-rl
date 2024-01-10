@@ -36,8 +36,6 @@ for j in range(100):
 
             obs = obs_
 
-            # TODO: actualizar estado del agente --> después o durante el episodio
-
 print("|| Success")
 env.close()
 
