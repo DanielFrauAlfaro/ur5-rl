@@ -138,10 +138,10 @@ class UR5Env(gym.Env):
         # Reward mask
         self.mask = np.array([-100, 2, 2, 2])
 
+        # Vector of warnings
         self.w = []
         
-        
-
+    
     # Adds noise to an array
     def add_noise(self, array, std = 0.5):
         noise = np.random.normal(loc=0, scale=std, size=np.array(array).shape)
@@ -268,9 +268,8 @@ class UR5Env(gym.Env):
             
         return r
 
-    def set_warning(self, w):
-        self.w = w
 
+    # Out of bounds check
     def out_of_bounds(self):
         for warning in self.w:
             if "method is not within the observation space" in str(warning.message):
@@ -278,6 +277,7 @@ class UR5Env(gym.Env):
         
         return False
 
+    # Computes if the environmen has reach a terminal state
     def get_terminal(self):
         terminated = False
         truncated = (time.time() - self._t_act) > self._t_limit \
@@ -446,5 +446,9 @@ class UR5Env(gym.Env):
 
     # Get information from the environment
     def get_info(self):
-        return {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY), 
-                "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY)}
+        return {"frames_ext": cv.cvtColor(self.frame[0], cv.COLOR_BGR2GRAY)}
+                # "frames_rob": cv.cvtColor(self.frame[1], cv.COLOR_BGR2GRAY)} --> de momento voy a pasar solamente el frame externo
+    
+    # Setter de los warnings
+    def set_warning(self, w):
+        self.w = w
