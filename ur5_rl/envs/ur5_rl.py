@@ -273,9 +273,9 @@ class UR5Env(gym.Env):
         p.setGravity(0, 0, -20, self._client)
 
         # Adds the camera with noise in the positioning
-        set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
-                near_val=self.near_plane, far_val=self.far_plane, 
-                cameras_coord = self.cameras_coord, std = self.std_cam)
+        self.camera_params, self.markers = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
+                                                    near_val=self.near_plane, far_val=self.far_plane, 
+                                                    cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # self.obj_pos = np.random.normal(self.obj_pos, [0.01, 0.01, 0.01])
         rand_orientation = p.getQuaternionFromEuler(np.random.uniform([-3.1415,-3.1415,-3.1415], [3.1415, 3.1415, 3.1415]), physicsClientId=self._client)
