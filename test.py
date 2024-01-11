@@ -25,11 +25,15 @@ for j in range(100):
             env.set_warning(w)
             obs_, reward, done, truncated, info = env.step(action)
             obs_.update(info)
-            
 
+            
+            
+            print(obs_["R_t"]["t"])
+            print("Reward: ", reward)
+            break
             buffer.store_transition(obs, action, reward, obs_, (done or truncated))
             
-            # env.render()
+            env.render()
             
             if truncated or done:
                 break
