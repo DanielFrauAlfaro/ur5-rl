@@ -119,17 +119,6 @@ def collision_reward(client, collisions_to_check, mask = np.array([0,0])):
 
     return np.sum(checkers * mask)
 
-# Computes the whole reward
-def compute_reward(client, object, dist_obj_wrist, robot_id, collisions_to_check, mask):
-    r = 0
-
-    # Object Approximation
-    r, dist_obj_wrist = approx_reward(client = client, object = object, dist_obj_wrist=dist_obj_wrist, robot_id=robot_id)
-
-    # Collisions
-    r += collision_reward(client = client, collisions_to_check = collisions_to_check, mask = mask)
-        
-    return r, dist_obj_wrist
 
 def out_of_bounds(w):
     for warning in w:
@@ -137,92 +126,6 @@ def out_of_bounds(w):
             return True
     
     return False
-
-def get_terminal(client, t_act, t_limit, w, objects):
-    terminated = False
-    truncated = (time.time() - t_act) > t_limit \
-                or out_of_bounds(w) \
-                or check_collision(client = client, objects = objects)
-
-    return terminated, truncated
-
-# Computes the Rotation matrix (R) and Translation (t)
-#   between the two cameras
-def retrieve_R_t(client, camera_params, frame, frame_h, frame_w, detector, markers):
-    # For each camera ...
-    for idx, camera in enumerate(camera_params):
-        # Obtains the view
-
-        frame[idx] = p.getCameraImage(width = frame_w, 
-                                    height = frame_h, 
-                                    viewMatrix = camera[0], 
-                                    projectionMatrix = camera[1], 
-                                    physicsClientId = client)[2]
-        
-        
-        # Generates the RGB representation
-        b, g, r, _ = cv.split(frame[idx])
-        frame[idx] = cv.merge([r, g, b])
-
-        # Gray conversion
-        gray = cv.cvtColor(frame[idx], cv.COLOR_BGR2GRAY)
-
-        # Detects the corners
-        markerCorners, _, _ = detector.detectMarkers(gray)
-
-        # Concatenates and saves the arrays . There are two sets of arucos            
-        combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
-        markers[idx] = combined_array
-
-        # If it has obtained the second image, breaks the loop
-        if markers[-1] != []: break
-    
-    # Intrinic parameters of the camera
-    K1 = camera_params[0][-1]
-
-    # Points rescalation
-    points1 = np.vstack([corner for corner in markers[0]])
-    points2 = np.vstack([corner for corner in markers[1]])
-
-    points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
-    points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
-
-    # Point normalization
-    normalized_points1 = points1_ @ np.linalg.inv(K1)
-    normalized_points2 = points2_ @ np.linalg.inv(K1)
-
-    normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
-    normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
-
-    # Calculate Essential Matrix: coordinates from K1 to K2
-    #  The points are obtained from K1
-    E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
-
-    # Recover pose (rotation and translation)
-    _, R, t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
-        
-    # print(R)
-    # print(t)
-    # print("--\n")
-
-    return frame, markers, R.flatten(), t[:,0]
-
-# Getter for the observations
-def get_observation(client, robot, indices, Rt_indices, camera_params, frame, frame_h, frame_w, detector, markers):
-    # Gets starting observation
-    observation = robot.get_observation()
-
-    # Arranges observation vectors into a dictionary
-    obs = {}
-    for i in range(len(indices[:1])):
-        obs[indices[i]] = np.array(observation[i], dtype="float32")
-
-
-    frame, markers, R, t = retrieve_R_t(client = client, camera_params=camera_params, frame=frame, frame_h=frame_h, frame_w = frame_w, detector=detector, markers=markers) 
-    
-    obs[indices[1]] = {Rt_indices[0]: R.astype(np.float32), Rt_indices[1]: t.astype(np.float32)}
-
-    return frame, markers, obs
 
 # Get information from the environment
 def get_info(frame):

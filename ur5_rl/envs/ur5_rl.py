@@ -137,7 +137,108 @@ class UR5Env(gym.Env):
         self.mask = np.array([-100, 2, 2, 2])
 
         self.w = []
+    
+# Computes the whole reward
+    def compute_reward(self):
+        r = 0
+
+        # Object Approximation
+        r, self._dist_obj_wrist = approx_reward(client = self._client, object = self._object, 
+                                                dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
+
+        # Collisions
+        r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+            
+        return r
+
+
+    def get_terminal(self):
+        terminated = False
+        truncated = (time.time() - self._t_act) > self._t_limit \
+                    or out_of_bounds(self.w) \
+                    or check_collision(client = self._client, objects = [self._table.id, self._ur5.id])
+
+        return terminated, truncated
+
+    # Computes the Rotation matrix (R) and Translation (t)
+    #   between the two cameras
+    def retrieve_R_t(self):
+        # For each camera ...
+        for idx, camera in enumerate(self.camera_params):
+            # Obtains the view
+
+            self.frame[idx] = p.getCameraImage(width = self.frame_w, 
+                                        height = self.frame_h, 
+                                        viewMatrix = camera[0], 
+                                        projectionMatrix = camera[1], 
+                                        physicsClientId = self._client)[2]
+            
+            
+            # Generates the RGB representation
+            b, g, r, _ = cv.split(self.frame[idx])
+            self.frame[idx] = cv.merge([r, g, b])
+
+            # Gray conversion
+            gray = cv.cvtColor(self.frame[idx], cv.COLOR_BGR2GRAY)
+
+            # Detects the corners
+            markerCorners, _, _ = self.detector.detectMarkers(self.frame[idx])
+
+            # Concatenates and saves the arrays . There are two sets of arucos            
+            combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
+            self.markers[idx] = combined_array
+
+            # If it has obtained the second image, breaks the loop
+            if self.markers[-1] != []: break
         
+        # Intrinic parameters of the camera
+        K1 = self.camera_params[0][-1]
+
+        # Points rescalation
+        points1 = np.vstack([corner for corner in self.markers[0]])
+        points2 = np.vstack([corner for corner in self.markers[1]])
+
+        points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
+        points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
+
+        # Point normalization
+        normalized_points1 = points1_ @ np.linalg.inv(K1)
+        normalized_points2 = points2_ @ np.linalg.inv(K1)
+
+        normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
+        normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
+
+        # Calculate Essential Matrix: coordinates from K1 to K2
+        #  The points are obtained from K1
+        E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
+
+        # Recover pose (rotation and translation)
+        _, R, t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
+            
+        # print(R)
+        # print(t)
+        # print("--\n")
+
+        return R.flatten(), t[:,0]
+
+    # Getter for the observations
+    def get_observation(self):
+        # Gets starting observation
+        observation = self._ur5.get_observation()
+
+        # Arranges observation vectors into a dictionary
+        obs = {}
+        for i in range(len(self._indices[:1])):
+            obs[self._indices[i]] = np.array(observation[i], dtype="float32")
+
+
+        R, t = self.retrieve_R_t() 
+        
+        obs[self._indices[1]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
+
+        return obs
+
+
     # Step function
     def step(self, action):
         # Computes the action
@@ -147,19 +248,13 @@ class UR5Env(gym.Env):
         p.stepSimulation()
 
         # Computes the rewards after applying the action
-        reward, self._dist_obj_wrist = compute_reward(client = self._client, object = self._object, 
-                                                      dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id,
-                                                      collisions_to_check = self.collisions_to_check, mask = self.mask)
+        reward = self.compute_reward()
 
         # Gets the terminal state
-        terminated, truncated = get_terminal(client = self._client, t_act=self._t_act, t_limit=self._t_limit, 
-                                             w = self.w, objects=[self._table.id, self._ur5.id])
+        terminated, truncated = self.get_terminal()
 
         # Get the new state after the action
-        self.frame, self.markers, obs = get_observation(client = self._client, robot = self._ur5, indices = self._indices, 
-                                                        Rt_indices = self._Rt_indices, camera_params = self.camera_params, 
-                                                        frame = self.frame, frame_h = self.frame_h, frame_w = self.frame_w, 
-                                                        detector = self.detector, markers = self.markers)
+        obs = self.get_observation()
 
         # Extra information (images)
         info = get_info(frame = self.frame)
@@ -206,10 +301,7 @@ class UR5Env(gym.Env):
         __ = self.seed(seed = seed)
 
         # Gets initial state and information
-        self.frame, self.markers, obs = get_observation(client = self._client, robot = self._ur5, indices = self._indices, 
-                                                        Rt_indices = self._Rt_indices, camera_params = self.camera_params, 
-                                                        frame = self.frame, frame_h = self.frame_h, frame_w = self.frame_w, 
-                                                        detector = self.detector, markers = self.markers)
+        obs = self.get_observation()
         info = get_info(self.frame)
 
         return obs, info
