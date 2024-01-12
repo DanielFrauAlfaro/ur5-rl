@@ -56,16 +56,19 @@ class ConvNetWithResidual(nn.Module):
         return x
 
 # Create an instance of the model
-model = ConvNetWithResidual()
+# model = ConvNetWithResidual()
 
-# Create a random 200x200 numpy array with int8 values
-numpy_array = np.random.randint(low=0, high=255, size=(1, 1, 200, 200), dtype=np.int16)
+# # Create a random 200x200 numpy array with int8 values
+# numpy_array = np.random.randint(low=0, high=255, size=(1, 1, 200, 200), dtype=np.int16)
 
-# Convert the numpy array to a PyTorch tensor and cast it to float32
-input_tensor = torch.tensor(numpy_array, dtype=torch.float32)
+# # Convert the numpy array to a PyTorch tensor and cast it to float32
+# input_tensor = torch.tensor(numpy_array, dtype=torch.float32)
 
-# Perform the forward pass
-output_tensor = model(input_tensor)
+# # Perform the forward pass
+# output_tensor = model(input_tensor)
 
-# Print the output shape
-print("Output shape:", output_tensor.shape)
+# # Print the output shape
+# print("Output shape:", output_tensor.shape)
+
+
+print(1//2)
