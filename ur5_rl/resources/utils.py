@@ -32,7 +32,7 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
         view_matrix = p.computeViewMatrix(cameraEyePosition = camera[0], cameraTargetPosition = camera[0] + camera_vec, cameraUpVector = up_vec, physicsClientId = client)
         
         # Computes projection matrix
-        proj_matrix = p.computeProjectionMatrixFOV(fov = 80, aspect = 1, nearVal = 0.01, farVal = 100, physicsClientId = client)
+        proj_matrix = p.computeProjectionMatrixFOV(fov = 80, aspect = 1, nearVal = 0.01, farVal = 1, physicsClientId = client)
         
         # Convert the tuple to a NumPy array and reshape
         proj_matrix_3x3 = np.array(proj_matrix)
@@ -129,5 +129,38 @@ def out_of_bounds(w):
 
 # Get information from the environment
 def get_info(frame):
-    return {"frames_ext": cv.cvtColor(frame[0], cv.COLOR_BGR2GRAY)}
-            # "frames_rob": cv.cvtColor(frame[1], cv.COLOR_BGR2GRAY)} --> de momento solo paso los frames externos
+    return {}
+    
+
+def get_frames(client, camera_params, frame_h, frame_w, frame):
+
+    # For each camera ...
+    for idx, camera in enumerate(camera_params):
+        # Obtains the view
+
+        camera_info = p.getCameraImage(width = frame_w, 
+                                 height = frame_h, 
+                                 viewMatrix = camera[0], 
+                                 projectionMatrix = camera[1], 
+                                 physicsClientId = client)
+        
+        rgb_buffer = camera_info[2]
+
+        depth_buffer = np.reshape(camera_info[3], (frame_h, frame_w))
+
+        # Visualize the depth image with a colormap
+        depth_image = (depth_buffer - np.min(depth_buffer)) / (np.max(depth_buffer) - np.min(depth_buffer))  # Normalize to [0, 1]
+
+        # Apply a colormap (e.g., 'viridis')
+        depth_frame = (depth_image * 255).astype(np.uint8)
+
+        # Gray conversion
+        rgb_buffer = cv.cvtColor(rgb_buffer, cv.COLOR_BGR2GRAY)
+
+        frame[idx] = cv.merge([rgb_buffer, depth_frame])
+        frame[idx] = np.transpose(frame[idx], (2,0,1))
+        break
+
+        
+
+    return frame
