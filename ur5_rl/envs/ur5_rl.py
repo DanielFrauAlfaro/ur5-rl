@@ -36,8 +36,8 @@ class UR5Env(gym.Env):
         self._t_limits = [np.ones(3) * -10, np.ones(3) * 10] 
 
         # Frame height and width
-        self.frame_h = 400
-        self.frame_w = 400
+        self.frame_h = 200
+        self.frame_w = 200
 
         self._limits = [self._q_limits,  
                        self._qd_limits,  
@@ -60,24 +60,26 @@ class UR5Env(gym.Env):
 
 
         # Dictionary indices
-        self._indices = ["q_position", "R_t"]
+        self._indices = ["q_position", "image"]
         self._Rt_indices = ["R", "t"]
         '''
         Dictionary of spaces in observation space:
             - Joint Positions: 6 robot joint
-            - R and t matrix between cameras
+            - Camera image: grayscale and depth
         '''
         self.observation_space = gym.spaces.Dict({
             self._indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._q_limits[0])), 
                                high= np.float32(np.array(self._q_limits[1])), dtype=np.float32),
 
-            self._indices[1]: gym.spaces.Dict({
-                self._Rt_indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._R_limits[0])), 
-                               high= np.float32(np.array(self._R_limits[1]))),
+            # self._indices[1]: gym.spaces.Dict({
+            #     self._Rt_indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._R_limits[0])), 
+            #                    high= np.float32(np.array(self._R_limits[1]))),
 
-                self._Rt_indices[1]: gym.spaces.box.Box(low=np.float32(np.array(self._t_limits[0])), 
-                               high= np.float32(np.array(self._t_limits[1])))
-            })
+            #     self._Rt_indices[1]: gym.spaces.box.Box(low=np.float32(np.array(self._t_limits[0])), 
+            #                    high= np.float32(np.array(self._t_limits[1])))
+            # }),
+
+            self._indices[-1]: gym.spaces.box.Box(low=-1, high=256, shape=(2, self.frame_w, self.frame_h), dtype=np.int16)
         })
 
         # Checks if the selected render mode is within the possibles
@@ -97,14 +99,14 @@ class UR5Env(gym.Env):
         self._ur5 = None
         
         # Time limit of the episode (in seconds)
-        self._t_limit = 10
+        self._t_limit = 2
         self._t_act = time.time()
 
         # Object coordinates
         self.obj_pos = [0.2, 0.55, 0.9]
 
         # Image to be rendered
-        self.frame = [np.ones((self.frame_w, self.frame_h)), np.ones((self.frame_w, self.frame_h))]
+        self.frame = [np.ones((self.frame_w, self.frame_h), dtype=np.int16), np.ones((self.frame_w, self.frame_h), dtype=np.int16)]
 
         # Aruco detectors
         dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250) # DICT_6X6_250
@@ -138,7 +140,7 @@ class UR5Env(gym.Env):
 
         self.w = []
     
-# Computes the whole reward
+    # Computes the whole reward
     def compute_reward(self):
         r = 0
 
@@ -167,26 +169,39 @@ class UR5Env(gym.Env):
         for idx, camera in enumerate(self.camera_params):
             # Obtains the view
 
-            self.frame[idx] = p.getCameraImage(width = self.frame_w, 
+            frame = p.getCameraImage(width = self.frame_w, 
                                         height = self.frame_h, 
                                         viewMatrix = camera[0], 
                                         projectionMatrix = camera[1], 
-                                        physicsClientId = self._client)[2]
+                                        physicsClientId = self._client)
             
+            rgb_buffer = frame[2]
+
+            depth_buffer = np.reshape(frame[3], (self.frame_h, self.frame_w))
+
+            # Visualize the depth image with a colormap
+            depth_image = (depth_buffer - np.min(depth_buffer)) / (np.max(depth_buffer) - np.min(depth_buffer))  # Normalize to [0, 1]
+
+            # Apply a colormap (e.g., 'viridis')
+            depth_frame = (depth_image * 255).astype(np.uint8)
+
             
             # Generates the RGB representation
-            b, g, r, _ = cv.split(self.frame[idx])
-            self.frame[idx] = cv.merge([r, g, b])
+            # b, g, r, _ = cv.split(self.frame[idx])
+            # self.frame[idx] = cv.merge([r, g, b])
 
             # Gray conversion
-            gray = cv.cvtColor(self.frame[idx], cv.COLOR_BGR2GRAY)
+            rgb_buffer = cv.cvtColor(rgb_buffer, cv.COLOR_BGR2GRAY)
+            
 
             # Detects the corners
-            markerCorners, _, _ = self.detector.detectMarkers(self.frame[idx])
+            markerCorners, _, _ = self.detector.detectMarkers(rgb_buffer)
 
             # Concatenates and saves the arrays . There are two sets of arucos            
             combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
             self.markers[idx] = combined_array
+
+            self.frame[idx] = cv.merge([rgb_buffer, depth_frame])
 
             # If it has obtained the second image, breaks the loop
             if self.markers[-1] != []: break
@@ -232,9 +247,13 @@ class UR5Env(gym.Env):
             obs[self._indices[i]] = np.array(observation[i], dtype="float32")
 
 
-        R, t = self.retrieve_R_t() 
-        
-        obs[self._indices[1]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
+        # R, t = self.retrieve_R_t() 
+        self.frame = get_frames(client = self._client, camera_params = self.camera_params,
+                                frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, )
+
+
+        # obs[self._indices[1]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
+        obs[self._indices[-1]] = self.frame[0].astype(np.int16)
 
         return obs
 
@@ -268,6 +287,7 @@ class UR5Env(gym.Env):
 
     # Reset function
     def reset(self, seed=None, options={}):
+
         # Reset simulation and gravity establishment
         p.resetSimulation(self._client)
         p.setGravity(0, 0, -20, self._client)
@@ -308,7 +328,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self, trans=False):
-        cv.imshow("Station", self.frame[0])
+        cv.imshow("Station", self.frame[0][0])
         cv.waitKey(1)
 
     # Close function: shutdowns the simulation
