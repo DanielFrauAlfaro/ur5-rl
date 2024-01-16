@@ -35,24 +35,11 @@ class ResidualBlock(nn.Module):
         x = self.conv1(x)
         x = x + int(1 - self.end_l)*self.conv2(x)
 
-        '''
-        Si se quiere hacer residual pura el kernel de conv1_ != 1:
-        residual = x
-        x = self.relu1(self.conv1(x))
-        x = self.relu2(self.conv2(x))
-
-        # Adjust dimensions of the residual if needed
-        residual = self.adjust_dimensions(residual)
-
-        x += residual  # Add residual connection
-        '''
-
-        
         return x
 
 class Network(nn.Module):
     def __init__(self, lr, channels, kernel, m_kernel, n_layers, residual,
-                 dir, w_size, h_size, act_in = 6, act_out = 10):
+                 dir, w_size, h_size, act_in = 6, act_out = 6):
         super(Network, self).__init__()
 
         # Parameters
@@ -71,15 +58,19 @@ class Network(nn.Module):
 
         # -- Building model
         # Convlutional layers
-        self.layers = self.build_model()
+        self.conv_layers, self.mlp_layers = self.build_model()
         
         self.device = "cpu"# torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.to(self.device)
 
-    def forward(self, x):
-        x = self.layers(x)
+    def forward(self, state):
+        state = self.conv_layers(state)
 
-        return x
+        print(state.shape)
+
+        state = self.mlp_layers(state)
+
+        return state
 
     def build_conv(self):
         if self.residual:
@@ -92,15 +83,14 @@ class Network(nn.Module):
             return
     
     def build_mlp(self):
-        return nn.Sequential(nn.Linear(in_features = self.act_in, out_features = self.act_out),
-                             nn.LayerNorm(),
+        return nn.Sequential(nn.Linear(in_features = self.mlp_encoding_in, out_features = self.act_out),
                              nn.Tanh())
 
     def build_model(self):
         conv_layers = self.build_conv()
         mlp_layers = self.build_mlp()
 
-        return  nn.Sequential(*conv_layers)
+        return  nn.Sequential(*conv_layers), nn.Sequential(*mlp_layers)
 
     def save_checkpoint(self):
         torch.save(self.state_dict(), self.checkpoint_dir)
@@ -109,11 +99,15 @@ class Network(nn.Module):
         self.load_state_dict(torch.load(self.checkpoint_dir))        
 
 if __name__ == "__main__":
-    X = torch.randn(1, 1, 120, 104)
-    test = Network(lr = 0.001, channels=[1, 16,32, 32, 32], 
+    X = torch.randn(1, 2, 200, 200)
+    
+    test = Network(lr = 0.001, channels=[2, 16,32, 32, 32], 
                    kernel=3, m_kernel = 2, n_layers=4, 
                    residual=True, dir="", w_size = X.shape[-2], h_size = X.shape[-1])
     
 
     out = test(X)
+   
     print(out.shape)
+    print(out)
+    print(test)
