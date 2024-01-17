@@ -26,14 +26,14 @@ class UR5Env(gym.Env):
     def __init__(self, render_mode="DIRECT"):    
 
         # Limit values
-        self._q_limits = [[-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831], [1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831]]
-        self._qd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
+        self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
+        self._qd_limits = [np.ones(6) * -180, np.ones(6) * 180]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
 
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi], [1,1,1,pi,pi,pi]]
 
         self._R_limits =  [np.ones(9) * -10, np.ones(9) * 10]
-        self._t_limits = [np.ones(3) * -10, np.ones(3) * 10] 
+        self._t_limits = [np.ones(3) * -10, np.ones(3) * 10]
 
         # Frame height and width
         self.frame_h = 200
@@ -99,7 +99,7 @@ class UR5Env(gym.Env):
         self._ur5 = None
         
         # Time limit of the episode (in seconds)
-        self._t_limit = 2
+        self._t_limit = 8
         self._t_act = time.time()
 
         # Object coordinates
@@ -157,84 +157,11 @@ class UR5Env(gym.Env):
     def get_terminal(self):
         terminated = False
         truncated = (time.time() - self._t_act) > self._t_limit \
-                    or out_of_bounds(self.w) \
+                    or out_of_bounds(self._limits, self._ur5) \
                     or check_collision(client = self._client, objects = [self._table.id, self._ur5.id])
 
         return terminated, truncated
 
-    # Computes the Rotation matrix (R) and Translation (t)
-    #   between the two cameras
-    def retrieve_R_t(self):
-        # For each camera ...
-        for idx, camera in enumerate(self.camera_params):
-            # Obtains the view
-
-            frame = p.getCameraImage(width = self.frame_w, 
-                                        height = self.frame_h, 
-                                        viewMatrix = camera[0], 
-                                        projectionMatrix = camera[1], 
-                                        physicsClientId = self._client)
-            
-            rgb_buffer = frame[2]
-
-            depth_buffer = np.reshape(frame[3], (self.frame_h, self.frame_w))
-
-            # Visualize the depth image with a colormap
-            depth_image = (depth_buffer - np.min(depth_buffer)) / (np.max(depth_buffer) - np.min(depth_buffer))  # Normalize to [0, 1]
-
-            # Apply a colormap (e.g., 'viridis')
-            depth_frame = (depth_image * 255).astype(np.uint8)
-
-            
-            # Generates the RGB representation
-            # b, g, r, _ = cv.split(self.frame[idx])
-            # self.frame[idx] = cv.merge([r, g, b])
-
-            # Gray conversion
-            rgb_buffer = cv.cvtColor(rgb_buffer, cv.COLOR_BGR2GRAY)
-            
-
-            # Detects the corners
-            markerCorners, _, _ = self.detector.detectMarkers(rgb_buffer)
-
-            # Concatenates and saves the arrays . There are two sets of arucos            
-            combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
-            self.markers[idx] = combined_array
-
-            self.frame[idx] = cv.merge([rgb_buffer, depth_frame])
-
-            # If it has obtained the second image, breaks the loop
-            if self.markers[-1] != []: break
-        
-        # Intrinic parameters of the camera
-        K1 = self.camera_params[0][-1]
-
-        # Points rescalation
-        points1 = np.vstack([corner for corner in self.markers[0]])
-        points2 = np.vstack([corner for corner in self.markers[1]])
-
-        points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
-        points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
-
-        # Point normalization
-        normalized_points1 = points1_ @ np.linalg.inv(K1)
-        normalized_points2 = points2_ @ np.linalg.inv(K1)
-
-        normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
-        normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
-
-        # Calculate Essential Matrix: coordinates from K1 to K2
-        #  The points are obtained from K1
-        E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
-
-        # Recover pose (rotation and translation)
-        _, R, t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
-            
-        # print(R)
-        # print(t)
-        # print("--\n")
-
-        return R.flatten(), t[:,0]
 
     # Getter for the observations
     def get_observation(self):
@@ -243,16 +170,15 @@ class UR5Env(gym.Env):
 
         # Arranges observation vectors into a dictionary
         obs = {}
-        for i in range(len(self._indices[:1])):
-            obs[self._indices[i]] = np.array(observation[i], dtype="float32")
+        obs[self._indices[0]] = np.array(observation[0], dtype="float32")
+
+        self.qd = observation[1]
 
 
-        # R, t = self.retrieve_R_t() 
         self.frame = get_frames(client = self._client, camera_params = self.camera_params,
                                 frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, )
 
 
-        # obs[self._indices[1]] = {self._Rt_indices[0]: R.astype(np.float32), self._Rt_indices[1]: t.astype(np.float32)}
         obs[self._indices[-1]] = self.frame[0].astype(np.int16)
 
         return obs
@@ -277,6 +203,9 @@ class UR5Env(gym.Env):
 
         # Extra information (images)
         info = get_info(frame = self.frame)
+
+        if truncated:
+            reward -= 10
 
         # observations --> obs --> sensors values
         # reward --> reward --> task well done
