@@ -120,11 +120,16 @@ def collision_reward(client, collisions_to_check, mask = np.array([0,0])):
     return np.sum(checkers * mask)
 
 
-def out_of_bounds(w):
-    for warning in w:
-        if "method is not within the observation space" in str(warning.message):
+def out_of_bounds(limits, ur5):
+
+    qs = [ur5.q, ur5.qd]
+
+    for idx, limit in enumerate(limits[:2]):
+        if True in list(limit[0] > qs[idx]) or  \
+           True in list(limit[1] < qs[idx]):
+            
             return True
-    
+
     return False
 
 # Get information from the environment
