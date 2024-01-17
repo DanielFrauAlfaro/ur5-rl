@@ -105,8 +105,9 @@ class UR5e:
 
 
 
-        # Starting joint positions for the robot and the gripper
+        # Starting joint positions and velocities for the robot and the gripper
         self.q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785 + pi]
+        self.qd = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         # Brings the robot to a starting position
         self.apply_action(self.q)
@@ -159,7 +160,7 @@ class UR5e:
     # Returns observation of the robot state
     def get_observation(self):
         self.q = []
-        qd = []
+        self.qd = []
         q_t = []
 
 
@@ -170,7 +171,7 @@ class UR5e:
                                 physicsClientId=self.client)
 
             self.q.append(aux[0])
-            qd.append(aux[1])
+            self.qd.append(aux[1])
             q_t.append(aux[2][-1])
 
         # End effector position and orientation
@@ -182,7 +183,7 @@ class UR5e:
         
         
         # Builds and returns the message
-        observation = [self.q, qd, q_t,  ee]
+        observation = [self.q, self.qd, q_t,  ee]
 
         return observation
             
