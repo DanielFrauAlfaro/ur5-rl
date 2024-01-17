@@ -45,7 +45,7 @@ if __name__ == "__main__":
                 learning_rate = 0.00073, gamma = 0.98, seed = 42,
                 use_sde = True, sde_sample_freq = 8)         # See logs: tensorboard --logdir logs/
     
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test_", progress_bar = True)
+    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", progress_bar = True)
     
     model.save("./models/sac_ur5_stage_1.0")
     
