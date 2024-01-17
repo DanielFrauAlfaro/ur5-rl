@@ -11,11 +11,14 @@ from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size = 3, kernel_max = 2, end_layer = False):
+    def __init__(self, in_channels, out_channels, kernel_size = 3, kernel_max = 2, end_layer = False, residual = False):
         super(ResidualBlock, self).__init__()
 
+        # Parameters
         self.end_l = end_layer
+        self.residual = residual
         
+        # Layers
         if not self.end_l:
             self.conv1 = nn.Sequential(nn.Conv2d(in_channels  = in_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
                                     nn.MaxPool2d(kernel_size = kernel_max), 
@@ -37,9 +40,13 @@ class ResidualBlock(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-        x = x + int(1 - self.end_l)*self.conv2(x)
+        x = x + int(not self.end_l and self.residual)*self.conv2(x)
 
         return x
+
+
+
+
 
 class CustomCombinedExtractor(BaseFeaturesExtractor):
     def __init__(self, observation_space, residual = True, channels = [2, 16, 32, 32, 32], kernel = 3, m_kernel = 2, n_layers = 4, h_size=200, w_size=200, out_q_features = 16, features_dim = 128):
@@ -74,7 +81,7 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         self.n_linear = nn.Sequential(nn.Linear(in_features = self.features_dim_, out_features = features_dim), nn.ReLU())
         
 
-        self.device = "cpu"# torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.to(self.device)
     
     def forward(self, observations) -> torch.Tensor:
@@ -90,14 +97,10 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
 
 
     def build_conv(self):
-        if self.residual:
-            return [ResidualBlock(in_channels = self.channels[i],
+        return [ResidualBlock(in_channels = self.channels[i],
                                   out_channels = self.channels[i + 1],
                                   kernel_size = self.kernel,
                                   kernel_max = self.m_kernel, end_layer = (i == self.n_layers-1)) for i in range(self.n_layers)]
-
-        else:
-            return
 
 
 
