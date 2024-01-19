@@ -71,17 +71,17 @@ class UR5e:
             
             list_attr[jointName] = jointID
 
-            # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
-            # print("--")
+            print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
+            print("--")
 
 
             # If a joint is controllable ...
             if controllable:
                 # ... enables torque sensors, ...
-                p.enableJointForceTorqueSensor(bodyUniqueId=self.id, 
-                                               jointIndex=jointID, 
-                                               enableSensor=1,
-                                               physicsClientId=self.client)
+                # p.enableJointForceTorqueSensor(bodyUniqueId=self.id, 
+                #                                jointIndex=jointID, 
+                #                                enableSensor=1,
+                #                                physicsClientId=self.client)
 
                 # ... saves its properties, ...
                 info = jointInfo(jointID,jointName,jointType,jointDamping,jointFriction,jointLowerLimit,
@@ -107,6 +107,7 @@ class UR5e:
 
         # Starting joint positions and velocities for the robot and the gripper
         self.q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785 + pi]
+        self.ee = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.qd = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         # Brings the robot to a starting position
@@ -134,11 +135,10 @@ class UR5e:
         self.T = T * T_
 
         # Computes inverse kinematics
-        q = self.__ur5.ikine_LM(self.T,q0 = self.q)       # Inversa: obtiene las posiciones articulares a través de la posición
-
+        q = self.__ur5.ik_LM(self.T,q0 = self.q)       # Inversa: obtiene las posiciones articulares a través de la posición
 
         # Applies the joint action
-        self.apply_action(q.q)
+        self.apply_action(q[0])
 
     # Moves the robot to a desired position
     def apply_action(self, action):
@@ -179,11 +179,13 @@ class UR5e:
         ee_pos = T.t
         ee_or = T.eul('xyz')
 
-        ee = np.array([ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]])
+        self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
+        state = p.getLinkState(bodyUniqueId = self.id, linkIndex = 11, computeForwardKinematics = True)
         
-        
+        print(state)
+
         # Builds and returns the message
-        observation = [self.q, self.qd, q_t,  ee]
+        observation = [self.q, self.qd, q_t,  self.ee]
 
         return observation
             
