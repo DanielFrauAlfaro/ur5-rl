@@ -99,7 +99,7 @@ class UR5Env(gym.Env):
         self._ur5 = None
         
         # Time limit of the episode (in seconds)
-        self._t_limit = 8
+        self._t_limit = 2
         self._t_act = time.time()
 
         # Object coordinates
@@ -136,9 +136,10 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = math.inf
 
         # Reward mask
-        self.mask = np.array([-100, 2, 2, 2])
+        self.mask = np.array([-2, 2, 2, 2])
 
-        self.w = []
+        
+
     
     # Computes the whole reward
     def compute_reward(self):
@@ -183,7 +184,6 @@ class UR5Env(gym.Env):
 
         return obs
 
-
     # Step function
     def step(self, action):
         # Computes the action
@@ -191,6 +191,9 @@ class UR5Env(gym.Env):
         
         # Advances the simulation
         p.stepSimulation()
+        
+        cv.imshow("Station", self.frame[0][0])
+        cv.waitKey(1)
 
         # Computes the rewards after applying the action
         reward = self.compute_reward()
@@ -225,7 +228,7 @@ class UR5Env(gym.Env):
         self.camera_params, self.markers = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
                                                     near_val=self.near_plane, far_val=self.far_plane, 
                                                     cameras_coord = self.cameras_coord, std = self.std_cam)
-
+        
         # self.obj_pos = np.random.normal(self.obj_pos, [0.01, 0.01, 0.01])
         rand_orientation = p.getQuaternionFromEuler(np.random.uniform([-3.1415,-3.1415,-3.1415], [3.1415, 3.1415, 3.1415]), physicsClientId=self._client)
 
