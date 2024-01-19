@@ -7,8 +7,8 @@ from networks_SB import CustomCombinedExtractor
 
 if __name__ == "__main__":
     print("|| Compiling ...")
-    env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
-    env_ = gym.make_vec("ur5_rl/Ur5Env-v0", num_envs=3)
+    env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    
     print("\n\n")
 
     q_space = env.observation_space["q_position"]
@@ -40,26 +40,26 @@ if __name__ == "__main__":
         share_features_extractor = True
     )
 
-    model = SAC("MultiInputPolicy", env, policy_kwargs=policy_kwargs, 
-                verbose=100, buffer_size = 30000,  batch_size = 256, tensorboard_log="logs/", train_freq=10,
-                learning_rate = 0.00073, gamma = 0.98, seed = 42,
-                use_sde = True, sde_sample_freq = 8)         # See logs: tensorboard --logdir logs/
+    # model = SAC("MultiInputPolicy", env, policy_kwargs=policy_kwargs, 
+    #             verbose=100, buffer_size = 30000,  batch_size = 256, tensorboard_log="logs/", train_freq=10,
+    #             learning_rate = 0.00073, gamma = 0.98, seed = 42,
+    #             use_sde = True, sde_sample_freq = 8)         # See logs: tensorboard --logdir logs/
     
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", progress_bar = True)
+    # model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", progress_bar = True)
     
-    model.save("./models/sac_ur5_stage_1.0")
+    # model.save("./models/sac_ur5_stage_1.0")
     
 
 
     # Testing
     obs, info = env.reset()
     while True:
-        action, _states = model.predict(obs)
-        # action = env.action_space.sample()
+        # action, _states = model.predict(obs)
+        action = env.action_space.sample()
 
         obs, reward, terminated, truncated, info = env.step(action)
 
-        env.render()
+        # env.render()
 
         if terminated or truncated:
             obs, info = env.reset()
