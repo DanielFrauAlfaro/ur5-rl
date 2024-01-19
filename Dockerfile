@@ -54,6 +54,9 @@ RUN pip3 install numpy==1.24
 RUN pip3 install stable-baselines3[extra]
 RUN pip3 install sb3-contrib
 
+# Install IKPY
+RUN pip3 install ikpy
+
 # GPU configuration
 RUN export CUDA_VISIBLE_DEVICES=[0]
 ENV NVIDIA_VISIBLE_DEVICES ${NVIDIA_VISIBLE_DEVICES:-all}
