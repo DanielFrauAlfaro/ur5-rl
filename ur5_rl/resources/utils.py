@@ -5,6 +5,7 @@ import pyb_utils
 from scipy.spatial.transform import Rotation
 import cv2 as cv
 import time
+import copy
 
 # Adds noise to an array
 def add_noise(array, std = 0.5):
@@ -15,10 +16,12 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
     camera_params = []
     markers = []
 
-    cameras_coord[0][0] += add_noise(cameras_coord[0][0], std = std)
+    cameras_coord_aux = copy.deepcopy(cameras_coord)
+
+    cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
     
     # For each camera ...
-    for camera in cameras_coord:
+    for camera in cameras_coord_aux:
         # Obtain rotations
         rot_x = np.array([[1, 0, 0], [0, math.cos(camera[1][0]), -math.sin(camera[1][0])], [0, math.sin(camera[1][0]), math.cos(camera[1][0])]])
         rot_y = np.array([[math.cos(camera[1][1]),0, math.sin(camera[1][1])], [0, 1, 0], [-math.sin(camera[1][1]),0,math.cos(camera[1][1])]])
