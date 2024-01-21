@@ -138,8 +138,6 @@ class UR5Env(gym.Env):
         # Reward mask
         self.mask = np.array([-2, 2, 2, 2])
 
-        
-
     
     # Computes the whole reward
     def compute_reward(self):
@@ -155,6 +153,7 @@ class UR5Env(gym.Env):
         return r
 
 
+    # Computes if the environmen has reach a terminal state
     def get_terminal(self):
         terminated = False
         truncated = (time.time() - self._t_act) > self._t_limit \
@@ -272,6 +271,67 @@ class UR5Env(gym.Env):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
         return [seed]
 
-    # Setter for the warning message
-    def set_warning(self, w):
-        self.w = w
+
+   # Computes the Rotation matrix (R) and Translation (t)
+    #   between the two cameras
+    def retrieve_R_t(self):
+        # For each camera ...
+        for idx, camera in enumerate(self.camera_params):
+            # Obtains the view
+
+            self.frame[idx] = p.getCameraImage(width = self.frame_w, 
+                                     height = self.frame_h, 
+                                     viewMatrix = camera[0], 
+                                     projectionMatrix = camera[1], 
+                                     physicsClientId = self._client)[2]
+            
+            
+            # Generates the RGB representation
+            b, g, r, _ = cv.split(self.frame[idx])
+            self.frame[idx] = cv.merge([r, g, b])
+
+            # Gray conversion
+            gray = cv.cvtColor(self.frame[idx], cv.COLOR_BGR2GRAY)
+
+            # Detects the corners
+            markerCorners, _, _ = self.detector.detectMarkers(gray)
+
+            # Concatenates and saves the arrays . There are two sets of arucos            
+            combined_array = np.concatenate((markerCorners[0], markerCorners[1]), axis=1)
+            self.markers[idx] = combined_array
+
+            # If it has obtained the second image, breaks the loop
+            if self.markers[-1] != []: break
+        
+        # Intrinic parameters of the camera
+        K1 = self.camera_params[0][-1]
+
+        # Points rescalation
+        points1 = np.vstack([corner for corner in self.markers[0]])
+        points2 = np.vstack([corner for corner in self.markers[1]])
+
+        points1_ = np.hstack((points1, np.ones((points1.shape[0], 1))))
+        points2_ = np.hstack((points2, np.ones((points2.shape[0], 1))))
+
+        # Point normalization
+        normalized_points1 = points1_ @ np.linalg.inv(K1)
+        normalized_points2 = points2_ @ np.linalg.inv(K1)
+
+        normalized_points1 = normalized_points1[:,:-1].reshape(-1, 1, 2)
+        normalized_points2 = normalized_points2[:,:-1].reshape(-1, 1, 2)
+
+        # Calculate Essential Matrix: coordinates from K1 to K2
+        #  The points are obtained from K1
+        E, E_ = cv.findEssentialMat(normalized_points1, normalized_points2, K1, method=cv.RANSAC)
+
+        # Recover pose (rotation and translation)
+        _, R, t, _ = cv.recoverPose(E, normalized_points1, normalized_points2, K1)
+            
+        # print(self.R)
+        # print(self.t)
+        # print("--\n")
+
+        return R.flatten(), t[:,0]
+
+
+
