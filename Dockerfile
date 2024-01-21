@@ -50,6 +50,12 @@ RUN pip3 install pynput
 # Update Numpy
 RUN pip3 install numpy==1.24
 
+# Install Stable Baselines 3
+RUN pip3 install stable-baselines3[extra]
+RUN pip3 install sb3-contrib
+
+# Install IKPY
+RUN pip3 install ikpy
 
 # GPU configuration
 RUN export CUDA_VISIBLE_DEVICES=[0]
