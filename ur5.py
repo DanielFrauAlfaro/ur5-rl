@@ -23,32 +23,31 @@ ur5.base = SE3.RPY(0,0,pi / 2)      # Rotate robot base so it matches Gazebo mod
 # ur5.tool = SE3(0.0, 0.0, 0.03)
 
 # Define GUI elements
-def user_interface(): # [ 0.49586404 -0.11770215  0.48789221]    //      [-2.38737814e+00 -3.04939623e-05 -3.14158786e+00]  --> Robotic Toolbox
-                      # (0.13295353284875722, 0.4919942088645094, 1.1878922101017253)
-                      # [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785 + pi]
+def user_interface(): # [0.1332997  0.49190053 0.48789219]    //      [-3.14157518e+00 -2.55923108e-05 -2.35658978e+00]  --> Robotic Toolbox
+                      # [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785 + pi] --> Q
 
-    shoulder_pan_gui = p.addUserDebugParameter('Shoulder pan', -1.5, 1.5, 0)
-    shoulder_lift_gui = p.addUserDebugParameter('Shoulder lift', -3.14, 0.0, -1.5708)
-    elbow_gui = p.addUserDebugParameter('Elbow', -3.14, 0.0, -1.5708)
-    wrist_1_gui = p.addUserDebugParameter('Wrist 1', -3.14, 0.0, -1.5708)
-    wrist_2_gui = p.addUserDebugParameter('Wrist 2', 0.0, 3.14, 1.5708)
-    wrist_3_gui = p.addUserDebugParameter('Wrist 3', -3.1415, 3.1415, -0.785 + pi)
+    # shoulder_pan_gui = p.addUserDebugParameter('Shoulder pan', -1.5, 1.5, 0)
+    # shoulder_lift_gui = p.addUserDebugParameter('Shoulder lift', -3.14, 0.0, -1.5708)
+    # elbow_gui = p.addUserDebugParameter('Elbow', -3.14, 0.0, -1.5708)
+    # wrist_1_gui = p.addUserDebugParameter('Wrist 1', -3.14, 0.0, -1.5708)
+    # wrist_2_gui = p.addUserDebugParameter('Wrist 2', 0.0, 3.14, 1.5708)
+    # wrist_3_gui = p.addUserDebugParameter('Wrist 3', -3.1415, 3.1415, -0.785 + pi)
 
-    gripper_1 = p.addUserDebugParameter('Finger 1', 0, 1.2, 0)
-    gripper_2 = p.addUserDebugParameter('Finger 2', 0, 1.2, 0)
-    gripper_mid = p.addUserDebugParameter('Finger Middle', 0, 1.2, 0)
+    # gripper_1 = p.addUserDebugParameter('Finger 1', 0, 1.2, 0)
+    # gripper_2 = p.addUserDebugParameter('Finger 2', 0, 1.2, 0)
+    # gripper_mid = p.addUserDebugParameter('Finger Middle', 0, 1.2, 0)
 
-    gripper_palm = p.addUserDebugParameter('Palm', 1, 0, 1)
+    # gripper_palm = p.addUserDebugParameter('Palm', 1, 0, 1)
 
-    x_gui = p.addUserDebugParameter('X', -1.5, 1.5, 0)
-    y_gui = p.addUserDebugParameter('Y', -1.5, 1.5, 0.0)
-    z_gui = p.addUserDebugParameter('Z', -1.5, 1.5, 0.0)
-    roll_gui = p.addUserDebugParameter('Roll', -1.5, 1.5, 0)
+    x_gui = p.addUserDebugParameter('X', -1.5, 1.5, 0.1332997)
+    y_gui = p.addUserDebugParameter('Y', -1.5, 1.5, 0.49190053)
+    z_gui = p.addUserDebugParameter('Z', -1.5, 1.5, 0.48789219)
+    roll_gui = p.addUserDebugParameter('Roll', -5, 0.0, -3.14)
     pitch_gui = p.addUserDebugParameter('Pitch', -1.5, 1.5, 0)
-    yaw_gui = p.addUserDebugParameter('Yaw', -1.5, 1.5, 0)
+    yaw_gui = p.addUserDebugParameter('Yaw', -3.1415, 0.0, -2.35658978)
 
-    return [shoulder_pan_gui, shoulder_lift_gui, elbow_gui, wrist_1_gui, wrist_2_gui, wrist_3_gui, gripper_1, gripper_2, gripper_mid, gripper_palm,
-            x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
+    # return [shoulder_pan_gui, shoulder_lift_gui, elbow_gui, wrist_1_gui, wrist_2_gui, wrist_3_gui, gripper_1, gripper_2, gripper_mid, gripper_palm,
+    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
 
 maxForce = 100
 v = 100
@@ -65,21 +64,12 @@ def set_joints(ur5_id, j):
     p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=5 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[4])
     p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=6 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[5])
 
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=11, controlMode=p.POSITION_CONTROL, targetPosition=j[6])
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=15, controlMode=p.POSITION_CONTROL, targetPosition=j[7])
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=19, controlMode=p.POSITION_CONTROL, targetPosition=j[8])
+    # p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=11, controlMode=p.POSITION_CONTROL, targetPosition=j[6])
+    # p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=15, controlMode=p.POSITION_CONTROL, targetPosition=j[7])
+    # p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=19, controlMode=p.POSITION_CONTROL, targetPosition=j[8])
 
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=10, controlMode=p.POSITION_CONTROL, targetPosition=j[9])
+    # p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=10, controlMode=p.POSITION_CONTROL, targetPosition=j[9])
 
-def set_cart(ur5_id, pos, robot):
-
-
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=1 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[0])
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=2 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[1])
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=3 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[2])
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=4 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[3])
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=5 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[4])
-    p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=6 + 2, controlMode=p.POSITION_CONTROL, targetPosition=j[5])
 
 
 
@@ -92,14 +82,50 @@ def read_gui(gui_joints):
     j5 = p.readUserDebugParameter(gui_joints[4])
     j6 = p.readUserDebugParameter(gui_joints[5])
     
-    g1 = p.readUserDebugParameter(gui_joints[6])
-    g2 = p.readUserDebugParameter(gui_joints[7])
-    gm = p.readUserDebugParameter(gui_joints[8])
+    # g1 = p.readUserDebugParameter(gui_joints[6])
+    # g2 = p.readUserDebugParameter(gui_joints[7])
+    # gm = p.readUserDebugParameter(gui_joints[8])
 
-    gp = p.readUserDebugParameter(gui_joints[9])
+    # gp = p.readUserDebugParameter(gui_joints[9])
 
-    return [j1, j2, j3, j4, j5, j6, g1, g2, gm, gp]
+    return [j1, j2, j3, j4, j5, j6]
 
+def compute_ik(robot_id, action, joints, q):
+    x = action[0]                                 
+    y = action[1]
+    z = action[2]
+        
+    roll = action[3]
+    pitch = action[4]
+    yaw = action[5]
+
+    # Builds up homogeneus matrix
+    T = SE3(x, y, z)
+    T_ = SE3.RPY(roll, pitch, yaw, order='zyx')
+
+    T = T * T_
+
+    # Computes inverse kinematics
+    new_q = ur5.ik_LM(T,q0 = q)
+
+    # print(q)
+    # print("Roll: ", )
+    # print("Pitch: ",[0][4])
+    # print("Yaw: ", new_q[0][5])
+
+    # if new_q[0][3] < -pi:
+    #     new_q[0][3] = 
+
+    # print("\n") 
+
+    # print(len(joints))
+    # print(len(new_q[0]))
+    # print("\n")
+    p.setJointMotorControlArray(bodyUniqueId=robot_id, 
+                                    jointIndices=joints, 
+                                    controlMode=p.POSITION_CONTROL,
+                                    targetPositions=new_q[0],
+                                    physicsClientId=client)
 
 # Spawn environment
 def spawn_environment(id):
@@ -217,30 +243,35 @@ if __name__ == "__main__":
     prev_palm = 0
     state_palm = 0
 
+    set_joints(ur5_id, [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785 + pi])
+
+    for __ in range(25):
+        p.stepSimulation()
+    
     while True:
         
         j = read_gui(gui_joints)
-        palm = j[-1]
+        # palm = j[-1]
 
-        if palm != prev_palm:
-            state_palm = state_palm + 1
+        # if palm != prev_palm:
+        #     state_palm = state_palm + 1
 
-            if state_palm > 2:
-                state_palm = 0
+        #     if state_palm > 2:
+        #         state_palm = 0
 
-        if state_palm == 0:
-            j[-1] = -0.19
-        elif state_palm == 1:
-            j[-1] = 0
-        else:
-            j[-1] = 0.17
+        # if state_palm == 0:
+        #     j[-1] = -0.19
+        # elif state_palm == 1:
+        #     j[-1] = 0
+        # else:
+        #     j[-1] = 0.17
 
-        set_joints(ur5_id, j)
-        prev_palm = palm
+        
+        # prev_palm = palm
 
         q = []
 
-        # UR5 joint values
+        # # UR5 joint values
         for i in joints:
             aux = p.getJointState(bodyUniqueId=ur5_id, 
                                 jointIndex=i,
@@ -248,18 +279,21 @@ if __name__ == "__main__":
 
             q.append(aux[0])
 
+        # set_joints(ur5_id, j)
+        compute_ik(ur5_id, j, joints, q)
 
         # render(client, ur5_id)
         T = ur5.fkine(q, order='zyx')
+        state = p.getLinkState(bodyUniqueId = ur5_id, linkIndex = 11, computeForwardKinematics = True)
+
+
 
         print("Robotic Toolboox T: ", T.t)
         print("Robotic Toolbox R: ", T.rpy(order='zyx'))
         print("--")
-        # print(T)
-
-        state = p.getLinkState(bodyUniqueId = ur5_id, linkIndex = 11, computeForwardKinematics = True)
-        print("Pybullet API T: ", state[0])
-        print("Pybullet aPI R: ", p.getEulerFromQuaternion(state[1]))
-        print("--\n\n")
+        
+        # print("Pybullet API T: ", state[0])
+        # print("Pybullet aPI R: ", p.getEulerFromQuaternion(state[1]))
+        # print("--\n\n")
 
         p.stepSimulation()
