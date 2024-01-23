@@ -832,7 +832,7 @@
         <parent link="robotiq_finger_1_link_2" />
         <child link="robotiq_finger_1_link_3" />
         <axis xyz="0 0 1" />
-        <origin rpy="0 0 0" xyz="0.039 0 0" />
+        <origin rpy="0 0 -0.6" xyz="0.039 0 0" />
         <limit effort="100" lower="-1.2217" upper="-0.0523" velocity="100" />
     </joint>
     <!-- end of joint list -->
@@ -950,7 +950,7 @@
         <parent link="robotiq_finger_2_link_2" />
         <child link="robotiq_finger_2_link_3" />
         <axis xyz="0 0 1" />
-        <origin rpy="0 0 0" xyz="0.039 0 0" />
+        <origin rpy="0 0 -0.6" xyz="0.039 0 0" />
         <limit effort="100" lower="-1.2217" upper="-0.0523" velocity="100" />
     </joint>
     <!-- end of joint list -->
@@ -1068,7 +1068,7 @@
         <parent link="robotiq_finger_middle_link_2" />
         <child link="robotiq_finger_middle_link_3" />
         <axis xyz="0 0 1" />
-        <origin rpy="0 0 0" xyz="0.039 0 0" />
+        <origin rpy="0 0 -0.6" xyz="0.039 0 0" />
         <limit effort="100" lower="-1.2217" upper="-0.0523" velocity="100" />
     </joint>
     <!-- end of joint list -->
