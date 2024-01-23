@@ -54,15 +54,13 @@ RUN pip3 install numpy==1.24
 RUN pip3 install stable-baselines3[extra]
 RUN pip3 install sb3-contrib
 
-# Install IKPY
-RUN pip3 install ikpy
-
 # GPU configuration
 RUN export CUDA_VISIBLE_DEVICES=[0]
 ENV NVIDIA_VISIBLE_DEVICES ${NVIDIA_VISIBLE_DEVICES:-all}
 ENV NVIDIA_DRIVER_CAPABILITIES all 
 
 
-
-
 WORKDIR /daniel/Desktop/ur5-rl
+
+RUN rm /usr/local/lib/python3.10/dist-packages/roboticstoolbox/mobile/EKF.py
+COPY EKF.py /usr/local/lib/python3.10/dist-packages/roboticstoolbox/mobile
