@@ -11,7 +11,11 @@ import numpy as np
 # Class for the UR5
 class UR5e:
     def __init__(self, client):
+
+        # --- Parameters
+        self.client = client    # Client ID of the Pybullet server
         
+
         # Internal UR5 DH model
         self.__ur5 = rtb.DHRobot([
             rtb.RevoluteDH(d=0.1625, alpha=pi/2.0),
@@ -22,11 +26,6 @@ class UR5e:
             rtb.RevoluteDH(d = 0.0996)
         ], name="UR5e")
     
-        self.__ur5.base = SE3.RPY(0,0,-pi)      # Rotate robot base so it matches Gazebo model
-        self.__ur5.tool = SE3(0.0, 0.0, 0.03)
-
-        # Client ID of the Pybullet server
-        self.client = client
 
         # Load the UR5 URDF
         self.id = p.loadURDF(fileName=os.path.dirname(__file__) + '/models/models/ur5_env.urdf',
@@ -36,26 +35,21 @@ class UR5e:
 
         # Name of the gripper and UR5 joint (all joints are included on the same body)
         gripperJoints = ["robotiq_finger_1_joint_1", "robotiq_finger_2_joint_1", "robotiq_finger_middle_joint_1"]
-        gripperMimicJoints = ["robotiq_finger_1_joint_1", "robotiq_finger_1_joint_2", "robotiq_finger_1_joint_3", 
-                              "robotiq_finger_2_joint_1", "robotiq_finger_2_joint_2", "robotiq_finger_2_joint_3", 
-                              "robotiq_finger_middle_joint_1", "robotiq_finger_middle_joint_2", "robotiq_finger_middle_joint_3"]
+
         controlJoints = ["shoulder_pan_joint","shoulder_lift_joint",
                      "elbow_joint", "wrist_1_joint",
                      "wrist_2_joint", "wrist_3_joint"]
-        palmJoints = ["palm_finger_1_joint", "palm_finger_2_joint"]
         
         # Get info from joints and enable joint torque sensor
-        self.joints = []
         self.ur5_joints_id = []
         self.gripper_joints_id = []
-        self.gripper_mimic_joints_id = []
-        self.palm_joint_id = []
+
         numJoints = p.getNumJoints(self.id)
         jointInfo = collections.namedtuple("jointInfo",["id","name","type",'damping','friction',"lowerLimit","upperLimit","maxForce","maxVelocity","controllable"])
         
         list_attr = {}
 
-        # Iterates for each joint
+        # Iterates over each joint
         for i in range(numJoints):
             info = p.getJointInfo(self.id, i)
             jointID = info[0]
@@ -71,22 +65,21 @@ class UR5e:
             
             list_attr[jointName] = jointID
 
-            print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
-            print("--")
-
-
+    
             # If a joint is controllable ...
             if controllable:
+                # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
+                # print("--")
+
                 # ... enables torque sensors, ...
-                # p.enableJointForceTorqueSensor(bodyUniqueId=self.id, 
-                #                                jointIndex=jointID, 
-                #                                enableSensor=1,
-                #                                physicsClientId=self.client)
+                p.enableJointForceTorqueSensor(bodyUniqueId=self.id, 
+                                               jointIndex=jointID, 
+                                               enableSensor=1,
+                                               physicsClientId=self.client)
 
                 # ... saves its properties, ...
                 info = jointInfo(jointID,jointName,jointType,jointDamping,jointFriction,jointLowerLimit,
                             jointUpperLimit,jointMaxForce,jointMaxVelocity,controllable)
-                self.joints.append(info)
 
                 # ... saves the IDs of the UR5 joints, ...
                 if jointName in controlJoints:
@@ -96,22 +89,22 @@ class UR5e:
                 if jointName in gripperJoints:
                     self.gripper_joints_id.append(jointID)
 
-                if jointName in gripperMimicJoints:
-                    self.gripper_mimic_joints_id.append(jointID)
 
-                # saves the ID of the Palm joint
-                if jointName in palmJoints:
-                    self.palm_joint_id.append(jointID)
-
-
-
-        # Starting joint positions and velocities for the robot and the gripper
-        self.q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785 + pi]
-        self.ee = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        # Starting joint positions and velocities for the robot joints
+        self.q = [-0.004, -1.549, -1.547, -pi/2.0, pi/2.0, pi/2.0]
         self.qd = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-        # Brings the robot to a starting position
+        # Starting end effector's position
+        self.ee = [0.1332997, 0.49190053, 0.48789219, -3.14, 0.0, -2.35658978]
+
+        # Gripper parameters
+        self.m1 = 1.2218 / 140
+        self.max_closure = 100
+        self.g = 1
+
+        # Brings the robot and gripper to a starting position
         self.apply_action(self.q)
+        self.apply_action_g(self.g)
 
 
 
@@ -119,7 +112,20 @@ class UR5e:
     def get_ids(self):
         return self.client, self.id
     
+    # Applies cartesian action
     def apply_action_c(self, action):
+        '''
+        Given a cartesian action, applies the new position to the robot,
+    along with the gripper action.
+
+            - action: array of XYZ - RPY - G position actions, where G is the gripper
+        action [0, 255] (list of length 7 --> 6 + 1)
+        '''
+        
+        # Converts the action to a
+        action = self.ee + action
+
+        # Obtains XYZ and RPY positions
         x = action[0]                                 
         y = action[1]
         z = action[2]
@@ -128,41 +134,68 @@ class UR5e:
         pitch = action[4]
         yaw = action[5]
 
-        # Builds up homogeneus matrix
+        # Builds up the homogeneus transformation matrix for XYZ and RPY
         T = SE3(x, y, z)
-        T_ = SE3.RPY(roll, pitch, yaw, order='xyz')
+        T_ = SE3.RPY(roll, pitch, yaw, order='zyx')
 
+        # Computes the complete transformation
         self.T = T * T_
 
         # Computes inverse kinematics
-        q = self.__ur5.ik_LM(self.T,q0 = self.q)       # Inversa: obtiene las posiciones articulares a través de la posición
+        q = self.__ur5.ik_LM(self.T,q0 = self.q)
 
-        # Applies the joint action
+        # Applies the joint action (joint and gripper)
         self.apply_action(q[0])
+        self.apply_action_g(int(action[-1]))
+
 
     # Moves the robot to a desired position
     def apply_action(self, action):
-        # Decodes the action in robot joint position, gripper position and palm state
-        q = action
+        '''
+        Applies a joint action
 
-        # Assigns the action to the internal values of the robot
-        # self.q = q
+            - action: a set of joint positions according to the ids.
+        [shoulder_pan, shoulder_lift, elbow, wrist_1, wrist_2, wrist_3] (list)
+        '''
 
-        # UR5 control
         p.setJointMotorControlArray(bodyUniqueId=self.id, 
                                     jointIndices=self.ur5_joints_id, 
                                     controlMode=p.POSITION_CONTROL,
-                                    targetPositions=q,
+                                    targetPositions=action,
+                                    physicsClientId=self.client)
+    
+    # Appliy action to the gripper
+    def apply_action_g(self, action):
+        '''
+        Applies a gripper action
+
+            - action: gripper action [0, 255] (int)
+        '''
+
+        # Computes pseudo - inverse kinematics. Transforms "g" action to closure angles 
+        action = min(self.m1 * action, self.max_closure)
+        action = np.ones(3) * action
+
+        p.setJointMotorControlArray(bodyUniqueId=self.id, 
+                                    jointIndices=self.gripper_joints_id, 
+                                    controlMode=p.POSITION_CONTROL,
+                                    targetPositions=action,
                                     physicsClientId=self.client)
 
 
-    
     # Returns observation of the robot state
     def get_observation(self):
+        '''
+        Gets the observation space of the robot
+
+        Returns:
+            - A list of observations [q, qd, gripper, ee]
+        '''
+
         self.q = []
         self.qd = []
         q_t = []
-
+        g = []
 
         # UR5 joint values
         for i in self.ur5_joints_id:
@@ -174,18 +207,26 @@ class UR5e:
             self.qd.append(aux[1])
             q_t.append(aux[2][-1])
 
-        # End effector position and orientation
-        T = self.__ur5.fkine(self.q, order='xyz')
-        ee_pos = T.t
-        ee_or = T.eul('xyz')
 
-        self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
-        state = p.getLinkState(bodyUniqueId = self.id, linkIndex = 11, computeForwardKinematics = True)
+        # Gripper Joint Values
+        for i in self.gripper_joints_id:
+            aux = p.getJointState(bodyUniqueId=self.id, 
+                                jointIndex=i,
+                                physicsClientId=self.client)
+
+            g.append(aux[0])
         
-        print(state)
+        # Obtains [0, 255] representation
+        self.g = min(min(g) / self.m1, self.max_closure)
 
+        # End effector position and orientation
+        T = self.__ur5.fkine(self.q, order='zyx')
+        ee_pos = T.t
+        ee_or = T.eul('zyx')
+        self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
+        
         # Builds and returns the message
-        observation = [self.q, self.qd, q_t,  self.ee]
+        observation = [self.q, self.qd, self.g,  self.ee]
 
         return observation
             

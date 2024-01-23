@@ -2,6 +2,7 @@ import ur5_rl
 import gymnasium as gym
 from stable_baselines3 import SAC
 from networks_SB import CustomCombinedExtractor
+import numpy as np
 
 
 
@@ -9,21 +10,20 @@ if __name__ == "__main__":
     print("|| Compiling ...")
     env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
     
-    print("\n\n")
 
-    q_space = env.observation_space["q_position"]
+    q_space = env.observation_space["ee_position"]
     image_space = env.observation_space["image"]
 
     q_shape = q_space.shape
     in_channels, frame_w, frame_h = image_space.shape
     
-    residual = False
-    channels = [in_channels, 16, 32]
-    kernel = 3
-    m_kernel = 2
+    residual = True
+    channels = [in_channels, 16, 32, 32]
+    kernel = 3          
+    m_kernel = 5
     n_layers = len(channels) - 1
 
-    out_q_features = 10
+    out_vector_features = 50
     features_dim = 128          
 
     # Use your custom feature extractor in the policy_kwargs
@@ -32,7 +32,7 @@ if __name__ == "__main__":
         features_extractor_kwargs=dict(features_dim = features_dim,
                                        residual = residual, 
                                        channels = channels, kernel = kernel, m_kernel = m_kernel,
-                                       n_layers = n_layers, out_q_features = out_q_features),
+                                       n_layers = n_layers, out_vector_features = out_vector_features),
         net_arch=dict(
             pi=[features_dim, 32],  # Adjust the size of these layers based on your requirements
             vf=[features_dim, 32],  # Adjust the size of these layers based on your requirements
@@ -40,11 +40,11 @@ if __name__ == "__main__":
         share_features_extractor = True
     )
 
-    # model = SAC("MultiInputPolicy", env, policy_kwargs=policy_kwargs, 
-    #             verbose=100, buffer_size = 30000,  batch_size = 256, tensorboard_log="logs/", train_freq=10,
-    #             learning_rate = 0.00073, gamma = 0.98, seed = 42,
-    #             use_sde = True, sde_sample_freq = 8)         # See logs: tensorboard --logdir logs/
-    
+    model = SAC("MultiInputPolicy", env, policy_kwargs=policy_kwargs, 
+                verbose=100, buffer_size = 30000,  batch_size = 256, tensorboard_log="logs/", train_freq=10,
+                learning_rate = 0.00073, gamma = 0.98, seed = 42,
+                use_sde = True, sde_sample_freq = 8)         # See logs: tensorboard --logdir logs/
+    # print(model.policy)
     # model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", progress_bar = True)
     
     # model.save("./models/sac_ur5_stage_1.0")
@@ -52,8 +52,8 @@ if __name__ == "__main__":
     # Testing
     obs, info = env.reset()
     while True:
-        # action, _states = model.predict(obs)
-        action = env.action_space.sample()
+        action, _states = model.predict(obs)
+        # action = env.action_space.sample()
 
         obs, reward, terminated, truncated, info = env.step(action)
 
