@@ -21,7 +21,6 @@ def add_noise(array, std = 0.5):
 
     return np.random.normal(loc=0, scale=std, size=np.array(array).shape)
 
-
 # Sets the camera with the class parameters and the desiresd coordiantes
 def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
     '''
