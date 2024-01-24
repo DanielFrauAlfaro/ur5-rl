@@ -7,6 +7,26 @@ import numpy as np
 import cv2 as cv
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
+# Uniform noise layer
+'''
+Applies noise to an input between two parameters:
+    - low: lowest possible noise
+    - high: highest possible noise
+'''
+class UniformNoiseLayer(nn.Module):
+    def __init__(self, low = -0.1, high = 0.1):
+        super(UniformNoiseLayer, self).__init__()
+
+        # --- Parameters ---
+        self.low = low
+        self.high = high
+    
+    # Forward method
+    def forward(self, x):
+        # Applies random noise and clips it between both values
+        return x + torch.rand_like(x) * (self.high - self.low) + self.low
+
+
 
 # Resiudual block
 '''
@@ -26,12 +46,12 @@ class ResidualBlock(nn.Module):
         # --- Parameters ---
         self.end_l = end_layer
         self.residual = residual
-        self.device = device
+        dropout_prob = 0.3
 
         # Parameters as tensors for GPU conputation
-        self.end_l_tensor = torch.tensor(end_layer, dtype=torch.int8, device = device)
+        self.end_l_tensor = torch.tensor(not end_layer, dtype=torch.int8, device = device)
         self.residual_tensor = torch.tensor(residual, dtype=torch.int8, device = device)
-        
+
         # Regular Layers
         '''
         First convoltion:
@@ -47,14 +67,16 @@ class ResidualBlock(nn.Module):
             # First convolutional
             self.conv1 = nn.Sequential(nn.Conv2d(in_channels  = in_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
                                     nn.MaxPool2d(kernel_size = kernel_max), 
-                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1))
+                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
+                                    nn.Dropout(p = dropout_prob))
             
             # Residual convolutional
             self.conv2 = nn.Sequential(nn.ReLU(), 
                                     nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
                                     nn.ReLU(), 
                                     nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
-                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1))               
+                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
+                                    nn.Dropout(p = dropout_prob))               
 
 
         # Final layer: adds softmax and flatten with reshaping convolutionals 
@@ -63,6 +85,8 @@ class ResidualBlock(nn.Module):
             self.conv1 = nn.Sequential(nn.ReLU(),
                                        nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 1), 
                                        nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
+                                       nn.Dropout(p = dropout_prob),
+                                       UniformNoiseLayer(-0.1, 0.1),
                                        nn.Softmax2d(),
                                        nn.Flatten())
             
@@ -71,11 +95,12 @@ class ResidualBlock(nn.Module):
     
     # Forward method
     def forward(self, x):
+        
         # First layer
         x = self.conv1(x)
         
         # Residual connection
-        x = x + (1.0 - self.end_l_tensor) * self.residual_tensor * self.conv2(x)
+        x = x + self.end_l_tensor * self.residual_tensor * self.conv2(x)
         
         return x
 
@@ -110,20 +135,18 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         self.image_extractor = nn.Sequential(*(self.build_conv()))      # Images
         self.vector_extractor = nn.Sequential(                          # Position Vector
             nn.Linear(in_features=q_space.shape[0], out_features = self.out_vector_features),
-            nn.ReLU())
+            nn.Tanh())
         
 
         # Obtains the output dimensions of the flatten convoutioanl extractor layers
         with torch.no_grad():
             n_flatten = self.image_extractor(
-                torch.as_tensor(observation_space.sample()["image"]).float()
+                torch.tensor(observation_space.sample()["image"], dtype=torch.float32, device = self.device)
             )
 
 
         # Obtains the features dimensions combined
         self.features_dim_ = n_flatten.shape[0] * n_flatten.shape[1] + self.out_vector_features
-
-        print("Features dim: ", self.features_dim_)
         
         # MLP for combining features layers' outputs into a fixed dimension vector specified
         self.n_linear = nn.Sequential(nn.Linear(in_features = self.features_dim_, out_features = features_dim), nn.ReLU())
@@ -131,7 +154,7 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
 
     # Forward method
     def forward(self, observations) -> torch.Tensor:
-        
+
         # Obtain inputs as torch tensors for GPU computation
         image_tensor = torch.as_tensor(observations["image"], device=self.device, dtype=torch.float32)
         q_tensor = torch.as_tensor(observations["ee_position"], device=self.device, dtype=torch.float32)
@@ -140,8 +163,10 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         image_features = self.image_extractor(image_tensor)
         vector_features = self.vector_extractor(q_tensor)
 
+        ret = self.n_linear(torch.cat([image_features, vector_features], dim=1))
+
         # Returns combined features
-        return self.n_linear(torch.cat([image_features, vector_features], dim=1))
+        return ret
     
 
     # Build convolutional feature extractor with:
@@ -159,7 +184,7 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         return [ResidualBlock(in_channels = self.channels[i],
                               out_channels = self.channels[i + 1],
                               kernel_size = self.kernel, device = self.device, residual = self.residual,
-                              kernel_max = self.m_kernel, end_layer = (i == self.n_layers-1)) for i in range(self.n_layers)]
+                              kernel_max = self.m_kernel, end_layer = (i == self.n_layers-1)).to(self.device) for i in range(self.n_layers)]
 
         
 
