@@ -76,7 +76,7 @@ if __name__ == "__main__":
        
     eval_log_dir = "my_models_eval/"
     eval_callback = CustomEvalCallback(eval_env, best_model_save_path=eval_log_dir,
-                                  log_path=eval_log_dir, eval_freq=max(100 // n_training_envs, 1),
+                                  log_path=eval_log_dir, eval_freq=max(500 // n_training_envs, 1),
                                   n_eval_episodes=1, deterministic=False,
                                   render=False)
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
                 verbose=100, buffer_size = 10000,  batch_size = 128, tensorboard_log="logs/", 
                 train_freq=10, learning_rate = 0.001, gamma = 0.99, seed = 42,
-                use_sde = False, sde_sample_freq = 8, action_noise = action_noise)         # See logs: tensorboard --logdir logs/
+                use_sde = False, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
     
 
     if not TEST:
