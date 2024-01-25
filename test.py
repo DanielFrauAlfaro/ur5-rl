@@ -1,63 +1,85 @@
 import ur5_rl
 import gymnasium as gym
 from stable_baselines3 import SAC
-from stable_baselines3 import SAC
-from stable_baselines3.common.vec_env import SubprocVecEnv
+from stable_baselines3.common.vec_env import VecNormalize
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.noise import NormalActionNoise
+from stable_baselines3.common.callbacks import EvalCallback
 from networks_SB import CustomCombinedExtractor
 import numpy as np
 import cv2 as cv
+import os
 
 
 TEST = False
+env_id = "ur5_rl/Ur5Env-v0"
+n_training_envs = 1
+n_eval_envs = 2
 
-def make_env(env_id: str, rank: int, seed: int = 0):
-    """
-    Utility function for multiprocessed env.
 
-    :param env_id: the environment ID
-    :param num_env: the number of environments you wish to have in subprocesses
-    :param seed: the inital seed for RNG
-    :param rank: index of the subprocess
-    """
-    def _init():
-        env = gym.make(env_id, render_mode="DIRECT")
-        env.reset(seed=seed + rank)
-        return env
+class CustomEvalCallback(EvalCallback):
+    def __init__(self, eval_env, **kwargs):
+        super(CustomEvalCallback, self).__init__(eval_env, **kwargs)
+        self.best_mean_reward = -float('inf')
 
-    return _init
+    def on_step(self) -> bool:
 
+        # Call the parent on_step method to handle the default behavior
+        continue_training = super().on_step()
+
+        # Custom logic to save the best model based on mean rewards
+        if self.best_mean_reward < self.best_mean_reward:
+            self.best_mean_reward = self.best_mean_reward
+            # Save the best model
+            self.model.save(self.best_model_save_path)
+        
+        if self.n_calls % self.eval_freq == 0:
+            self.eval_env.close()
+            aux_env = make_vec_env(env_id, n_envs = n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
+            self.eval_env = VecNormalize(aux_env, norm_obs=True, norm_reward=True)
+            self.training_env.reset()
+
+
+        return continue_training
 
 
 if __name__ == "__main__":
     print("|| Compiling ...")
-    env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     
+    
+    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
+    vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=True, training = True)
+
+    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
+    eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=True, training = False)
 
 
 
-
-    env_id = "ur5_rl/Ur5Env-v0"
-    num_cpu = 3  # Number of processes to use
-    # Create the vectorized environment
-    vec_env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
-
-
-
-
-    q_space = env.observation_space["ee_position"]
-    image_space = env.observation_space["image"]
+    q_space = vec_env.observation_space["ee_position"]
+    image_space = vec_env.observation_space["image"]
 
     q_shape = q_space.shape
     in_channels, frame_w, frame_h = image_space.shape
     
     residual = False
-    channels = [in_channels, 16, 32]
+    channels = [in_channels, 16, 32, 32]
     kernel = 3          
-    m_kernel = 3
+    m_kernel = 5
     n_layers = len(channels) - 1
 
-    out_vector_features = 70
-    features_dim = 128          
+    out_vector_features = 100
+    features_dim = 256   
+
+    n_actions = vec_env.action_space.shape[-1]
+    action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
+       
+    eval_log_dir = "my_models_eval/"
+    eval_callback = CustomEvalCallback(eval_env, best_model_save_path=eval_log_dir,
+                                  log_path=eval_log_dir, eval_freq=max(100 // n_training_envs, 1),
+                                  n_eval_episodes=1, deterministic=False,
+                                  render=False)
+
 
     # Use your custom feature extractor in the policy_kwargs
     policy_kwargs = dict(
@@ -74,28 +96,38 @@ if __name__ == "__main__":
     )
 
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
-                verbose=100, buffer_size = 10000,  batch_size = 128, tensorboard_log="logs/", train_freq=10,
-                learning_rate = 0.001, gamma = 0.99, seed = 42,
-                use_sde = False, sde_sample_freq = 8)         # See logs: tensorboard --logdir logs/
+                verbose=100, buffer_size = 10000,  batch_size = 128, tensorboard_log="logs/", 
+                train_freq=10, learning_rate = 0.001, gamma = 0.99, seed = 42,
+                use_sde = False, sde_sample_freq = 8, action_noise = action_noise)         # See logs: tensorboard --logdir logs/
     
 
     if not TEST:
-        model.learn(total_timesteps=6300, log_interval=5, tb_log_name= "Test", progress_bar = True)
+        model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = eval_callback, progress_bar = True)
         model.save("./models/sac_ur5_stage_teset")
     else:
-        model = SAC.load("./models/sac_ur5_stage_1.2")
+        model = SAC.load("./my_models_eval/best_model.zip")
     
     
     model.policy.eval()
     print("... Testing ...")
-    
-    obs, info = env.reset()
+    # mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
+    # print("Mean Reward: ", mean_reward)
+    # print("STD reward:  ", std_reward, "\n\n")
+
+    # Close enviroments
+    vec_env.close()
+    eval_env.close()
+
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+    obs, info = vec_env.reset()
     while True:
-        action, _states = model.predict(obs)
-        obs, reward, terminated, truncated, info = env.step(action)
+        action, _states = model.predict(obs, deterministic = True)
+        obs, reward, terminated, truncated, info = vec_env.step(action)
+
+        vec_env.render()
 
         if terminated or truncated:
-            obs, info = env.reset()
+            obs, info = vec_env.reset()
             
 
     
