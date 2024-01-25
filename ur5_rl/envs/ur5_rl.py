@@ -21,9 +21,10 @@ from scipy.spatial.transform import Rotation
 class UR5Env(gym.Env):
     # Environment Metadata
     metadata = {'render_modes': ['DIRECT', 'GUI'],
-                'render_fps': 60}  
+                'render_fps': 60,
+                'show': False}  
   
-    def __init__(self, render_mode="DIRECT"):    
+    def __init__(self, render_mode="DIRECT", show = False):    
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
@@ -39,12 +40,12 @@ class UR5Env(gym.Env):
         # --- Action limits ---
         # Joint actions
         self.max_action = 0.05
-        self._action_limits = [-np.ones(6)*self.max_action, np.ones(6)*self.max_action]
+        self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
         self.max_action_g = 2       # Max action G is two because the robot class converts it to integer
-        self._action_limits[0] = np.append(self._action_limits[0], -self.max_action_g)
-        self._action_limits[1] = np.append(self._action_limits[1],  self.max_action_g)
+        self._action_limits[0] = np.append(self._action_limits[0], -1)
+        self._action_limits[1] = np.append(self._action_limits[1],  1)
 
         # Frame height and width
         self.frame_h = 200
@@ -72,7 +73,7 @@ class UR5Env(gym.Env):
                                high= np.float32(np.array(self._ee_limits[1])), dtype=np.float32),
 
 
-            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(2, self.frame_w, self.frame_h), dtype=np.uint8)
+            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(2, self.frame_w, self.frame_h), dtype=np.float16)
         })
 
         # Time limit of the episode (in seconds)
@@ -83,6 +84,8 @@ class UR5Env(gym.Env):
 
         # Checks if the selected render mode is within the possibles
         assert render_mode is None or render_mode in self.metadata["render_modes"]
+
+        self.show = show
 
         # Start seed
         self.np_random, __ = gym.utils.seeding.np_random()
@@ -129,6 +132,8 @@ class UR5Env(gym.Env):
                               2, 2, 2,
                               2, 2, 2,
                               0.1, 0.1])
+
+        print(self._client)
 
     
     # Computes the whole reward
@@ -203,7 +208,12 @@ class UR5Env(gym.Env):
                                 frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, )
 
         # Stores the first frame (external camera)
-        obs[self._indices[-1]] = self.frame[0].astype(np.uint8)
+        normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / (np.max(self.frame[0][0]) - np.min(self.frame[0][0]))
+        normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / (np.max(self.frame[0][1]) - np.min(self.frame[0][1]))
+
+        merged = cv.merge([normalized_image_0, normalized_image_1])
+        merged = np.transpose(merged, (2,0,1))
+        obs[self._indices[-1]] = merged.astype(np.float16)
 
         return obs
 
@@ -224,16 +234,19 @@ class UR5Env(gym.Env):
             - Info (dict)
         '''
         
+        action *= self.max_action
+        action[-1] /= self.max_action * self.max_action_g
 
         # Computes the action
         self._ur5.apply_action_c(action)
         
         # Advances the simulation
-        p.stepSimulation()
+        p.stepSimulation(self._client)
         
         # --- Debugger ---
-        cv.imshow("Station", self.frame[0][0])
-        cv.waitKey(1)
+        if self.show:
+            cv.imshow("Station " + str(self._client), self.frame[0][0])
+            cv.waitKey(1)
 
         # Computes the rewards after applying the action
         reward = self.compute_reward()
@@ -330,7 +343,7 @@ class UR5Env(gym.Env):
 
 
     # Render function
-    def render(self, trans=False):
+    def render(self):
         cv.imshow("Station", self.frame[0][0])
         cv.waitKey(1)
 
@@ -338,6 +351,7 @@ class UR5Env(gym.Env):
     # Close function: shutdowns the simulation
     def close(self):
         p.disconnect(self._client) 
+        cv.destroyAllWindows()
 
 
     # Set seed
