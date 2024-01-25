@@ -44,14 +44,14 @@ class UR5e:
         self.ur5_joints_id = []
         self.gripper_joints_id = []
 
-        numJoints = p.getNumJoints(self.id)
+        numJoints = p.getNumJoints(self.id, physicsClientId = self.client)
         jointInfo = collections.namedtuple("jointInfo",["id","name","type",'damping','friction',"lowerLimit","upperLimit","maxForce","maxVelocity","controllable"])
         
         list_attr = {}
 
         # Iterates over each joint
         for i in range(numJoints):
-            info = p.getJointInfo(self.id, i)
+            info = p.getJointInfo(self.id, i, physicsClientId = self.client)
             jointID = info[0]
             jointName = info[1].decode("utf-8")
             jointType = info[2]
@@ -157,7 +157,7 @@ class UR5e:
             - action: a set of joint positions according to the ids.
         [shoulder_pan, shoulder_lift, elbow, wrist_1, wrist_2, wrist_3] (list)
         '''
-
+        
         p.setJointMotorControlArray(bodyUniqueId=self.id, 
                                     jointIndices=self.ur5_joints_id, 
                                     controlMode=p.POSITION_CONTROL,
