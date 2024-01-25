@@ -7,7 +7,8 @@ import numpy as np
 import cv2 as cv
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
-# Uniform noise layer
+# Uniform noise layer --> DEPRECATED // NOT USED
+# se deja para tener info en un futuro
 '''
 Applies noise to an input between two parameters:
     - low: lowest possible noise
@@ -86,7 +87,6 @@ class ResidualBlock(nn.Module):
                                        nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 1), 
                                        nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
                                        nn.Dropout(p = dropout_prob),
-                                       UniformNoiseLayer(-0.1, 0.1),
                                        nn.Softmax2d(),
                                        nn.Flatten())
             
@@ -128,12 +128,12 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
 
 
         # --- Environment observation space ---
-        q_space = observation_space["ee_position"]  # Robot Ende - Effector Positions
+        q_space = observation_space["ee_position"]  # Robot End - Effector Positions
         image_space = observation_space["image"]    # Image
 
         # --- Feature extractors ---
         self.image_extractor = nn.Sequential(*(self.build_conv()))      # Images
-        self.vector_extractor = nn.Sequential(                          # Position Vector
+        self.vector_extractor = nn.Sequential(nn.BatchNorm1d(num_features=7),                          # Position Vector
             nn.Linear(in_features=q_space.shape[0], out_features = self.out_vector_features),
             nn.Tanh())
         
