@@ -66,7 +66,8 @@ class ResidualBlock(nn.Module):
         '''
         if not self.end_l:
             # First convolutional
-            self.conv1 = nn.Sequential(nn.Conv2d(in_channels  = in_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
+            self.conv1 = nn.Sequential(nn.InstanceNorm2d(in_channels),
+                                    nn.Conv2d(in_channels  = in_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
                                     nn.MaxPool2d(kernel_size = kernel_max), 
                                     nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
                                     nn.Dropout(p = dropout_prob))
