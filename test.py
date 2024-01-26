@@ -183,7 +183,7 @@ if __name__ == "__main__":
             pi=[features_dim, 16],  # Adjust the size of these layers based on your requirements
             vf=[features_dim, 16],  # Adjust the size of these layers based on your requirements
             qf=[features_dim, 16]),
-        share_features_extractor = True
+        share_features_extractor = False
     )
 
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
