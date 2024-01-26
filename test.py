@@ -1,15 +1,16 @@
 import ur5_rl
 import gymnasium as gym
 from stable_baselines3 import SAC
-from stable_baselines3.common.vec_env import VecNormalize
+from stable_baselines3.common.vec_env import VecNormalize, VecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.noise import NormalActionNoise
-from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.callbacks import EvalCallback, BaseCallback
 from networks_SB import CustomCombinedExtractor
 import numpy as np
 import cv2 as cv
 import os
+import imageio
 
 
 TEST = False
@@ -42,6 +43,93 @@ class CustomEvalCallback(EvalCallback):
 
 
         return continue_training
+
+# class SaveVecVideoCallback(BaseCallback):
+#     """
+#     Callback for saving a video of the environment to TensorBoard during training.
+
+#     :param eval_env: The environment used for evaluation
+#     :param eval_freq: Frequency at which to save videos (in terms of training steps)
+#     :param n_eval_episodes: Number of episodes to run for each evaluation
+#     :param deterministic: Whether to use deterministic or stochastic policy during evaluation
+#     """
+
+#     def __init__(self, eval_env: VecEnv, eval_freq: int = 1000, n_eval_episodes: int = 1, deterministic: bool = False):
+#         super(SaveVecVideoCallback, self).__init__(callback_order=eval_freq)
+#         self.eval_env = eval_env
+#         self.eval_freq = eval_freq
+#         self.n_eval_episodes = n_eval_episodes
+#         self.deterministic = deterministic
+
+#     def _on_step(self) -> bool:
+#         if self.eval_freq > 0 and self.num_timesteps % self.eval_freq == 0:
+#             self.eval_policy()
+#         return True
+
+#     def eval_policy(self) -> None:
+#         """
+#         Evaluate the policy and save video to TensorBoard.
+#         """
+#         # Save video to TensorBoard
+#         video_frames = []
+#         obs, info = self.eval_env.reset()
+#         for _ in range(self.n_eval_episodes):
+#             terminated, truncated = False, False
+#             while not (terminated or truncated):
+#                 action, _ = self.model.predict(obs, deterministic=self.deterministic)
+#                 obs, _, terminated, truncated, _ = self.eval_env.step(action)
+#                 video_frames.append(self.eval_env.render())
+
+#         # Convert video frames to uint8
+#         video_frames = np.array(video_frames, dtype=np.uint8)
+
+#         # Write video to TensorBoard
+#         self.model.logger.record('logs/Videos', video_frames, len(video_frames))
+
+class SaveVecVideoCallback(BaseCallback):
+    """
+    Callback for saving a video of the environment to a file during training.
+
+    :param eval_env: The environment used for evaluation
+    :param eval_freq: Frequency at which to save videos (in terms of training steps)
+    :param n_eval_episodes: Number of episodes to run for each evaluation
+    :param deterministic: Whether to use deterministic or stochastic policy during evaluation
+    :param video_file: Name of the video file to save
+    """
+
+    def __init__(self, eval_env: VecEnv, eval_freq: int = 1000, n_eval_episodes: int = 1, deterministic: bool = False, video_file: str = 'output_video.mp4'):
+        super(SaveVecVideoCallback, self).__init__(callback_order=1000)
+        self.eval_env = eval_env
+        self.eval_freq = eval_freq
+        self.n_eval_episodes = n_eval_episodes
+        self.deterministic = deterministic
+        self.video_file = video_file
+
+    def _on_step(self) -> bool:
+        if self.eval_freq > 0 and self.num_timesteps % self.eval_freq == 0:
+            self.eval_policy()
+        return True
+
+    def eval_policy(self) -> None:
+        """
+        Evaluate the policy and save video to a file.
+        """
+        # Save video to a file using imageio
+        video_frames = []
+        obs, info = self.eval_env.reset()
+        for _ in range(self.n_eval_episodes):
+            terminated, truncated = False, False
+            while not (terminated or truncated):
+                action, _ = self.model.predict(obs, deterministic=self.deterministic)
+                obs, _, terminated, truncated, _ = self.eval_env.step(action)
+                video_frames.append(self.eval_env.render())
+
+        # Convert video frames to uint8
+        video_frames = np.array(video_frames, dtype=np.uint8)
+
+        # Write video frames to a file using imageio
+        imageio.mimsave(self.video_file, video_frames, fps=30)
+
 
 
 if __name__ == "__main__":
@@ -79,6 +167,9 @@ if __name__ == "__main__":
                                   log_path=eval_log_dir, eval_freq=max(500 // n_training_envs, 1),
                                   n_eval_episodes=1, deterministic=False,
                                   render=False)
+    
+    # video_callback = SaveVecVideoCallback(eval_env, eval_freq=max(500 // n_training_envs, 1), n_eval_episodes=1, deterministic=False)
+    video_callback = SaveVecVideoCallback(eval_env, eval_freq=1000, n_eval_episodes=1, deterministic=False, video_file='output_video.mp4')
 
 
     # Use your custom feature extractor in the policy_kwargs
@@ -102,7 +193,7 @@ if __name__ == "__main__":
     
 
     if not TEST:
-        model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
+        model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = [eval_callback, video_callback], progress_bar = True)
         model.save("./models/sac_ur5_stage_teset")
     else:
         model = SAC.load("./my_models_eval/best_model.zip")
