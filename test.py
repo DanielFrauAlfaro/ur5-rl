@@ -153,7 +153,7 @@ if __name__ == "__main__":
     residual = False
     channels = [in_channels, 16, 32, 32]
     kernel = 3          
-    m_kernel = 5
+    m_kernel = 6
     n_layers = len(channels) - 1
 
     out_vector_features = 100
@@ -180,9 +180,9 @@ if __name__ == "__main__":
                                        channels = channels, kernel = kernel, m_kernel = m_kernel,
                                        n_layers = n_layers, out_vector_features = out_vector_features),
         net_arch=dict(
-            pi=[features_dim, 16],  # Adjust the size of these layers based on your requirements
-            vf=[features_dim, 16],  # Adjust the size of these layers based on your requirements
-            qf=[features_dim, 16]),
+            pi=[features_dim, 32],  # Adjust the size of these layers based on your requirements
+            vf=[features_dim, 32],  # Adjust the size of these layers based on your requirements
+            qf=[features_dim, 32]),
         share_features_extractor = False
     )
 

@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.085
+        self.max_action = 0.09
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
@@ -128,10 +128,10 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-50, 
-                              10, 10, 10,
-                              10,10,10,
-                              10,10,10,
-                              0.1, 0.1])
+                              0.001, 0.001, 0.001,
+                              0.001, 0.001, 0.001,
+                              0.001, 0.001, 0.001,
+                              0.001, 0.001])
 
         print(self._client)
 
