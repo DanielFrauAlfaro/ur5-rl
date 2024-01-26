@@ -98,7 +98,7 @@ class SaveVecVideoCallback(BaseCallback):
     """
 
     def __init__(self, eval_env: VecEnv, eval_freq: int = 1000, n_eval_episodes: int = 1, deterministic: bool = False, video_file: str = 'output_video.mp4'):
-        super(SaveVecVideoCallback, self).__init__(callback_order=1000)
+        super(SaveVecVideoCallback, self).__init__()
         self.eval_env = eval_env
         self.eval_freq = eval_freq
         self.n_eval_episodes = n_eval_episodes
