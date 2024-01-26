@@ -36,7 +36,7 @@ class CustomEvalCallback(EvalCallback):
         
         if self.n_calls % self.eval_freq == 0:
             self.eval_env.close()
-            aux_env = make_vec_env(env_id, n_envs = n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
+            aux_env = make_vec_env(env_id, n_envs = n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
             self.eval_env = VecNormalize(aux_env, norm_obs=True, norm_reward=True)
             self.training_env.reset()
 
@@ -49,10 +49,10 @@ if __name__ == "__main__":
     
     
     vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
-    vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=True, training = True)
+    vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=False, training = True)
 
-    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
-    eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=True, training = False)
+    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
+    eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=False, training = False)
 
 
 
