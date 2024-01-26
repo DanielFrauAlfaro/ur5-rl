@@ -293,8 +293,8 @@ class UR5Env(gym.Env):
         # --- Create Entities ---
         
         # Random object position and orientation
-        pos, orn = np.random.uniform([[0.01, 0.45, 0.85], [-3.1415,-3.1415, -3.1415]], 
-                                     [[0.3,  0.65, 0.85], [3.1415,  3.1415,  3.1415]])
+        pos, orn = np.random.uniform([[0.01,  0.4, 0.85], [-3.1415,-3.1415, -3.1415]], 
+                                     [[0.35,  0.7, 0.85], [3.1415,  3.1415,  3.1415]])
 
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         
