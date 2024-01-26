@@ -102,7 +102,7 @@ if __name__ == "__main__":
     
 
     if not TEST:
-        model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
+        model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = eval_callback, progress_bar = True)
         model.save("./models/sac_ur5_stage_teset")
     else:
         model = SAC.load("./my_models_eval/best_model.zip")
