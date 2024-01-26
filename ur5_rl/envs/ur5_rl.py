@@ -28,7 +28,7 @@ class UR5Env(gym.Env):
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -10, np.ones(6) * 10]
+        self._qd_limits = [np.ones(6) * -15, np.ones(6) * 15]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.075
+        self.max_action = 0.085
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
@@ -77,7 +77,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 10
+        self._t_limit = 12
         self._t_act = time.time()
 
 
@@ -127,10 +127,10 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = math.inf
 
         # Reward mask
-        self.mask = np.array([-20, 
-                              4, 4, 4,
-                              2, 2, 2,
-                              2, 2, 2,
+        self.mask = np.array([-50, 
+                              10, 10, 10,
+                              10,10,10,
+                              10,10,10,
                               0.1, 0.1])
 
         print(self._client)
