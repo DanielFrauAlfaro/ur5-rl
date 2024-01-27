@@ -40,7 +40,7 @@ class UR5Env(gym.Env):
         # --- Action limits ---
         # Joint actions
         self.max_action = 0.09
-        self._action_limits = [-np.ones(6), np.ones(6)]
+        self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1,1,0,1,1,1])]
         
         # Appends gripper actions
         self.max_action_g = 2       # Max action G is two because the robot class converts it to integer
