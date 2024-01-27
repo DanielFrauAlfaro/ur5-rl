@@ -168,7 +168,8 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     distance = np.linalg.norm(wrist_pos - obj_pos)
 
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
-    reward = 1 if distance < dist_obj_wrist else -10
+    reward = 1 if distance < dist_obj_wrist else -2
+    reward /= distance
 
     # Updates distance
     dist_obj_wrist = distance
