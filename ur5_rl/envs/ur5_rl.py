@@ -255,7 +255,7 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 10
+            reward -= 60
 
         # Get the new state after the action
         obs = self.get_observation()
