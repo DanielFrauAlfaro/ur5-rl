@@ -184,13 +184,13 @@ if __name__ == "__main__":
     )
 
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
-                verbose=100, buffer_size = 16000,  batch_size = 256, tensorboard_log="logs/", 
+                verbose=100, buffer_size = 10000,  batch_size = 256, tensorboard_log="logs/", 
                 train_freq=10, learning_rate = 0.00073, gamma = 0.99, seed = 42,
                 use_sde = False, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
     
 
     if not TEST:
-        model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
+        model.learn(total_timesteps=18000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
         model.save("./my_models_eval/best_model.zip")
     else:
         model = SAC.load("./my_models_eval/best_model.zip")
