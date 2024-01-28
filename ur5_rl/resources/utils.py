@@ -122,6 +122,7 @@ def get_wrist_pos(client, robot_id):
     # Get the position and orientation of the ee_link
     link_state = p.getLinkState(robot_id, 11, computeLinkVelocity=1, computeForwardKinematics=1, physicsClientId = client)
     pos, orn = link_state[0], link_state[1]
+    # pos[-1] += 0.01
 
     # ----- Extra code for changing axis ------
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
@@ -141,6 +142,7 @@ def get_wrist_pos(client, robot_id):
     y_axis_local = np.dot(rotation_matrix, y_axis_local)
     x_axis_local *= -1
 
+    
     return np.array(pos), np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
@@ -167,13 +169,17 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # Compures the distance between them
     # distance = np.linalg.norm(wrist_pos - obj_pos)
 
-    distance_xyz = [round(x - y, 2) for x, y in zip(wrist_pos, obj_pos)]      # if round, round to 3
+    distance_xyz = [math.sqrt((x - y)**2) for x, y in zip(wrist_pos, obj_pos)]      # if round, round to 3
     
-    # aux = [round(y - x, 2) for x, y in zip(distance_xyz, dist_obj_wrist)]
+    aux = [round(y - x, 3) for x, y in zip(distance_xyz, dist_obj_wrist)]
+    # print(distance_xyz)
+    # print(dist_obj_wrist)
+    # print([i < j for i,j in zip(distance_xyz, dist_obj_wrist)])
 
+    not_approx = False in [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
     # reward = 1 if distance < dist_obj_wrist else -2
-    reward = 1 if distance_xyz <= dist_obj_wrist else -1
+    reward = -1 if not_approx else 1
     # reward /= distance
 
     # Updates distance

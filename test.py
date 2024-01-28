@@ -193,7 +193,7 @@ if __name__ == "__main__":
         model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
         model.save("./my_models_eval/best_model.zip")
     else:
-        model = SAC.load("./my_models_eval/best_model.zip")
+        model = SAC.load("./my_models_eval/best_model_sep.zip")
     
     
     model.policy.eval()
