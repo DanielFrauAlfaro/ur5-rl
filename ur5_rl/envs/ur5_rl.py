@@ -124,7 +124,7 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = math.inf
+        self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
         self.mask = np.array([-50, 
@@ -132,9 +132,6 @@ class UR5Env(gym.Env):
                               5, 5, 5,
                               5, 5, 5,
                               2,2])
-
-        print(self._client)
-
     
     # Computes the whole reward
     def compute_reward(self):
