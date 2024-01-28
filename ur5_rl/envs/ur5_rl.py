@@ -116,7 +116,7 @@ class UR5Env(gym.Env):
 
         # Coordinates of the cameras
         self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],                 # External Camera 1
-                              [[-0.021, 0.456, 1.179], [3.134 + pi/2, -0.024, 1.58]]]       # Robot camera
+                              [[-0.021, 0.456, 1.179], [3.134 + pi/2, -0.024, 1.58]]]       # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
 
         self.std_cam = 0.0
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
