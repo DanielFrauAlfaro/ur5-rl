@@ -150,7 +150,7 @@ if __name__ == "__main__":
     residual = False
     channels = [in_channels, 16, 32, 32]
     kernel = 3          
-    m_kernel = 6
+    m_kernel = 3
     n_layers = len(channels) - 1
 
     out_vector_features = 100
