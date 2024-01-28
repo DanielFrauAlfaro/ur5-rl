@@ -190,10 +190,10 @@ if __name__ == "__main__":
     
 
     if not TEST:
-        model.learn(total_timesteps=16000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
+        model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
         model.save("./my_models_eval/best_model.zip")
     else:
-        model = SAC.load("./my_models_eval/best_model_sep.zip")
+        model = SAC.load("./my_models_eval/best_model(1).zip")
     
     
     model.policy.eval()
@@ -203,8 +203,9 @@ if __name__ == "__main__":
     # print("STD reward:  ", std_reward, "\n\n")
 
     # Close enviroments
-    vec_env.close()
-    eval_env.close()
+    # vec_env.close()
+    # eval_env.close()
+    # r = 0
 
     # vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     # obs, info = vec_env.reset()
@@ -213,12 +214,14 @@ if __name__ == "__main__":
     #     obs, reward, terminated, truncated, info = vec_env.step(action)
         
     #     print(reward)
+    #     r += reward
     #     img = vec_env.render()
     #     cv.imshow("AA", img)
     #     cv.waitKey(1)
 
     #     if terminated or truncated:
-    #         print("--")
+    #         print(r, "--")
+    #         r = 0
     #         obs, info = vec_env.reset()
             
 
