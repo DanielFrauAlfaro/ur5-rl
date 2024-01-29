@@ -65,11 +65,12 @@ class UR5e:
             
             list_attr[jointName] = jointID
 
-    
+            
             # If a joint is controllable ...
             if controllable:
                 # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
                 # print("--")
+                
 
                 # ... enables torque sensors, ...
                 p.enableJointForceTorqueSensor(bodyUniqueId=self.id, 
@@ -105,6 +106,8 @@ class UR5e:
         # Brings the robot and gripper to a starting position
         self.apply_action(self.q)
         self.apply_action_g(self.g)
+
+        
 
 
 

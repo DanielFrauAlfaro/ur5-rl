@@ -12,7 +12,7 @@ import cv2 as cv
 import os
 
 
-TEST = False
+TEST = True
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
 n_eval_envs = 2
@@ -49,10 +49,10 @@ if __name__ == "__main__":
     
     
     vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
-    vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=True, training = True)
+    # vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=True, training = True)
 
     eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
-    eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=True, training = False)
+    # eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=True, training = False)
 
 
 
@@ -62,10 +62,10 @@ if __name__ == "__main__":
     q_shape = q_space.shape
     in_channels, frame_w, frame_h = image_space.shape
     
-    residual = False
-    channels = [in_channels, 16, 32, 32]
+    residual = True
+    channels = [in_channels, 16, 32, 32, 32]
     kernel = 3          
-    m_kernel = 5
+    m_kernel = 3
     n_layers = len(channels) - 1
 
     out_vector_features = 100
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     
 
     if not TEST:
-        model.learn(total_timesteps=10000, log_interval=5, tb_log_name= "Test", callback = eval_callback, progress_bar = True)
+        model.learn(total_timesteps=15000, log_interval=5, tb_log_name= "Test", callback = eval_callback, progress_bar = True)
         model.save("./models/sac_ur5_stage_teset")
     else:
         model = SAC.load("./my_models_eval/best_model.zip")
@@ -121,10 +121,13 @@ if __name__ == "__main__":
     vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     obs, info = vec_env.reset()
     while True:
-        action, _states = model.predict(obs, deterministic = True)
+        action, _states = model.predict(obs, deterministic = False)
+
         obs, reward, terminated, truncated, info = vec_env.step(action)
 
-        vec_env.render()
+        img = (obs["image"][0]*255).astype(np.uint8)
+        cv.imshow("A", img)
+        cv.waitKey(1)
 
         if terminated or truncated:
             obs, info = vec_env.reset()

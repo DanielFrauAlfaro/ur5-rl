@@ -28,7 +28,7 @@ class UR5Env(gym.Env):
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -10, np.ones(6) * 10]
+        self._qd_limits = [np.ones(6) * -12, np.ones(6) * 12]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.075
+        self.max_action = 0.08
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
@@ -73,7 +73,7 @@ class UR5Env(gym.Env):
                                high= np.float32(np.array(self._ee_limits[1])), dtype=np.float32),
 
 
-            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(2, self.frame_w, self.frame_h), dtype=np.float16)
+            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(4, self.frame_w, self.frame_h), dtype=np.float16)
         })
 
         # Time limit of the episode (in seconds)
@@ -115,8 +115,8 @@ class UR5Env(gym.Env):
         # Camera positions variables: [[Position], [Orientation]]
 
         # Coordinates of the cameras
-        self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],                 # External Camera 1
-                              [[-0.021, 0.456, 1.179], [3.134 + pi/2, -0.024, 1.58]]]       # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
+        self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],     # External Camera 1
+                              [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]]        # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
 
         self.std_cam = 0.0
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
@@ -133,7 +133,6 @@ class UR5Env(gym.Env):
                               2, 2, 2,
                               0.1, 0.1])
 
-        print(self._client)
 
     
     # Computes the whole reward
@@ -211,8 +210,13 @@ class UR5Env(gym.Env):
         normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / (np.max(self.frame[0][0]) - np.min(self.frame[0][0]))
         normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / (np.max(self.frame[0][1]) - np.min(self.frame[0][1]))
 
-        merged = cv.merge([normalized_image_0, normalized_image_1])
+        normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
+        normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
+
+        merged = cv.merge([normalized_image_0, normalized_image_1, normalized_image_0_, normalized_image_1_])
         merged = np.transpose(merged, (2,0,1))
+        
+        
         obs[self._indices[-1]] = merged.astype(np.float16)
 
         return obs
@@ -325,7 +329,6 @@ class UR5Env(gym.Env):
         # Advances the simulation to robot's initial state
         for __ in range(40):
             p.stepSimulation(self._client)
-    
 
         # --- Reseting params 
         # Resets internal values
@@ -344,7 +347,8 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        cv.imshow("Station", self.frame[0][0])
+        return self.frame
+        cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 
 

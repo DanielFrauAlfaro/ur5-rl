@@ -284,7 +284,7 @@ def get_frames(client, camera_params, frame_h, frame_w, frame):
         frame[idx] = np.transpose(frame[idx], (2,0,1))
 
         # Computes images for the first one (external)
-        break
+        # break
 
     return frame
 
