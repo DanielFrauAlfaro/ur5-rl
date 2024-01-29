@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 # Define a simple residual block with a 3x3 kernel
 class ResidualBlock(nn.Module):
@@ -72,3 +73,13 @@ class ConvNetWithResidual(nn.Module):
 
 
 print(1//2)
+pos, orn = np.random.uniform([[0.3, 2], [0.2, 2]], [[1, 4],[40,4]])
+print(pos)
+print(orn)
+
+collisions_to_check = [[1, 2],
+                       [3, (1, "robotiq_finger_1_link_3")], 
+                       [3, (1, "robotiq_finger_2_link_3")], 
+                       [3, (1, "robotiq_finger_middle_link_3")]]
+
+print(collisions_to_check[1:])
