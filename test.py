@@ -12,7 +12,7 @@ import cv2 as cv
 import os
 
 
-TEST = False
+TEST = True
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
 n_eval_envs = 2
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
     # vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=True, training = True)
 
-    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
+    # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
     # eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=True, training = False)
 
 
@@ -74,11 +74,11 @@ if __name__ == "__main__":
     n_actions = vec_env.action_space.shape[-1]
     action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
        
-    eval_log_dir = "my_models_eval/"
-    eval_callback = CustomEvalCallback(eval_env, best_model_save_path=eval_log_dir,
-                                  log_path=eval_log_dir, eval_freq=max(500 // n_training_envs, 1),
-                                  n_eval_episodes=1, deterministic=False,
-                                  render=False)
+    # eval_log_dir = "my_models_eval/"
+    # eval_callback = CustomEvalCallback(eval_env, best_model_save_path=eval_log_dir,
+    #                               log_path=eval_log_dir, eval_freq=max(500 // n_training_envs, 1),
+    #                               n_eval_episodes=1, deterministic=False,
+    #                               render=False)
 
 
     # Use your custom feature extractor in the policy_kwargs
@@ -89,9 +89,9 @@ if __name__ == "__main__":
                                        channels = channels, kernel = kernel, m_kernel = m_kernel,
                                        n_layers = n_layers, out_vector_features = out_vector_features),
         net_arch=dict(
-            pi=[features_dim, 16],  # Adjust the size of these layers based on your requirements
-            vf=[features_dim, 16],  # Adjust the size of these layers based on your requirements
-            qf=[features_dim, 16]),
+            pi=[features_dim, 32],  # Adjust the size of these layers based on your requirements
+            vf=[features_dim, 32],  # Adjust the size of these layers based on your requirements
+            qf=[features_dim, 32]),
         share_features_extractor = True
     )
 
@@ -102,10 +102,10 @@ if __name__ == "__main__":
     
 
     if not TEST:
-        model.learn(total_timesteps=15000, log_interval=5, tb_log_name= "Test", callback = eval_callback, progress_bar = True)
-        model.save("./models/sac_ur5_stage_teset")
+        model.learn(total_timesteps=30000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
+        model.save("./models_eval/best_model_cameras.zip")
     else:
-        model = SAC.load("./my_models_eval/best_model.zip")
+        model = SAC.load("./models_eval/best_model_cameras")
     
     
     model.policy.eval()
@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     # Close enviroments
     vec_env.close()
-    eval_env.close()
+    # eval_env.close()
 
     vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     obs, info = vec_env.reset()
