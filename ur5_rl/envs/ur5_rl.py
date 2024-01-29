@@ -127,11 +127,11 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-50, 
-                              5, 5, 5,
-                              5, 5, 5,
-                              5, 5, 5,
-                              2,2])
+        self.mask = np.array([-40, 
+                              3, 3, 3,
+                              3, 3, 3,
+                              3, 3, 3,
+                              1,1])
     
     # Computes the whole reward
     def compute_reward(self):
@@ -150,7 +150,7 @@ class UR5Env(gym.Env):
                                                 dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
 
         # Collision reward
-        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
 
@@ -252,7 +252,7 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 60
+            reward -= 10
 
         # Get the new state after the action
         obs = self.get_observation()
