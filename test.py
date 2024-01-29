@@ -137,7 +137,7 @@ if __name__ == "__main__":
     
     vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
 
-    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
+    # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
 
 
 
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     q_shape = q_space.shape
     in_channels, frame_w, frame_h = image_space.shape
     
-    residual = False
+    residual = True
     channels = [in_channels, 16, 32, 32]
     kernel = 3          
     m_kernel = 3
@@ -159,14 +159,14 @@ if __name__ == "__main__":
     n_actions = vec_env.action_space.shape[-1]
     action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
        
-    eval_log_dir = "my_models_eval/"
-    eval_callback = CustomEvalCallback(eval_env, best_model_save_path=eval_log_dir,
-                                  log_path=eval_log_dir, eval_freq=max(500 // n_training_envs, 1),
-                                  n_eval_episodes=1, deterministic=False,
-                                  render=False)
+    # eval_log_dir = "my_models_eval/"
+    # eval_callback = CustomEvalCallback(eval_env, best_model_save_path=eval_log_dir,
+    #                               log_path=eval_log_dir, eval_freq=max(500 // n_training_envs, 1),
+    #                               n_eval_episodes=1, deterministic=False,
+    #                               render=False)
     
-    # video_callback = SaveVecVideoCallback(eval_env, eval_freq=max(500 // n_training_envs, 1), n_eval_episodes=1, deterministic=False)
-    video_callback = SaveVecVideoCallback(eval_env, eval_freq=1000, n_eval_episodes=1, deterministic=False, video_file='output_video.mp4')
+    # # video_callback = SaveVecVideoCallback(eval_env, eval_freq=max(500 // n_training_envs, 1), n_eval_episodes=1, deterministic=False)
+    # video_callback = SaveVecVideoCallback(eval_env, eval_freq=1000, n_eval_episodes=1, deterministic=False, video_file='output_video.mp4')
 
 
     # Use your custom feature extractor in the policy_kwargs
@@ -190,10 +190,10 @@ if __name__ == "__main__":
     
 
     if not TEST:
-        model.learn(total_timesteps=16000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
+        model.learn(total_timesteps=30000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
         model.save("./my_models_eval/best_model.zip")
     else:
-        model = SAC.load("./my_models_eval/best_model(1).zip")
+        model = SAC.load("./best_model.zip")
     
     
     model.policy.eval()
@@ -204,13 +204,13 @@ if __name__ == "__main__":
 
     # Close enviroments
     vec_env.close()
-    eval_env.close()
+    # eval_env.close()
     r = 0
 
     # vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     # obs, info = vec_env.reset()
     # while True:
-    #     action, _states = model.predict(obs, deterministic = True)
+    #     action, _states = model.predict(obs, deterministic = False)
     #     obs, reward, terminated, truncated, info = vec_env.step(action)
         
     #     # print(reward)
