@@ -127,11 +127,11 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-20, 
+        self.mask = np.array([-30, 
                               4, 4, 4,
-                              2, 2, 2,
-                              2, 2, 2,
-                              0.1, 0.1])
+                              3, 3, 3,
+                              3, 3, 3,
+                              1, 1])
 
 
     
