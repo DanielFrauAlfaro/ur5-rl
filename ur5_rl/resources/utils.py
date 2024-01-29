@@ -165,13 +165,14 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     wrist_pos, wrist_or = get_wrist_pos(client = client, robot_id=robot_id)
 
     # Compures the distance between them
-    # distance = np.linalg.norm(wrist_pos - obj_pos)
+    distance = np.linalg.norm(wrist_pos - obj_pos)
     distance_xyz = [abs(round(i - j, 3)) for i,j in zip(wrist_pos, obj_pos)]
     not_approx = False in [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]              # Se puede poner en un solo bucle con lo de arriba: optimizacion
 
 
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
-    reward = -1 if not not_approx else 1
+    reward = -1 if not_approx else 1
+    reward /= distance
 
     # Updates distance
     dist_obj_wrist = distance_xyz
