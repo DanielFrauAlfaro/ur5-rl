@@ -12,7 +12,7 @@ import cv2 as cv
 import os
 
 
-TEST = False
+TEST = True
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
 n_eval_envs = 2
@@ -207,22 +207,22 @@ if __name__ == "__main__":
     # eval_env.close()
     r = 0
 
-    # vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
-    # obs, info = vec_env.reset()
-    # while True:
-    #     action, _states = model.predict(obs, deterministic = False)
-    #     obs, reward, terminated, truncated, info = vec_env.step(action)
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+    obs, info = vec_env.reset()
+    while True:
+        action, _states = model.predict(obs, deterministic = True)
+        obs, reward, terminated, truncated, info = vec_env.step(action)
         
-    #     # print(reward)
-    #     r += reward
-    #     img = vec_env.render()
-    #     cv.imshow("AA", img)
-    #     cv.waitKey(1)
+        # print(reward)
+        r += reward
+        img = vec_env.render()
+        cv.imshow("AA", img)
+        cv.waitKey(1)
 
-    #     if terminated or truncated:
-    #         print(r, "--")
-    #         r = 0
-    #         obs, info = vec_env.reset()
+        if terminated or truncated:
+            print(r, "--")
+            r = 0
+            obs, info = vec_env.reset()
             
 
     
