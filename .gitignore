@@ -4,5 +4,11 @@ models
 my_models_eval
 *.zip
 pruebas.py
+ur5_rl/resources/__pycache__
+ur5_rl/env/__pycache__
+
 
 ./Dockerfile
+ur5_rl/resources/__pycache__/object.cpython-310.pyc
+ur5_rl/resources/__pycache__/table.cpython-310.pyc
+*.pyc
