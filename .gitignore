@@ -2,6 +2,6 @@ logs
 *.pyc
 models
 my_models_eval
-.zip
+*.zip
 
 ./Dockerfile
