@@ -90,8 +90,11 @@ class UR5e:
                     self.gripper_joints_id.append(jointID)
 
 
-        # Starting joint positions and velocities for the robot joints
+        # Starting joint positions (with noise) and velocities for the robot joints
         self.q = [-0.004, -1.549, -1.547, -pi/2.0, pi/2.0, pi/2.0]
+        q_noise = np.random.normal(0, 0.05, len(self.q))
+        self.q = (np.array(self.q) + np.array(q_noise)).tolist()
+
         self.qd = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         # Starting end effector's position
