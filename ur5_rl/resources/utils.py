@@ -122,7 +122,7 @@ def get_object_pos(client, object):
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
     
     pos = list(pos)
-    pos[-1] += 0.125
+    pos[-1] += 0.13
 
     # print_axis(client = client, pos = pos, rotation_matrix = rotation_matrix)
 
@@ -209,7 +209,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # print([i < j for i,j in zip(distance_xyz, dist_obj_wrist)])
     
     # Si hay por lo menos uno que es FALSE, le asigna el False
-    not_approx = False in [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
+    not_approx = False in [i <= j for i,j in zip(distance_xyz, dist_obj_wrist)]
 
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
     # reward = 1 if distance < dist_obj_wrist else -2
