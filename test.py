@@ -1,7 +1,7 @@
 import ur5_rl
 import gymnasium as gym
 from stable_baselines3 import SAC
-from stable_baselines3.common.vec_env import VecNormalize, VecEnv
+from stable_baselines3.common.vec_env import VecNormalize, VecEnv, SubprocVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.noise import NormalActionNoise
@@ -12,7 +12,7 @@ import cv2 as cv
 import os
 
 
-TEST = False
+TEST = True
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
 n_eval_envs = 2
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     print("|| Compiling ...")
     
     
-    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
+    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False}) #vec_env_cls = SubprocVecEnv
 
     # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
 
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         model.save("./my_models_eval/best_model.zip")
     else:
         print("|| Loading model for testing ...")
-        model = SAC.load("./my_models_eval/rl_model_17000_steps.zip")
+        model = SAC.load("./my_models_eval/rl_model_47000_steps.zip")
     
     
     model.policy.eval()
