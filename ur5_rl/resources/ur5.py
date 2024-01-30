@@ -25,6 +25,7 @@ class UR5e:
             rtb.RevoluteDH(d = 0.0997, alpha=-pi/2.0),
             rtb.RevoluteDH(d = 0.0996)
         ], name="UR5e")
+        self.__ur5.base = SE3.RPY(0,0,pi / 2)
     
 
         # Load the UR5 URDF
@@ -92,11 +93,11 @@ class UR5e:
 
 
         # Starting joint positions and velocities for the robot joints
-        self.q = [-0.004, -1.549, -1.547, -pi/2.0, pi/2.0, pi/2.0]
+        self.q = [-1.3360968459648296e-05, -1.5409607013524822, -1.6385327718060263, -1.3924517717591243, 1.5708117370946297, 2.0007906663413113]
         self.qd = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         # Starting end effector's position
-        self.ee = [0.1332997, 0.49190053, 0.48789219, -3.14, 0.0, -2.35658978]
+        # self.ee = [0.1332997, 0.49190053, 0.48789219, -3.14, 0.0, -2.35658978]
 
         # Gripper parameters
         self.m1 = 1.2218 / 140
@@ -128,7 +129,6 @@ class UR5e:
         # Converts the action to a
         action = self.ee + action
 
-        # Obtains XYZ and RPY positions
         x = action[0]                                 
         y = action[1]
         z = action[2]
@@ -137,18 +137,17 @@ class UR5e:
         pitch = action[4]
         yaw = action[5]
 
-        # Builds up the homogeneus transformation matrix for XYZ and RPY
+        # Builds up homogeneus matrix
         T = SE3(x, y, z)
         T_ = SE3.RPY(roll, pitch, yaw, order='zyx')
 
-        # Computes the complete transformation
-        self.T = T * T_
+        T = T * T_
 
         # Computes inverse kinematics
-        q = self.__ur5.ik_LM(self.T,q0 = self.q)
+        new_q = self.__ur5.ik_LM(T,q0 = self.q)
 
         # Applies the joint action (joint and gripper)
-        self.apply_action(q[0])
+        self.apply_action(new_q[0])
         self.apply_action_g(int(action[-1]))
 
 
@@ -199,7 +198,7 @@ class UR5e:
         self.qd = []
         q_t = []
         g = []
-
+        
         # UR5 joint values
         for i in self.ur5_joints_id:
             aux = p.getJointState(bodyUniqueId=self.id, 
@@ -209,7 +208,6 @@ class UR5e:
             self.q.append(aux[0])
             self.qd.append(aux[1])
             q_t.append(aux[2][-1])
-
 
         # Gripper Joint Values
         for i in self.gripper_joints_id:
@@ -223,9 +221,9 @@ class UR5e:
         self.g = min(min(g) / self.m1, self.max_closure)
 
         # End effector position and orientation
-        T = self.__ur5.fkine(self.q, order='zyx')
+        T = self.__ur5.fkine(self.q, order='yxz')
         ee_pos = T.t
-        ee_or = T.eul('zyx')
+        ee_or = T.rpy('yxz')
         self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
         
         # Builds and returns the message
