@@ -5,7 +5,7 @@ from stable_baselines3.common.vec_env import VecNormalize
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.noise import NormalActionNoise
-from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback
 from networks_SB import CustomCombinedExtractor
 import numpy as np
 import cv2 as cv
@@ -80,6 +80,13 @@ if __name__ == "__main__":
     #                               n_eval_episodes=1, deterministic=False,
     #                               render=False)
 
+    checkpoint_callback = CheckpointCallback(
+        save_freq = 1000, 
+        save_path = "./my_models_eval",
+        name_prefix = "rl_model",
+        save_replay_buffer = False,
+        save_vecnormaliza = False
+    )
 
     # Use your custom feature extractor in the policy_kwargs
     policy_kwargs = dict(
@@ -102,7 +109,7 @@ if __name__ == "__main__":
     
 
     if not TEST:
-        model.learn(total_timesteps=30000, log_interval=5, tb_log_name= "Test", callback = None, progress_bar = True)
+        model.learn(total_timesteps=20000, log_interval=5, tb_log_name= "Test", callback = checkpoint_callback, progress_bar = True)
         model.save("./models_eval/best_model_cameras.zip")
     else:
         model = SAC.load("./models_eval/best_model_cameras")
