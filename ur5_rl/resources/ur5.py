@@ -224,9 +224,9 @@ class UR5e:
         self.g = min(min(g) / self.m1, self.max_closure)
 
         # End effector position and orientation
-        T = self.__ur5.fkine(self.q, order='zyx')
+        T = self.__ur5.fkine(self.q, order='yxz')
         ee_pos = T.t
-        ee_or = T.eul('zyx')
+        ee_or = T.rpy('yxz')
         self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
         
         # Builds and returns the message
