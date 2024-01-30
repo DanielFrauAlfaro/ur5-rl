@@ -327,7 +327,7 @@ class UR5Env(gym.Env):
 
         # --- Simulation advanced ---
         # Advances the simulation to robot's initial state
-        for __ in range(40):
+        for __ in range(60):
             p.stepSimulation(self._client)
 
         # --- Reseting params 
