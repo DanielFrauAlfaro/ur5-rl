@@ -28,7 +28,7 @@ class UR5Env(gym.Env):
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -5, np.ones(6) * 5]
+        self._qd_limits = [np.ones(6) * -9, np.ones(6) * 9]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
