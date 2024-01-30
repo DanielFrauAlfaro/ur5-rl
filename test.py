@@ -111,15 +111,11 @@ if __name__ == "__main__":
 
     if not TEST:
         print("|| Training ...")
-        model = SAC.load("./my_models_eval/best_sac_1.3_approx(pingo).zip")
-        model.set_env(vec_env)
-        model.policy.train()
-
         model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = checkpoint_callback, progress_bar = True)
         model.save("./my_models_eval/best_model.zip")
     else:
         print("|| Loading model for testing ...")
-        model = SAC.load("./my_models_eval/best_sac_1.3_approx(pingo).zip")
+        model = SAC.load("./my_models_eval/rl_model_17000_steps.zip")
     
     
     model.policy.eval()
