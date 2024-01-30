@@ -12,7 +12,7 @@ import cv2 as cv
 import os
 
 
-TEST = False
+TEST = True
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
 n_eval_envs = 2
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         model.learn(total_timesteps=20000, log_interval=5, tb_log_name= "Test", callback = checkpoint_callback, progress_bar = True)
         model.save("./models_eval/best_model_cameras.zip")
     else:
-        model = SAC.load("./models_eval/best_model_cameras")
+        model = SAC.load("./models_eval/best_model_cameras.zip")
     
     
     model.policy.eval()
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
         obs, info = vec_env.reset()
         while True:
-            action, _states = model.predict(obs, deterministic = False)
+            action, _states = model.predict(obs, deterministic = True)
 
             obs, reward, terminated, truncated, info = vec_env.step(action)
 
