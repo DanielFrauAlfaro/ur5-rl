@@ -76,6 +76,33 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
     return camera_params
 
 
+# Shows axis on the world
+def print_axis(client, pos, rotation_matrix):
+    axis_length = 0.1
+    x_axis, y_axis, z_axis = [axis_length, 0, 0], [0, axis_length, 0], [0, 0, axis_length]
+
+    # Get the directions of the axes in the object's local coordinate system
+    y_axis_local = [0,0,1]
+    z_axis_local = rotation_matrix[:, 2]
+    x_axis_local = np.cross(z_axis_local, y_axis_local)
+
+    y_aux = y_axis_local
+    y_axis_local = z_axis_local
+    z_axis_local = y_aux
+    
+
+    # Draw lines representing the axes of the object
+    line_start = pos
+    line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
+    line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
+    line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
+
+    p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5)  # X-axis (red)
+    p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5)  # Y-axis (green)
+    p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5)  # Z-axis (blue)
+
+
+
 # Getter for the object position
 def get_object_pos(client, object):
     '''
@@ -93,6 +120,12 @@ def get_object_pos(client, object):
     pos, orn = p.getBasePositionAndOrientation(object.id, physicsClientId=client)
     # Convert quaternion to rotation matrix
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
+    
+    pos = list(pos)
+    pos[-1] += 0.125
+
+    # print_axis(client = client, pos = pos, rotation_matrix = rotation_matrix)
+
 
     # ----- Extra code for changinf the axis -------
     # Get the directions of the axes in the object's local coordinate system
@@ -249,7 +282,7 @@ def out_of_bounds(limits, robot):
     for idx, limit in enumerate(limits[:2]):
         if True in list(limit[0] > qs[idx]) or  \
            True in list(limit[1] < qs[idx]):
-            
+
             return True
 
     return False
