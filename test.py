@@ -12,7 +12,7 @@ import cv2 as cv
 import os
 
 
-TEST = True
+TEST = False
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
 n_eval_envs = 2
