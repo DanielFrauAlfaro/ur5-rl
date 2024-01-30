@@ -137,6 +137,30 @@ def spawn_environment(id):
                               basePosition=[0, 0, 0], 
                               physicsClientId=client, 
                               useFixedBase=1)
+    
+    euler = [-1.57,0,-1.57]
+    orientation = p.getQuaternionFromEuler(euler, physicsClientId=client)
+    table = p.loadURDF(fileName=os.path.dirname(__file__) + '/ur5_rl/resources/models/models/table.urdf',
+                              basePosition=[-0.16, 1.0, 0.74], 
+                              baseOrientation=orientation, 
+                              physicsClientId=client, 
+                              useFixedBase=1)
+    
+    # List of object directories
+    spawnables = ("002_master_chef_can", "003_cracker_box", "004_sugar_box", "005_tomato_soup_can", "006_mustard_bottle", "007_tuna_fish_can", "008_pudding_box", "009_gelatin_box", "010_potted_meat_can", "011_banana", "012_strawberry", "013_apple", "014_lemon", "015_peach", "016_pear", "017_orange", "018_plum", "021_bleach_cleanser")
+
+    # Random object position and orientation
+    pos, orn = np.random.uniform([[0.01, 0.45, 0.85], [-3.1415,-3.1415, -3.1415]], 
+                                    [[0.3,  0.65, 0.85], [3.1415,  3.1415,  3.1415]])
+
+    rand_orientation = p.getQuaternionFromEuler(orn)
+
+    # Load URDF model of selected object: pybullet_URDF_objects/' + spawnables[object] + '/model.urdf',
+    object = p.loadURDF(fileName=os.path.dirname(__file__) + '/ur5_rl/resources/models/pybullet_URDF_objects/' + spawnables[0] + '/model.urdf',
+                                basePosition=pos,
+                                baseOrientation=rand_orientation, 
+                                physicsClientId=client)
+    
     return ur5_id
 
 
