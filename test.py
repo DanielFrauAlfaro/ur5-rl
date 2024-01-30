@@ -63,7 +63,7 @@ if __name__ == "__main__":
     in_channels, frame_w, frame_h = image_space.shape
     
     residual = True
-    channels = [in_channels, 16, 32, 32, 32]
+    channels = [in_channels, 16, 32, 32]
     kernel = 3          
     m_kernel = 3
     n_layers = len(channels) - 1
@@ -92,12 +92,12 @@ if __name__ == "__main__":
             pi=[features_dim, 32],  # Adjust the size of these layers based on your requirements
             vf=[features_dim, 32],  # Adjust the size of these layers based on your requirements
             qf=[features_dim, 32]),
-        share_features_extractor = True
+        share_features_extractor = False
     )
 
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
-                verbose=100, buffer_size = 10000,  batch_size = 128, tensorboard_log="logs/", 
-                train_freq=10, learning_rate = 0.001, gamma = 0.99, seed = 42,
+                verbose=100, buffer_size = 16000,  batch_size = 256, tensorboard_log="logs/", 
+                train_freq=10, learning_rate = 0.00073, gamma = 0.99, seed = 42,
                 use_sde = False, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
     
 
@@ -118,19 +118,20 @@ if __name__ == "__main__":
     vec_env.close()
     # eval_env.close()
 
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
-    obs, info = vec_env.reset()
-    while True:
-        action, _states = model.predict(obs, deterministic = False)
+    if TEST:
+        vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+        obs, info = vec_env.reset()
+        while True:
+            action, _states = model.predict(obs, deterministic = False)
 
-        obs, reward, terminated, truncated, info = vec_env.step(action)
+            obs, reward, terminated, truncated, info = vec_env.step(action)
 
-        img = (obs["image"][0]*255).astype(np.uint8)
-        cv.imshow("A", img)
-        cv.waitKey(1)
+            img = (obs["image"][0]*255).astype(np.uint8)
+            cv.imshow("A", img)
+            cv.waitKey(1)
 
-        if terminated or truncated:
-            obs, info = vec_env.reset()
+            if terminated or truncated:
+                obs, info = vec_env.reset()
             
 
     
