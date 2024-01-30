@@ -9,6 +9,7 @@ from spatialmath import SE3
 import roboticstoolbox as rtb
 from math import pi
 import os
+import time
 
 ur5 = rtb.DHRobot([
             rtb.RevoluteDH(d=0.1625, alpha=pi/2.0),
@@ -39,12 +40,19 @@ def user_interface(): # [0.1332997  0.49190053 0.48789219]    //      [-3.141575
 
     # gripper_palm = p.addUserDebugParameter('Palm', 1, 0, 1)
 
-    x_gui = p.addUserDebugParameter('X', -1.5, 1.5, 0.1332997)
-    y_gui = p.addUserDebugParameter('Y', -1.5, 1.5, 0.49190053)
-    z_gui = p.addUserDebugParameter('Z', -1.5, 1.5, 0.48789219)
-    roll_gui = p.addUserDebugParameter('Roll', -5, 0.0, -3.14)
-    pitch_gui = p.addUserDebugParameter('Pitch', -1.5, 1.5, 0)
-    yaw_gui = p.addUserDebugParameter('Yaw', -3.1415, 0.0, -2.35658978)
+    x_gui = p.addUserDebugParameter('X', -1, 1, 0.0)
+    y_gui = p.addUserDebugParameter('Y', -1, 1, 0.0)
+    z_gui = p.addUserDebugParameter('Z', -1, 1, 0.0)
+    roll_gui = p.addUserDebugParameter('Roll', -1, 1, 0)
+    pitch_gui = p.addUserDebugParameter('Pitch', -1, 1, 0)
+    yaw_gui = p.addUserDebugParameter('Yaw', -1, 1, 0)
+
+    # x_gui = p.addUserDebugParameter('X', -1.5, 1.5, 0.1332997)
+    # y_gui = p.addUserDebugParameter('Y', -1.5, 1.5, 0.49190053)
+    # z_gui = p.addUserDebugParameter('Z', -1.5, 1.5, 0.48789219)
+    # roll_gui = p.addUserDebugParameter('Roll', 0.0, 2, 2)
+    # pitch_gui = p.addUserDebugParameter('Pitch', -1.5, 1.5, 0)
+    # yaw_gui = p.addUserDebugParameter('Yaw', -5, 0.0, -3)
 
     # return [shoulder_pan_gui, shoulder_lift_gui, elbow_gui, wrist_1_gui, wrist_2_gui, wrist_3_gui, gripper_1, gripper_2, gripper_mid, gripper_palm,
     return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
@@ -98,29 +106,24 @@ def compute_ik(robot_id, action, joints, q):
     roll = action[3]
     pitch = action[4]
     yaw = action[5]
-
+    print(action)
     # Builds up homogeneus matrix
     T = SE3(x, y, z)
     T_ = SE3.RPY(roll, pitch, yaw, order='zyx')
 
     T = T * T_
 
+    print(T.t)
+    print(T.rpy('zyx'))
+
     # Computes inverse kinematics
     new_q = ur5.ik_LM(T,q0 = q)
 
-    # print(q)
-    # print("Roll: ", )
-    # print("Pitch: ",[0][4])
-    # print("Yaw: ", new_q[0][5])
+    print("New Q: ", new_q[0])
+    print("\n\n")
+    # raise
+    
 
-    # if new_q[0][3] < -pi:
-    #     new_q[0][3] = 
-
-    # print("\n") 
-
-    # print(len(joints))
-    # print(len(new_q[0]))
-    # print("\n")
     p.setJointMotorControlArray(bodyUniqueId=robot_id, 
                                     jointIndices=joints, 
                                     controlMode=p.POSITION_CONTROL,
@@ -163,7 +166,6 @@ def spawn_environment(id):
     
     return ur5_id
 
-
 # Process all model joints: obtain data of each joint
 def setup_robot(robotID):
     # Name of the gripper and UR5 joint (all joints are included on the same body)
@@ -203,8 +205,8 @@ def setup_robot(robotID):
         
         list_attr[jointName] = jointID
 
-        print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
-        print("--")
+        # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
+        # print("--")
 
 
         # If a joint is controllable ...
@@ -243,10 +245,6 @@ def setup_robot(robotID):
 
 # Main
 if __name__ == "__main__":
-    
-    
-
-
     client = p.connect(p.GUI)
 
     gui_joints = user_interface()
@@ -257,67 +255,72 @@ if __name__ == "__main__":
 
     joints, __ = setup_robot(ur5_id)
 
-    # mimic_finger_1 = gripperControl(ur5_id, joints, '1')
-    # mimic_finger_2 = gripperControl(ur5_id, joints, '2')
-    # mimic_finger_middle = gripperControl(ur5_id, joints, 'middle')
-
-    # mimic_palm = palmControl(ur5_id, joints)
 
     palm = 0
     prev_palm = 0
     state_palm = 0
 
-    set_joints(ur5_id, [0.0, -1.5708, -1.5708, -1.5708, 1.5708, -0.785 + pi])
+    q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, 2.3]
 
-    for __ in range(25):
+    set_joints(ur5_id, q)
+    
+
+
+    ee = [0.1332997, 0.49, 0.48, -3.14, 0.0, -2.3]
+
+    for __ in range(40):
         p.stepSimulation()
+
+    T = ur5.fkine(q, order='yxz')
+    ee_pos = T.t
+    ee_or = T.rpy('yxz')
+
+    ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
+
+
+    print("Init ee_pos: ", ee_pos)
+    print("Init ee_or: ", ee_or)
+    print("\n\n")
+    
     
     while True:
         
         j = read_gui(gui_joints)
-        # palm = j[-1]
-
-        # if palm != prev_palm:
-        #     state_palm = state_palm + 1
-
-        #     if state_palm > 2:
-        #         state_palm = 0
-
-        # if state_palm == 0:
-        #     j[-1] = -0.19
-        # elif state_palm == 1:
-        #     j[-1] = 0
-        # else:
-        #     j[-1] = 0.17
-
-        
-        # prev_palm = palm
-
-        q = []
-
-        # # UR5 joint values
-        for i in joints:
-            aux = p.getJointState(bodyUniqueId=ur5_id, 
-                                jointIndex=i,
-                                physicsClientId=client)
-
-            q.append(aux[0])
+        j = (np.array(j) + np.array(ee)).tolist()
+        # j = ee
 
         # set_joints(ur5_id, j)
         compute_ik(ur5_id, j, joints, q)
 
+        p.stepSimulation()
+
+        # # UR5 joint values
+        for idx, i in enumerate(joints):
+            aux = p.getJointState(bodyUniqueId=ur5_id, 
+                                jointIndex=i,
+                                physicsClientId=client)
+
+            q[idx] = aux[0]
+
         # render(client, ur5_id)
-        T = ur5.fkine(q, order='zyx')
-        state = p.getLinkState(bodyUniqueId = ur5_id, linkIndex = 11, computeForwardKinematics = True)
+        T = ur5.fkine(q, order='yxz')
+        ee_pos = T.t
+        ee_or = T.rpy('yxz')
+        ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
 
-
+        # state = p.getLinkState(bodyUniqueId = ur5_id, linkIndex = 11, computeForwardKinematics = True)
 
         print("Robotic Toolboox T: ", T.t)
-        print("Robotic Toolbox R: ", T.rpy(order='zyx'))
-        print("--")
+        print("Robotic Toolbox R: ", T.rpy('yxz'))
+        # print(q)
+        print("--\n\n")
+
+        time.sleep(0.1)
+        
+        
         
         # print("Pybullet API T: ", state[0])
         # print("Pybullet aPI R: ", p.getEulerFromQuaternion(state[1]))
         # print("--\n\n")
 
-        p.stepSimulation()
+        
