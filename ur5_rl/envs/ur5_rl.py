@@ -28,7 +28,7 @@ class UR5Env(gym.Env):
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -15, np.ones(6) * 15]
+        self._qd_limits = [np.ones(6) * -5, np.ones(6) * 5]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.09
+        self.max_action = 0.06
         self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1,1,1,1,1,1])]
         
         # Appends gripper actions
@@ -77,7 +77,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 12
+        self._t_limit = 13
         self._t_act = time.time()
 
 
@@ -128,10 +128,10 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-40, 
-                              3, 3, 3,
-                              3, 3, 3,
-                              3, 3, 3,
-                              1,1])
+                              -10, -10, -10,
+                              -10, -10, -10,
+                              -10, -10, -10,
+                              -10, -10])
     
     # Computes the whole reward
     def compute_reward(self):
@@ -174,7 +174,8 @@ class UR5Env(gym.Env):
                                                                            
         
         truncated = out_of_bounds(self._limits, self._ur5) \
-                    or check_collision(client = self._client, objects = [self._table.id, self._ur5.id])
+                    or  collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask) < 0.0
+                    # or check_collision(client = self._client, objects = [self._table.id, self._ur5.id])
 
         return terminated, truncated
 
@@ -253,6 +254,9 @@ class UR5Env(gym.Env):
 
         if truncated:
             reward -= 10
+        elif terminated:
+            reward += 20
+
 
         # Get the new state after the action
         obs = self.get_observation()
