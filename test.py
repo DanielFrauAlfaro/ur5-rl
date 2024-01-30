@@ -85,7 +85,7 @@ if __name__ == "__main__":
         save_path = "./my_models_eval",
         name_prefix = "rl_model",
         save_replay_buffer = False,
-        save_vecnormaliza = False
+        save_vecnormalize = False
     )
 
     # Use your custom feature extractor in the policy_kwargs
