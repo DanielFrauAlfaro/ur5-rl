@@ -9,6 +9,7 @@ from spatialmath import SE3
 import roboticstoolbox as rtb
 from math import pi
 import os
+import pyb_utils
 import time
 
 ur5 = rtb.DHRobot([
@@ -46,6 +47,7 @@ def user_interface(): # [0.1332997  0.49190053 0.48789219]    //      [-3.141575
     roll_gui = p.addUserDebugParameter('Roll', -1, 1, 0)
     pitch_gui = p.addUserDebugParameter('Pitch', -1, 1, 0)
     yaw_gui = p.addUserDebugParameter('Yaw', -1, 1, 0)
+    gripper_gui = p.addUserDebugParameter('Gripper', -1, 1, 0)
 
     # x_gui = p.addUserDebugParameter('X', -1.5, 1.5, 0.1332997)
     # y_gui = p.addUserDebugParameter('Y', -1.5, 1.5, 0.49190053)
@@ -55,7 +57,7 @@ def user_interface(): # [0.1332997  0.49190053 0.48789219]    //      [-3.141575
     # yaw_gui = p.addUserDebugParameter('Yaw', -5, 0.0, -3)
 
     # return [shoulder_pan_gui, shoulder_lift_gui, elbow_gui, wrist_1_gui, wrist_2_gui, wrist_3_gui, gripper_1, gripper_2, gripper_mid, gripper_palm,
-    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
+    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui, gripper_gui]
 
 maxForce = 100
 v = 100
@@ -89,6 +91,7 @@ def read_gui(gui_joints):
     j4 = p.readUserDebugParameter(gui_joints[3])
     j5 = p.readUserDebugParameter(gui_joints[4])
     j6 = p.readUserDebugParameter(gui_joints[5])
+    g =  p.readUserDebugParameter(gui_joints[6])
     
     # g1 = p.readUserDebugParameter(gui_joints[6])
     # g2 = p.readUserDebugParameter(gui_joints[7])
@@ -96,9 +99,9 @@ def read_gui(gui_joints):
 
     # gp = p.readUserDebugParameter(gui_joints[9])
 
-    return [j1, j2, j3, j4, j5, j6]
+    return [j1, j2, j3, j4, j5, j6, g]
 
-def compute_ik(robot_id, action, joints, q):
+def compute_ik(robot_id, action, joints, gripper_joints_id, q):
     x = action[0]                                 
     y = action[1]
     z = action[2]
@@ -106,21 +109,23 @@ def compute_ik(robot_id, action, joints, q):
     roll = action[3]
     pitch = action[4]
     yaw = action[5]
-    print(action)
+
+    # print(action)
+
     # Builds up homogeneus matrix
     T = SE3(x, y, z)
     T_ = SE3.RPY(roll, pitch, yaw, order='zyx')
 
     T = T * T_
 
-    print(T.t)
-    print(T.rpy('zyx'))
+    # print(T.t)
+    # print(T.rpy('zyx'))
 
     # Computes inverse kinematics
     new_q = ur5.ik_LM(T,q0 = q)
 
-    print("New Q: ", new_q[0])
-    print("\n\n")
+    # print("New Q: ", new_q[0])
+    # print("\n\n")
     # raise
     
 
@@ -129,6 +134,24 @@ def compute_ik(robot_id, action, joints, q):
                                     controlMode=p.POSITION_CONTROL,
                                     targetPositions=new_q[0],
                                     physicsClientId=client)
+    
+    g = action[-1]
+
+    m1 = 1.2218 / 140
+    max_closure = 100
+
+    action = min(m1 * g, max_closure)
+    action = np.ones(3) * action
+
+    p.setJointMotorControlArray(bodyUniqueId=robot_id, 
+                                    jointIndices=gripper_joints_id, 
+                                    controlMode=p.POSITION_CONTROL,
+                                    targetPositions=action,
+                                    physicsClientId= client)
+    
+
+    
+    
 
 # Spawn environment
 def spawn_environment(id):
@@ -164,7 +187,7 @@ def spawn_environment(id):
                                 baseOrientation=rand_orientation, 
                                 physicsClientId=client)
     
-    return ur5_id
+    return ur5_id, object
 
 # Process all model joints: obtain data of each joint
 def setup_robot(robotID):
@@ -212,10 +235,10 @@ def setup_robot(robotID):
         # If a joint is controllable ...
         if controllable:
             # ... enables torque sensors, ...
-            # p.enableJointForceTorqueSensor(bodyUniqueId=id, 
-            #                                jointIndex=jointID, 
-            #                                enableSensor=1,
-            #                                physicsClientId=client)
+            p.enableJointForceTorqueSensor(bodyUniqueId=robotID, 
+                                           jointIndex=jointID, 
+                                           enableSensor=1,
+                                           physicsClientId=client)
 
             # ... saves its properties, ...
             info = jointInfo(jointID,jointName,jointType,jointDamping,jointFriction,jointLowerLimit,
@@ -238,7 +261,7 @@ def setup_robot(robotID):
                 palm_joint_id.append(jointID)
     
     #print(joints)
-    return ur5_joints_id, controllable
+    return ur5_joints_id, gripper_joints_id
 
     
 
@@ -249,16 +272,11 @@ if __name__ == "__main__":
 
     gui_joints = user_interface()
     
-    ur5_id = spawn_environment(client)
+    ur5_id, object = spawn_environment(client)
 
     n_joints = p.getNumJoints(ur5_id)
 
-    joints, __ = setup_robot(ur5_id)
-
-
-    palm = 0
-    prev_palm = 0
-    state_palm = 0
+    joints, gripper_joints_id = setup_robot(ur5_id)
 
     q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, 2.3]
 
@@ -266,7 +284,8 @@ if __name__ == "__main__":
     
 
 
-    ee = [0.1332997, 0.49, 0.48, -3.14, 0.0, -2.3]
+    ee = [0.1332997, 0.49, 0.48, -3.14, 0.0, -2.3,
+          0.0]
 
     for __ in range(40):
         p.stepSimulation()
@@ -275,22 +294,28 @@ if __name__ == "__main__":
     ee_pos = T.t
     ee_or = T.rpy('yxz')
 
-    ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
+    ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], 
+          0.0]
 
 
     print("Init ee_pos: ", ee_pos)
     print("Init ee_or: ", ee_or)
     print("\n\n")
-    
+
+    collisions_to_check = [[object, (ur5_id, "contact1")], 
+                            [object, (ur5_id, "contact2")], 
+                            [object, (ur5_id, "contact3")]]
+
     
     while True:
         
         j = read_gui(gui_joints)
+        j[-1] *= 10
         j = (np.array(j) + np.array(ee)).tolist()
         # j = ee
 
         # set_joints(ur5_id, j)
-        compute_ik(ur5_id, j, joints, q)
+        compute_ik(ur5_id, j, joints, gripper_joints_id, q)
 
         p.stepSimulation()
 
@@ -301,19 +326,48 @@ if __name__ == "__main__":
                                 physicsClientId=client)
 
             q[idx] = aux[0]
+        
+        g = []
+        g_t = []
+
+        for i in gripper_joints_id:
+            aux = p.getJointState(bodyUniqueId=ur5_id, 
+                                jointIndex=i,
+                                physicsClientId= client)
+
+            g.append(aux[0])
+            g_t.append(np.linalg.norm(np.array(aux[2][:3])))
+            # g_t.append(aux[-1])
+
+        m1 = 1.2218 / 140
+        max_closure = 100
+        
+
+        g = min(min(g) / m1, max_closure)
 
         # render(client, ur5_id)
         T = ur5.fkine(q, order='yxz')
         ee_pos = T.t
         ee_or = T.rpy('yxz')
-        ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
+        ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], g]
 
         # state = p.getLinkState(bodyUniqueId = ur5_id, linkIndex = 11, computeForwardKinematics = True)
 
-        print("Robotic Toolboox T: ", T.t)
-        print("Robotic Toolbox R: ", T.rpy('yxz'))
+        # print("Robotic Toolboox T: ", T.t)
+        # print("Robotic Toolbox R: ", T.rpy('yxz'))
         # print(q)
-        print("--\n\n")
+        # print("--\n\n")
+
+        col_detector = pyb_utils.CollisionDetector(client, [(collisions_to_check[0][0], collisions_to_check[0][1])])
+        c1 = col_detector.in_collision(margin = 0.001)
+
+        col_detector = pyb_utils.CollisionDetector(client, [(collisions_to_check[1][0], collisions_to_check[1][1])])
+        c2 = col_detector.in_collision(margin = 0.001)
+
+        col_detector = pyb_utils.CollisionDetector(client, [(collisions_to_check[2][0], collisions_to_check[2][1])])
+        c3 = col_detector.in_collision(margin = 0.001)
+
+        print([c1, c2, c3])
 
         time.sleep(0.1)
         
