@@ -82,13 +82,18 @@ def print_axis(client, pos, rotation_matrix):
     x_axis, y_axis, z_axis = [axis_length, 0, 0], [0, axis_length, 0], [0, 0, axis_length]
 
     # Get the directions of the axes in the object's local coordinate system
-    y_axis_local = [0,0,1]
-    z_axis_local = rotation_matrix[:, 2]
-    x_axis_local = np.cross(z_axis_local, y_axis_local)
+    # y_axis_local = [0,0,1]
+    # z_axis_local = rotation_matrix[:, 2]
+    # x_axis_local = np.cross(z_axis_local, y_axis_local)
 
-    y_aux = y_axis_local
-    y_axis_local = z_axis_local
-    z_axis_local = y_aux
+    # y_aux = y_axis_local
+    # y_axis_local = z_axis_local
+    # z_axis_local = y_aux
+
+    x_axis_local = rotation_matrix[0]
+    y_axis_local = rotation_matrix[1]
+    z_axis_local = rotation_matrix[2]
+
     
 
     # Draw lines representing the axes of the object
@@ -97,9 +102,9 @@ def print_axis(client, pos, rotation_matrix):
     line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
     line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
 
-    p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5, physicsClientId = client)  # X-axis (red)
-    p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5, physicsClientId = client)  # Y-axis (green)
-    p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5, physicsClientId = client)  # Z-axis (blue)
+    p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.3, physicsClientId = client)  # X-axis (red)
+    p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.3, physicsClientId = client)  # Y-axis (green)
+    p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.3, physicsClientId = client)  # Z-axis (blue)
 
 
 
@@ -121,23 +126,41 @@ def get_object_pos(client, object):
     # Convert quaternion to rotation matrix
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
     
+    x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
+    y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
+    z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
+
+    # y_axis_local[0] = math.cos(math.pi / 2.0) * z_axis_local[0] - math.sin(math.pi / 2.0) * z_axis_local[1]
+    # y_axis_local[1] = math.sin(math.pi / 2.0) * z_axis_local[0] + math.cos(math.pi / 2.0) * z_axis_local[1]
+    # y_axis_local[2] = z_axis_local[2]
+
+    # x_axis_local = np.cross(z_axis_local, y_axis_local)
+    # x_axis_local /= np.linalg.norm(x_axis_local)
+
+
+    # roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(0)
+    # my_rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
+
+    # new_matrix = rotation_matrix.transpose()*my_rotation_matrix*rotation_matrix
+    # y_axis_local = np.matmul(new_matrix, z_axis_local)
+    # y_axis_local /= np.linalg.norm(y_axis_local)
+
+    # x_axis_local = new_matrix[:,0] / np.linalg.norm(new_matrix[:,0])
+    # y_axis_local = new_matrix[:,1] / np.linalg.norm(new_matrix[:,1])
+    # z_axis_local = new_matrix[:,2] / np.linalg.norm(new_matrix[:,2])
+
+
+    # auto new_rot = matAux.transpose()*rotpos90x*rotneg45z*matAux;
+    # endLinkX = new_rot*endLinkX;
+    # endLinkY = new_rot*endLinkY;
+    # endLinkZ = new_rot*endLinkZ;
+
     pos = list(pos)
-    pos[-1] += 0.13
+    pos[-1] += 0.13 # * x_axis_local
 
-    # print_axis(client = client, pos = pos, rotation_matrix = rotation_matrix)
-
-
-    # ----- Extra code for changinf the axis -------
-    # Get the directions of the axes in the object's local coordinate system
-    y_axis_local = [0,0,1]
-    z_axis_local = rotation_matrix[:, 2]
-    x_axis_local = np.cross(z_axis_local, y_axis_local)
-
-    y_aux = y_axis_local
-    y_axis_local = z_axis_local
-    z_axis_local = y_aux
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
-    return np.array(pos), np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
+    return np.array(pos), z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
 
 
 # Getter for the wrist position
@@ -175,8 +198,12 @@ def get_wrist_pos(client, robot_id):
     y_axis_local = np.dot(rotation_matrix, y_axis_local)
     x_axis_local *= -1
 
+    y_axis_local, z_axis_local = z_axis_local, y_axis_local
+
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+
     
-    return np.array(pos), np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
+    return np.array(pos), z_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
 # Computes the reward according the approximation to the object
@@ -199,22 +226,26 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     obj_pos, obj_or = get_object_pos(object=object, client = client)
     wrist_pos, wrist_or = get_wrist_pos(client = client, robot_id=robot_id)
 
+
+
+    obj_pos  = np.concatenate((obj_pos, obj_or))
+    wrist_pos  = np.concatenate((wrist_pos, wrist_or))
+    
     # Compures the distance between them
     distance = np.linalg.norm(wrist_pos - obj_pos)
     distance_xyz = [math.sqrt((round(x - y, 3))**2) for x, y in zip(wrist_pos, obj_pos)]      # if round, round to 3
     
-    aux = [round(y - x, 3) for x, y in zip(distance_xyz, dist_obj_wrist)]
-    # print(distance_xyz)
-    # print(dist_obj_wrist)
-    # print([i < j for i,j in zip(distance_xyz, dist_obj_wrist)])
-    
     # Si hay por lo menos uno que es FALSE, le asigna el False
-    not_approx = False in [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
+    approx_list = [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
+    not_approx = False in approx_list
 
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
     # reward = 1 if distance < dist_obj_wrist else -2
     reward = -1 if not_approx else 1
-    reward /= distance
+    # reward /= distance
+
+    reward += -0.5 if False in approx_list[:3]  else 0.5
+    reward += -0.5 if False in approx_list[3:]  else 0.5
 
     # Updates distance
     dist_obj_wrist = distance_xyz
@@ -330,7 +361,7 @@ def get_frames(client, camera_params, frame_h, frame_w, frame):
         frame[idx] = np.transpose(frame[idx], (2,0,1))
 
         # Computes images for the first one (external)
-        break
+        # break
 
     return frame
 
