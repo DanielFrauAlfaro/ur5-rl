@@ -76,6 +76,33 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
     return camera_params
 
 
+# Shows axis on the world
+def print_axis(client, pos, rotation_matrix):
+    axis_length = 0.1
+    x_axis, y_axis, z_axis = [axis_length, 0, 0], [0, axis_length, 0], [0, 0, axis_length]
+
+    # Get the directions of the axes in the object's local coordinate system
+    y_axis_local = [0,0,1]
+    z_axis_local = rotation_matrix[:, 2]
+    x_axis_local = np.cross(z_axis_local, y_axis_local)
+
+    y_aux = y_axis_local
+    y_axis_local = z_axis_local
+    z_axis_local = y_aux
+    
+
+    # Draw lines representing the axes of the object
+    line_start = pos
+    line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
+    line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
+    line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
+
+    p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5, physicsClientId = client)  # X-axis (red)
+    p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5, physicsClientId = client)  # Y-axis (green)
+    p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5, physicsClientId = client)  # Z-axis (blue)
+
+
+
 # Getter for the object position
 def get_object_pos(client, object):
     '''
@@ -93,6 +120,12 @@ def get_object_pos(client, object):
     pos, orn = p.getBasePositionAndOrientation(object.id, physicsClientId=client)
     # Convert quaternion to rotation matrix
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
+    
+    pos = list(pos)
+    pos[-1] += 0.13
+
+    # print_axis(client = client, pos = pos, rotation_matrix = rotation_matrix)
+
 
     # ----- Extra code for changinf the axis -------
     # Get the directions of the axes in the object's local coordinate system
@@ -122,6 +155,7 @@ def get_wrist_pos(client, robot_id):
     # Get the position and orientation of the ee_link
     link_state = p.getLinkState(robot_id, 11, computeLinkVelocity=1, computeForwardKinematics=1, physicsClientId = client)
     pos, orn = link_state[0], link_state[1]
+    # pos[-1] += 0.01
 
     # ----- Extra code for changing axis ------
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
@@ -141,6 +175,7 @@ def get_wrist_pos(client, robot_id):
     y_axis_local = np.dot(rotation_matrix, y_axis_local)
     x_axis_local *= -1
 
+    
     return np.array(pos), np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
@@ -166,11 +201,18 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     # Compures the distance between them
     distance = np.linalg.norm(wrist_pos - obj_pos)
-    distance_xyz = [abs(round(i - j, 3)) for i,j in zip(wrist_pos, obj_pos)]
-    not_approx = False in [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]              # Se puede poner en un solo bucle con lo de arriba: optimizacion
-
+    distance_xyz = [math.sqrt((round(x - y, 3))**2) for x, y in zip(wrist_pos, obj_pos)]      # if round, round to 3
+    
+    aux = [round(y - x, 3) for x, y in zip(distance_xyz, dist_obj_wrist)]
+    # print(distance_xyz)
+    # print(dist_obj_wrist)
+    # print([i < j for i,j in zip(distance_xyz, dist_obj_wrist)])
+    
+    # Si hay por lo menos uno que es FALSE, le asigna el False
+    not_approx = False in [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
 
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
+    # reward = 1 if distance < dist_obj_wrist else -2
     reward = -1 if not_approx else 1
     reward /= distance
 
@@ -240,7 +282,7 @@ def out_of_bounds(limits, robot):
     for idx, limit in enumerate(limits[:2]):
         if True in list(limit[0] > qs[idx]) or  \
            True in list(limit[1] < qs[idx]):
-            
+
             return True
 
     return False
@@ -288,7 +330,7 @@ def get_frames(client, camera_params, frame_h, frame_w, frame):
         frame[idx] = np.transpose(frame[idx], (2,0,1))
 
         # Computes images for the first one (external)
-        # break
+        break
 
     return frame
 
