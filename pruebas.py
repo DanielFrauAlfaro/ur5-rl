@@ -83,3 +83,9 @@ collisions_to_check = [[1, 2],
                        [3, (1, "robotiq_finger_middle_link_3")]]
 
 print(collisions_to_check[1:])
+
+a = np.array([1,2,4])
+b = np.array([43,5,6])
+
+c = np.concatenate((a,b))
+print(c)
