@@ -48,9 +48,9 @@ if __name__ == "__main__":
     print("|| Compiling ...")
     
     
-    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False}) #vec_env_cls = SubprocVecEnv
+    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False}) #vec_env_cls = SubprocVecEnv
 
-    # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
+    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
 
 
 
@@ -71,18 +71,16 @@ if __name__ == "__main__":
 
     n_actions = vec_env.action_space.shape[-1]
     action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
-       
-    # eval_log_dir = "my_models_eval/"
-    # eval_callback = CustomEvalCallback(eval_env, best_model_save_path=eval_log_dir,
-    #                               log_path=eval_log_dir, eval_freq=max(500 // n_training_envs, 1),
-    #                               n_eval_episodes=1, deterministic=False,
-    #                               render=False)
     
-    # # video_callback = SaveVecVideoCallback(eval_env, eval_freq=max(500 // n_training_envs, 1), n_eval_episodes=1, deterministic=False)
-    # video_callback = SaveVecVideoCallback(eval_env, eval_freq=1000, n_eval_episodes=1, deterministic=False, video_file='output_video.mp4')
+    save_freq = 500
 
+    eval_log_dir = "my_models_eval/"
+    eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
+                             log_path="./logs/", eval_freq=max(save_freq // n_training_envs, 1),
+                             deterministic=True, render=False)
+    
     checkpoint_callback = CheckpointCallback(
-        save_freq=1000,
+        save_freq=max(save_freq // n_training_envs, 1),
         save_path="./my_models_eval/",
         name_prefix="rl_model",
         save_replay_buffer=False,
