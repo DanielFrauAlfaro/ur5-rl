@@ -97,9 +97,9 @@ def print_axis(client, pos, rotation_matrix):
     line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
     line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
 
-    p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5)  # X-axis (red)
-    p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5)  # Y-axis (green)
-    p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5)  # Z-axis (blue)
+    p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.5, physicsClientId = client)  # X-axis (red)
+    p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.5, physicsClientId = client)  # Y-axis (green)
+    p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.5, physicsClientId = client)  # Z-axis (blue)
 
 
 
