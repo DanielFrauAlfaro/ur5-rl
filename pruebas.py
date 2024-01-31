@@ -72,3 +72,4 @@ class ConvNetWithResidual(nn.Module):
 
 
 print(1//2)
+print(500 // 2)
