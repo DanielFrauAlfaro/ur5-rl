@@ -47,19 +47,21 @@ class CustomEvalCallback(EvalCallback):
 if __name__ == "__main__":
     print("|| Compiling ...")
     
-    
+    # Training environments
     vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False}) #vec_env_cls = SubprocVecEnv
 
+    # Evaluation environments
     eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
 
 
-
+    # Observation space
     q_space = vec_env.observation_space["ee_position"]
     image_space = vec_env.observation_space["image"]
 
     q_shape = q_space.shape
     in_channels, frame_w, frame_h = image_space.shape
-    
+
+    # --- Arquitecture ---    
     residual = True
     channels = [in_channels, 16, 32, 32]
     kernel = 3          
@@ -68,11 +70,23 @@ if __name__ == "__main__":
 
     out_vector_features = 100
     features_dim = 256   
-
-    n_actions = vec_env.action_space.shape[-1]
-    action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
     
-    save_freq = 500
+    # Use  custom feature extractor in the policy_kwargs
+    policy_kwargs = dict(
+        features_extractor_class=CustomCombinedExtractor,
+        features_extractor_kwargs=dict(features_dim = features_dim,
+                                       residual = residual, 
+                                       channels = channels, kernel = kernel, m_kernel = m_kernel,
+                                       n_layers = n_layers, out_vector_features = out_vector_features),
+        net_arch=dict(
+            pi=[features_dim, 32],  # Adjust the size of these layers based on the requirements
+            vf=[features_dim, 32],  # Adjust the size of these layers based on the requirements
+            qf=[features_dim, 32]),
+        share_features_extractor = False
+    )
+
+    # --- Callbacks ---
+    save_freq = 1000
 
     eval_log_dir = "my_models_eval/"
     eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
@@ -87,45 +101,37 @@ if __name__ == "__main__":
         save_vecnormalize=False
     )
     
-    # Use your custom feature extractor in the policy_kwargs
-    policy_kwargs = dict(
-        features_extractor_class=CustomCombinedExtractor,
-        features_extractor_kwargs=dict(features_dim = features_dim,
-                                       residual = residual, 
-                                       channels = channels, kernel = kernel, m_kernel = m_kernel,
-                                       n_layers = n_layers, out_vector_features = out_vector_features),
-        net_arch=dict(
-            pi=[features_dim, 32],  # Adjust the size of these layers based on your requirements
-            vf=[features_dim, 32],  # Adjust the size of these layers based on your requirements
-            qf=[features_dim, 32]),
-        share_features_extractor = False
-    )
+    # --- Action noise ---
+    n_actions = vec_env.action_space.shape[-1]
+    action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
 
+    # Model declaration
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
                 verbose=100, buffer_size = 16000,  batch_size = 256, tensorboard_log="logs/", 
                 train_freq=10, learning_rate = 0.00073, gamma = 0.99, seed = 42,
                 use_sde = True, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
     
-
+    # Training 
     if not TEST:
         print("|| Training ...")
-        model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = checkpoint_callback, progress_bar = True)
+        model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
         model.save("./my_models_eval/best_model.zip")
-    else:
-        print("|| Loading model for testing ...")
-        model = SAC.load("./my_models_eval/rl_model_47000_steps.zip")
+
+    # # Test
+    # else:
+    #     print("|| Loading model for testing ...")
+    #     model = SAC.load("./my_models_eval/best_model.zip")
     
-    
-    model.policy.eval()
-    print("|| Testing ...")
 
     # Close enviroments
     vec_env.close()
-    # eval_env.close()
-    
+    eval_env.close()
 
     
     if TEST:
+        model.policy.eval()
+        print("|| Testing ...")
+
         r = 0
         vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
         obs, info = vec_env.reset()
@@ -135,9 +141,9 @@ if __name__ == "__main__":
             
             # print(reward)
             r += reward
-            img = vec_env.render()
-            cv.imshow("AA", img)
-            cv.waitKey(1)
+            # img = vec_env.render()
+            # cv.imshow("AA", img)
+            # cv.waitKey(1)
 
             if terminated or truncated:
                 print(r, "--")
