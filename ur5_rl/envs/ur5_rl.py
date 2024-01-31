@@ -43,7 +43,7 @@ class UR5Env(gym.Env):
         self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1,1,1,1,1,1])]
         
         # Appends gripper actions
-        self.max_action_g = 2       # Max action G is two because the robot class converts it to integer
+        self.max_action_g = 6       # Max action G is two because the robot class converts it to integer
         self._action_limits[0] = np.append(self._action_limits[0], -1)
         self._action_limits[1] = np.append(self._action_limits[1],  1)
 
@@ -128,10 +128,10 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-40, 
-                              -10, -10, -10,
-                              -10, -10, -10,
-                              -10, -10, -10,
-                              -10, -10])
+                              -6, -6, -6,
+                              -6, -6, -6,
+                              -6, -6, -6,
+                              -6, -6])
     
     # Computes the whole reward
     def compute_reward(self):
