@@ -117,7 +117,7 @@ if __name__ == "__main__":
         model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
         model.save("./my_models_eval/best_model.zip")
 
-    # # Test
+    # Test
     else:
         print("|| Loading model for testing ...")
         model = SAC.load("./my_models_eval/rl_model_9000_steps.zip")
