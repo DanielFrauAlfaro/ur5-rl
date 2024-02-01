@@ -358,7 +358,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        return self.frame
+        return self.frame[0][0]
         cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 

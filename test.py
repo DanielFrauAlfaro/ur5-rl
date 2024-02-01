@@ -12,7 +12,7 @@ import cv2 as cv
 import os
 
 
-TEST = False
+TEST = True
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 3
 n_eval_envs = 2
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         print("|| Testing ...")
 
         r = 0
-        vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT", show=True)
+        vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
         obs, info = vec_env.reset()
         while True:
             action, _states = model.predict(obs, deterministic = True)
@@ -143,8 +143,8 @@ if __name__ == "__main__":
             r += reward
             img = vec_env.render()
 
-            # cv.imshow("AA", img)
-            # cv.waitKey(1)
+            cv.imshow("AA", img)
+            cv.waitKey(1)
 
             if terminated or truncated:
                 print(r, "--")
