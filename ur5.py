@@ -11,6 +11,8 @@ from math import pi
 import os
 import pyb_utils
 import time
+from scipy.spatial.transform import Rotation
+
 
 ur5 = rtb.DHRobot([
             rtb.RevoluteDH(d=0.1625, alpha=pi/2.0),
@@ -263,7 +265,36 @@ def setup_robot(robotID):
     #print(joints)
     return ur5_joints_id, gripper_joints_id
 
+# Shows axis on the world
+def print_axis(client, pos, rotation_matrix):
+    axis_length = 0.1
+    x_axis, y_axis, z_axis = [axis_length, 0, 0], [0, axis_length, 0], [0, 0, axis_length]
+
+    # Get the directions of the axes in the object's local coordinate system
+    # y_axis_local = [0,0,1]
+    # z_axis_local = rotation_matrix[:, 2]
+    # x_axis_local = np.cross(z_axis_local, y_axis_local)
+
+    # y_aux = y_axis_local
+    # y_axis_local = z_axis_local
+    # z_axis_local = y_aux
+
+    x_axis_local = rotation_matrix[0]
+    y_axis_local = rotation_matrix[1]
+    z_axis_local = rotation_matrix[2]
+
     
+
+    # Draw lines representing the axes of the object
+    line_start = pos
+    line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
+    line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
+    line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
+
+    p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.3, physicsClientId = client)  # X-axis (red)
+    p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.3, physicsClientId = client)  # Y-axis (green)
+    p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.3, physicsClientId = client)  # Z-axis (blue)
+
 
 
 # Main
@@ -305,6 +336,18 @@ if __name__ == "__main__":
     collisions_to_check = [[object, (ur5_id, "contact1")], 
                             [object, (ur5_id, "contact2")], 
                             [object, (ur5_id, "contact3")]]
+    
+    finger_collisions = [[object, (ur5_id, "robotiq_finger_1_link_3")], 
+                         [object, (ur5_id, "robotiq_finger_2_link_3")], 
+                         [object, (ur5_id, "robotiq_finger_middle_link_3")],
+                            
+                         [object, (ur5_id, "robotiq_finger_1_link_2")], 
+                         [object, (ur5_id, "robotiq_finger_2_link_2")], 
+                         [object, (ur5_id, "robotiq_finger_middle_link_2")], 
+                            
+                         [object, (ur5_id, "robotiq_finger_1_link_1")], 
+                         [object, (ur5_id, "robotiq_finger_2_link_1")], 
+                         [object, (ur5_id, "robotiq_finger_middle_link_1")]]
 
     
     while True:
@@ -359,15 +402,57 @@ if __name__ == "__main__":
         # print("--\n\n")
 
         col_detector = pyb_utils.CollisionDetector(client, [(collisions_to_check[0][0], collisions_to_check[0][1])])
-        c1 = col_detector.in_collision(margin = 0.001)
+        c1 = col_detector.in_collision(margin = 0.0005)
 
         col_detector = pyb_utils.CollisionDetector(client, [(collisions_to_check[1][0], collisions_to_check[1][1])])
-        c2 = col_detector.in_collision(margin = 0.001)
+        c2 = col_detector.in_collision(margin = 0.0005)
 
         col_detector = pyb_utils.CollisionDetector(client, [(collisions_to_check[2][0], collisions_to_check[2][1])])
-        c3 = col_detector.in_collision(margin = 0.001)
+        c3 = col_detector.in_collision(margin = 0.0005)
 
-        print([c1, c2, c3])
+
+
+        col_detector = pyb_utils.CollisionDetector(client, [(finger_collisions[0][0], finger_collisions[0][1])])
+        c1 = col_detector.in_collision(margin = 0.0005)
+
+        col_detector = pyb_utils.CollisionDetector(client, [(finger_collisions[3][0], finger_collisions[3][1])])
+        c2 = col_detector.in_collision(margin = 0.0005)
+
+        col_detector = pyb_utils.CollisionDetector(client, [(finger_collisions[6][0], finger_collisions[6][1])])
+        c3 = col_detector.in_collision(margin = 0.0005)
+
+
+        # --- Wrist ---
+        link_state = p.getLinkState(ur5_id, 11, computeLinkVelocity=1, computeForwardKinematics=1, physicsClientId = client)
+        pos, orn = link_state[0], link_state[1]
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
+        x_axis_local = rotation_matrix[:, 0]
+        y_axis_local = rotation_matrix[:, 1]
+        z_axis_local = rotation_matrix[:, 2]
+
+        roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
+        rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
+
+        # Rotate the vector using the rotation matrix
+        x_axis_local = np.dot(rotation_matrix, x_axis_local)
+        y_axis_local = np.dot(rotation_matrix, y_axis_local)
+        x_axis_local *= -1
+        y_axis_local, z_axis_local = z_axis_local, y_axis_local
+        print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+        print(y_axis_local)
+
+        # --- Object ---
+        pos, orn = p.getBasePositionAndOrientation(object, physicsClientId=client)
+        # Convert quaternion to rotation matrix
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
+        
+        x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
+        y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
+        z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
+
+        print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) 
+
+        print(y_axis_local)
 
         time.sleep(0.1)
         
