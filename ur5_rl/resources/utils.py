@@ -156,7 +156,7 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.13 # * x_axis_local
+    pos[-1] += 0.2 # * x_axis_local
 
     # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
@@ -227,12 +227,15 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     wrist_pos, wrist_or = get_wrist_pos(client = client, robot_id=robot_id)
 
 
+    # Compures the distance between them
+    distance = np.linalg.norm(wrist_pos - obj_pos)
+    orient = np.linalg.norm(wrist_or - obj_or)
+
+    distance = (distance + orient) / 2.0
 
     obj_pos  = np.concatenate((obj_pos, obj_or))
     wrist_pos  = np.concatenate((wrist_pos, wrist_or))
-    
-    # Compures the distance between them
-    distance = np.linalg.norm(wrist_pos - obj_pos)
+
     distance_xyz = [math.sqrt((round(x - y, 3))**2) for x, y in zip(wrist_pos, obj_pos)]      # if round, round to 3
     
     # Si hay por lo menos uno que es FALSE, le asigna el False
@@ -242,10 +245,11 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
     # reward = 1 if distance < dist_obj_wrist else -2
     reward = -1 if not_approx else 1
-    # reward /= distance
 
     reward += -0.5 if False in approx_list[:3]  else 0.5
     reward += -0.5 if False in approx_list[3:]  else 0.5
+
+    reward /= distance
 
     # Updates distance
     dist_obj_wrist = distance_xyz
