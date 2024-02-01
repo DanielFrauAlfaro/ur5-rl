@@ -249,7 +249,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     reward += -0.5 if False in approx_list[:3]  else 0.5
     reward += -0.5 if False in approx_list[3:]  else 0.5
 
-    reward /= distance
+    # reward /= distance
 
     # Updates distance
     dist_obj_wrist = distance_xyz

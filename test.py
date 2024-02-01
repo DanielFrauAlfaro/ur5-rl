@@ -12,10 +12,10 @@ import cv2 as cv
 import os
 
 
-TEST = False
+TEST = True
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
-n_eval_envs = 2
+n_eval_envs = 1
 
 
 class CustomEvalCallback(EvalCallback):
@@ -107,13 +107,13 @@ if __name__ == "__main__":
                 use_sde = True, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
     
 
-    if not TEST:
-        print("|| Training ...")
-        model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = checkpoint_callback, progress_bar = True)
-        model.save("./my_models_eval/best_model.zip")
-    else:
-        print("|| Loading model for testing ...")
-        model = SAC.load("./my_models_eval/rl_model_47000_steps.zip")
+    # if not TEST:
+    #     print("|| Training ...")
+    #     model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = checkpoint_callback, progress_bar = True)
+    #     model.save("./my_models_eval/best_model.zip")
+    # else:
+    #     print("|| Loading model for testing ...")
+    #     model = SAC.load("./my_models_eval/rl_model_47000_steps.zip")
     
     
     model.policy.eval()
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     
     if TEST:
         r = 0
-        vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+        vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
         obs, info = vec_env.reset()
         while True:
             action, _states = model.predict(obs, deterministic = True)

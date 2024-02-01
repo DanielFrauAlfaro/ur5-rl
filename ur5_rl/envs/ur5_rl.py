@@ -155,8 +155,11 @@ class UR5Env(gym.Env):
                                                 dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
 
         # Collision reward
-        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        r_aux = collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
+        if r_aux < 0.0:
+            r += r_aux
+
         return r
 
 
@@ -353,7 +356,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        return self.frame
+        return self.frame[0][0]
         cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 
