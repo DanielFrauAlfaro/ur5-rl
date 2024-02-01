@@ -269,7 +269,7 @@ def check_collision(client, objects):
     col_detector = pyb_utils.CollisionDetector(client, [(objects[0], objects[1])])
 
     # Detects collision with a certain margin (0.0)
-    return col_detector.in_collision(margin = 0.0)
+    return col_detector.in_collision(margin = 0.001)
     
 
 # Computes the reward associated with collision reward
