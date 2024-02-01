@@ -109,7 +109,7 @@ if __name__ == "__main__":
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
                 verbose=100, buffer_size = 14000,  batch_size = 256, tensorboard_log="logs/", 
                 train_freq=10, learning_rate = 0.00073, gamma = 0.99, seed = 42,
-                use_sde = True, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
+                use_sde = False, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
     
     # Training 
     if not TEST:

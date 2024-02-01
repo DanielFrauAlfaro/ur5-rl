@@ -321,7 +321,7 @@ def out_of_bounds(limits, robot):
     for idx, limit in enumerate(limits[:2]):
         if True in list(limit[0] > qs[idx]) or  \
            True in list(limit[1] < qs[idx]):
-
+            print("Limites ", idx)
             return True
 
     return False
