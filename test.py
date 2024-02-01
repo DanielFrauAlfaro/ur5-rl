@@ -14,7 +14,7 @@ import os
 
 TEST = False
 env_id = "ur5_rl/Ur5Env-v0"
-n_training_envs = 6
+n_training_envs = 4
 n_eval_envs = 2
 
 
