@@ -15,7 +15,7 @@ import os
 TEST = False
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 3
-n_eval_envs = 2
+n_eval_envs = 1
 
 
 class CustomEvalCallback(EvalCallback):
