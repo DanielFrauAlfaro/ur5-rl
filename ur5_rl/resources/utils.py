@@ -203,7 +203,7 @@ def get_wrist_pos(client, robot_id):
     # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
 
     
-    return np.array(pos), z_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
+    return np.array(pos), z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
 # Computes the reward according the approximation to the object
@@ -224,17 +224,20 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     # Obtains the object and wrist positions
     obj_pos, obj_or = get_object_pos(object=object, client = client)
-    wrist_pos, wrist_or = get_wrist_pos(client = client, robot_id=robot_id)
+    wrist_pos, wrist_or, wrist_y_axis = get_wrist_pos(client = client, robot_id=robot_id)
+
+    object_y_axis = np.array([0, 0, -1])
 
 
     # Compures the distance between them
     distance = np.linalg.norm(wrist_pos - obj_pos)
-    orient = np.linalg.norm(wrist_or - obj_or)
+    orient = min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or)))
+    orient_z = np.linalg.norm(wrist_y_axis - object_y_axis)
 
-    distance = (distance + orient) / 2.0
+    distance = (distance + orient + orient_z) / 3.0
 
-    obj_pos  = np.concatenate((obj_pos, obj_or))
-    wrist_pos  = np.concatenate((wrist_pos, wrist_or))
+    obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
+    wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
 
     distance_xyz = [math.sqrt((round(x - y, 3))**2) for x, y in zip(wrist_pos, obj_pos)]      # if round, round to 3
     
@@ -247,7 +250,8 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     reward = -1 if not_approx else 1
 
     reward += -0.5 if False in approx_list[:3]  else 0.5
-    reward += -0.5 if False in approx_list[3:]  else 0.5
+    reward += -0.25 if False in approx_list[3:6]  else 0.25
+    reward += -0.25 if False in approx_list[6:]  else 0.25
 
     reward /= distance
 
@@ -273,7 +277,7 @@ def check_collision(client, objects):
     col_detector = pyb_utils.CollisionDetector(client, [(objects[0], objects[1])])
 
     # Detects collision with a certain margin (0.0)
-    return col_detector.in_collision(margin = 0.001)
+    return col_detector.in_collision(margin = 0.0005)
     
 
 # Computes the reward associated with collision reward
