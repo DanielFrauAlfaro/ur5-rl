@@ -14,7 +14,7 @@ import os
 
 TEST = False
 env_id = "ur5_rl/Ur5Env-v0"
-n_training_envs = 1
+n_training_envs = 6
 n_eval_envs = 2
 
 
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     # # Test
     else:
         print("|| Loading model for testing ...")
-        model = SAC.load("./my_models_eval/rl_model_15000_steps.zip")
+        model = SAC.load("./my_models_eval/rl_model_9000_steps.zip")
     
 
     # Close enviroments
