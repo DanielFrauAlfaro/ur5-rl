@@ -126,6 +126,7 @@ class UR5Env(gym.Env):
 
         # Distance between object an wrist
         self._dist_obj_wrist = [math.inf, math.inf, math.inf, 
+                                math.inf, math.inf, math.inf,
                                 math.inf, math.inf, math.inf]
 
         # Reward mask
