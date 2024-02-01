@@ -134,7 +134,7 @@ class UR5Env(gym.Env):
                               -4, -4, -4,
                               -4, -4, -4,
                               -5, -5, 
-                              70, 70, 70])
+                              30, 30, 30])
 
 
     
@@ -177,7 +177,7 @@ class UR5Env(gym.Env):
         col_r = collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
 
         terminated = (time.time() - self._t_act) > self._t_limit \
-                    #   or col_r > 0.0 
+                      or col_r > 0.0 
                                                                            
         
         truncated = out_of_bounds(self._limits, self._ur5) \
