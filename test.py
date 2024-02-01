@@ -118,9 +118,9 @@ if __name__ == "__main__":
         model.save("./my_models_eval/best_model.zip")
 
     # # Test
-    # else:
-    #     print("|| Loading model for testing ...")
-    #     model = SAC.load("./my_models_eval/best_model.zip")
+    else:
+        print("|| Loading model for testing ...")
+        model = SAC.load("./my_models_eval/rl_model_15000_steps.zip")
     
 
     # Close enviroments
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         print("|| Testing ...")
 
         r = 0
-        vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+        vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT", show=True)
         obs, info = vec_env.reset()
         while True:
             action, _states = model.predict(obs, deterministic = True)
@@ -141,7 +141,8 @@ if __name__ == "__main__":
             
             # print(reward)
             r += reward
-            # img = vec_env.render()
+            img = vec_env.render()
+
             # cv.imshow("AA", img)
             # cv.waitKey(1)
 
