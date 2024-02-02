@@ -28,7 +28,7 @@ class UR5Env(gym.Env):
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -15, np.ones(6) * 15]
+        self._qd_limits = [np.ones(6) * -19, np.ones(6) * 19]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
@@ -39,8 +39,8 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.09
-        self.max_action_or = 0.2
+        self.max_action = 0.085
+        self.max_action_or = 0.4
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
@@ -119,7 +119,7 @@ class UR5Env(gym.Env):
         self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],     # External Camera 1
                               [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]]        # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
 
-        self.std_cam = 0.0
+        self.std_cam = 0.05
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
                                      near_val=self.near_plane, far_val=self.far_plane, 
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
@@ -130,12 +130,12 @@ class UR5Env(gym.Env):
                                 math.inf, math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-40, 
-                              -5, -5, -5,
-                              -5, -5, -5,
-                              -5, -5, -5,
-                              -5, -5, 
-                              20, 20, 20])
+        self.mask = np.array([-10, 
+                              -2, -2, -2,
+                              -2, -2, -2,
+                              -2, -2, -2,
+                              -2, -2, 
+                              6, 6, 6])
 
 
     
@@ -249,6 +249,7 @@ class UR5Env(gym.Env):
         action[3:-1] *= self.max_action_or
         action[-1]   *= self.max_action_g
 
+
         # Computes the action
         self._ur5.apply_action_c(action)
         
@@ -267,7 +268,10 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 10
+            reward -= 5
+        
+        if (time.time() - self._t_act) > self._t_limit:
+            reward += 5
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -305,8 +309,8 @@ class UR5Env(gym.Env):
         # --- Create Entities ---
         
         # Random object position and orientation
-        pos, orn = np.random.uniform([[0.01, 0.45, 0.85], [-3.1415,-3.1415, -3.1415]], 
-                                     [[0.3,  0.65, 0.85], [3.1415,  3.1415,  3.1415]])
+        pos, orn = np.random.uniform([[0.01, 0.45, 0.85], [-pi, -pi/2, -3.1415]], 
+                                     [[0.3,  0.65, 0.85], [pi,  -pi/2,  3.1415]])
 
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         
