@@ -309,13 +309,13 @@ if __name__ == "__main__":
 
     joints, gripper_joints_id = setup_robot(ur5_id)
 
-    q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, 2.3]
+    q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, 0.0]
 
     set_joints(ur5_id, q)
     
 
 
-    ee = [0.1332997, 0.49, 0.48, -3.14, 0.0, -2.3,
+    ee = [0.1332997, 0.49, 0.48, -3.14, 0.0, 0.0,
           0.0]
 
     for __ in range(40):
@@ -393,6 +393,9 @@ if __name__ == "__main__":
         ee_pos = T.t
         ee_or = T.rpy('yxz')
         ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], g]
+        print(j[3:-1])
+        print(ee_or)
+        print("---")
 
         # state = p.getLinkState(bodyUniqueId = ur5_id, linkIndex = 11, computeForwardKinematics = True)
 
@@ -440,7 +443,7 @@ if __name__ == "__main__":
         y_axis_local, z_axis_local = z_axis_local, y_axis_local
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
 
-        print(z_axis_local)
+        # print(z_axis_local)
 
         # --- Object ---
         pos, orn = p.getBasePositionAndOrientation(object, physicsClientId=client)
@@ -456,8 +459,8 @@ if __name__ == "__main__":
 
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) 
 
-        print(z_axis_local)
-        print("--")
+        # print(z_axis_local)
+        # print("--")
 
         time.sleep(0.1)
         
