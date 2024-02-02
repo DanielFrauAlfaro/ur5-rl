@@ -178,8 +178,8 @@ def spawn_environment(id):
     spawnables = ("002_master_chef_can", "003_cracker_box", "004_sugar_box", "005_tomato_soup_can", "006_mustard_bottle", "007_tuna_fish_can", "008_pudding_box", "009_gelatin_box", "010_potted_meat_can", "011_banana", "012_strawberry", "013_apple", "014_lemon", "015_peach", "016_pear", "017_orange", "018_plum", "021_bleach_cleanser")
 
     # Random object position and orientation
-    pos, orn = np.random.uniform([[0.01, 0.45, 0.85], [-3.1415,-3.1415, -3.1415]], 
-                                    [[0.3,  0.65, 0.85], [3.1415,  3.1415,  3.1415]])
+    pos, orn = np.random.uniform([[0.01, 0.45, 0.85], [-pi, -pi/2, -3.1415]], 
+                                 [[0.3,  0.65, 0.85], [pi,  -pi/2,  3.1415]])
 
     rand_orientation = p.getQuaternionFromEuler(orn)
 
@@ -439,7 +439,8 @@ if __name__ == "__main__":
         x_axis_local *= -1
         y_axis_local, z_axis_local = z_axis_local, y_axis_local
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
-        print(y_axis_local)
+
+        print(z_axis_local)
 
         # --- Object ---
         pos, orn = p.getBasePositionAndOrientation(object, physicsClientId=client)
@@ -450,9 +451,13 @@ if __name__ == "__main__":
         y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
         z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
 
+        down = np.array([-1, 0, 0])
+        x_axis_local = np.dot(rotation_matrix, down)
+
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) 
 
-        print(y_axis_local)
+        print(z_axis_local)
+        print("--")
 
         time.sleep(0.1)
         
