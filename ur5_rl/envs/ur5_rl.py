@@ -269,9 +269,6 @@ class UR5Env(gym.Env):
 
         if truncated:
             reward -= 5
-        
-        if (time.time() - self._t_act) > self._t_limit:
-            reward += 5
 
         # Get the new state after the action
         obs = self.get_observation()
