@@ -157,9 +157,9 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.2 # * x_axis_local
+    pos[-1] += 0.28 # * x_axis_local
 
-    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
     return np.array(pos), z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
 

@@ -119,7 +119,7 @@ class UR5Env(gym.Env):
         self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],     # External Camera 1
                               [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]]        # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
 
-        self.std_cam = 0.05 # 0.05
+        self.std_cam = 0.02 # 0.05
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
                                      near_val=self.near_plane, far_val=self.far_plane, 
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
@@ -131,10 +131,10 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-40, 
-                              4, 4, 4,
-                              4, 4, 4,
-                              4, 4, 4,
-                              1, 1, 
+                              -4, -4, -4,
+                              -4, -4, -4,
+                              -4, -4, -4,
+                              -1, -1, 
                               8, 8, 8])
 
 
