@@ -17,17 +17,17 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_10000_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_2000_steps.zip")
     
     model.policy.eval()
     print("|| Testing ...")
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     obs, info = vec_env.reset()
     while True:
         action, _states = model.predict(obs, deterministic = True)
-        print(type(action))
+
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
         # print(reward)
