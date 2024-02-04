@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.085
+        self.max_action = 0.09
         self.max_action_or = 0.4
         self._action_limits = [-np.ones(6), np.ones(6)]
         
@@ -130,12 +130,12 @@ class UR5Env(gym.Env):
                                 math.inf, math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-40, 
-                              -4, -4, -4,
-                              -4, -4, -4,
-                              -4, -4, -4,
+        self.mask = np.array([-10, 
+                              -2, -2, -2,
+                              -2, -2, -2,
+                              -2, -2, -2,
                               -1, -1, 
-                              8, 8, 8])
+                              3, 3, 3])
 
 
     

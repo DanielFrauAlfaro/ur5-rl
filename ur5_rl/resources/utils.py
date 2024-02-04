@@ -235,10 +235,10 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     orient = min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or)))
     orient_z = np.linalg.norm(wrist_y_axis - object_y_axis)
 
-    # distance = (orient + orient_z) / 2.0
+    # distance = (distance + orient + orient_z) / 3.0
 
-    # obj_pos  = np.concatenate((obj_or, object_y_axis))
-    # wrist_pos  = np.concatenate((wrist_or, wrist_y_axis))
+    obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
+    wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
 
     distance_xyz = [math.sqrt((round(i - j, 3))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
     
@@ -250,11 +250,11 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # reward = 1 if distance < dist_obj_wrist else -2
     reward = -1 if not_approx else 1
     # reward = 0
-    # reward += -0.5/orient if False in approx_list[:3]  else 0.5/orient
-    # reward += -0.5/orient_z if False in approx_list[3:]  else 0.5/orient_z
-    # reward += -0.25 if False in approx_list[6:]  else 0.25
+    reward += -0.5 if False in approx_list[:3]   else 0.5
+    reward += -0.5 if False in approx_list[3:6]  else 0.5
+    reward += -0.5 if False in approx_list[6:]   else 0.5
 
-    reward /= distance
+    # reward /= distance
 
     # Updates distance
     dist_obj_wrist = distance_xyz

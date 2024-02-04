@@ -128,7 +128,7 @@ class UR5e:
             - action: array of XYZ - RPY - G position actions, where G is the gripper
         action [0, 255] (list of length 7 --> 6 + 1)
         '''
-        
+
         # Converts the action to a
         action = self.ee + action
 

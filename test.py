@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_3000_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_10000_steps.zip")
     
     model.policy.eval()
     print("|| Testing ...")
@@ -27,6 +27,7 @@ if __name__ == "__main__":
     obs, info = vec_env.reset()
     while True:
         action, _states = model.predict(obs, deterministic = True)
+        print(type(action))
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
         # print(reward)
