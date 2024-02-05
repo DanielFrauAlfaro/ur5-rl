@@ -23,7 +23,7 @@ if __name__ == "__main__":
     print("|| Testing ...")
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     obs, info = vec_env.reset()
     while True:
         action, _states = model.predict(obs, deterministic = True)
