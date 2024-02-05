@@ -184,9 +184,9 @@ def get_wrist_pos(client, robot_id):
     # ----- Extra code for changing axis ------
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
 
-    x_axis_local = rotation_matrix[:, 0]
-    y_axis_local = rotation_matrix[:, 1]
-    z_axis_local = rotation_matrix[:, 2]
+    x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
+    y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
+    z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
 
     # Euler angles in radians (replace with your actual values)
     roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
@@ -240,7 +240,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
     # wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
 
-    distance_xyz = [math.sqrt((round(i - j, 3))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
+    distance_xyz = [math.sqrt((round(i - j, 2))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
     
     distance_xyz.append(orient)
     distance_xyz.append(orient_z)
@@ -254,9 +254,9 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # reward = 1 if distance < dist_obj_wrist else -2
     reward = -1 if not_approx else 1
     # reward = 0
-    reward += -1.1/distance if False in approx_list[:3]   else 1.1/distance
-    reward += -0.6/orient if False == approx_list[3]  else 0.6/orient
-    reward += -0.6/orient_z if False == approx_list[4]   else 0.6/orient_z
+    reward += -0.5/distance if False in approx_list[:3]   else 1/distance
+    reward += -0.5/orient if False == approx_list[3]  else 1/orient
+    reward += -0.5/orient_z if False == approx_list[4]   else 1/orient_z
 
     # reward /= distance
 

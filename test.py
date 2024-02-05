@@ -17,13 +17,13 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_7000_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_6000_steps.zip")
     
     model.policy.eval()
     print("|| Testing ...")
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
     obs, info = vec_env.reset()
     while True:
         action, _states = model.predict(obs, deterministic = True)

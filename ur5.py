@@ -431,7 +431,7 @@ if __name__ == "__main__":
         rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
         
         rpy_w = p.getEulerFromQuaternion(orn)
-        print(rpy_w)
+        # print(rpy_w)
 
 
 
@@ -440,16 +440,17 @@ if __name__ == "__main__":
         z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
         
 
-        # roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
-        # rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
+        roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
+        rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
 
-        # # Rotate the vector using the rotation matrix
-        # x_axis_local = np.dot(rotation_matrix, x_axis_local)
-        # y_axis_local = np.dot(rotation_matrix, y_axis_local)
-        # x_axis_local *= -1
-        # y_axis_local, z_axis_local = z_axis_local, y_axis_local
+        # Rotate the vector using the rotation matrix
+        x_axis_local = np.dot(rotation_matrix, x_axis_local)
+        y_axis_local = np.dot(rotation_matrix, y_axis_local)
+        x_axis_local *= -1
+        y_axis_local, z_axis_local = z_axis_local, y_axis_local
 
-        # obj_or = z_axis_local / np.linalg.norm(z_axis_local)
+        wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
+        wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
 
@@ -461,7 +462,7 @@ if __name__ == "__main__":
         rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
         
         rpy_o = p.getEulerFromQuaternion(orn)
-        print(rpy_o)                                # 0.86 de diferencia entre la YAW (3) del wrist 
+        # print(rpy_o)                                # 0.86 de diferencia entre la YAW (3) del wrist 
                                                     # y el ROLL (1) del objeto (transversal)
         
         diff = (rpy_w[-1]) - (rpy_o[0])
@@ -474,7 +475,7 @@ if __name__ == "__main__":
         y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
         z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
 
-        wrist_or = z_axis_local
+        obj_or = z_axis_local
 
         down = np.array([-1, 0, 0])
         x_axis_local = np.dot(rotation_matrix, down)
@@ -483,6 +484,8 @@ if __name__ == "__main__":
 
         # print(z_axis_local)
         # print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
+        object_y_axis = np.array([0, 0, -1])
+        print(np.linalg.norm(wrist_or_y - object_y_axis))
         print("--")
 
         
