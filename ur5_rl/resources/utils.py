@@ -159,7 +159,7 @@ def get_object_pos(client, object):
     pos = list(pos)
     pos[-1] += 0.28 # * x_axis_local
 
-    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
     return np.array(pos), z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
 
@@ -229,18 +229,17 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     object_y_axis = np.array([0, 0, -1])
 
-
     # Compures the distance between them
-    distance = np.linalg.norm(wrist_pos - obj_pos)
+    distance_ = np.linalg.norm(wrist_pos - obj_pos)
     orient = min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or)))
     orient_z = np.linalg.norm(wrist_y_axis - object_y_axis)
 
-    distance = (distance + orient + orient_z) / 3.0
+    distance = (distance_ + orient + orient_z) / 3.0
 
     # obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
     # wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
 
-    distance_xyz = [math.sqrt((round(i - j, 2))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
+    distance_xyz = [math.sqrt((round(i - j, 3))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
     
     distance_xyz.append(orient)
     distance_xyz.append(orient_z)
@@ -251,16 +250,22 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     approx_list = [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
     not_approx = False in approx_list
 
+    # print(distance)
+    # print(orient)
+    # print(orient_z)
+    # print(approx_list)
+    # print("--")
 
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
     # reward = 1 if distance < dist_obj_wrist else -2
-    reward = -1 if not_approx else 1
-    # reward = 0
-    # reward += -0.5/distance if False in approx_list[:3]   else 1/distance
-    # reward += -0.5/orient if False == approx_list[3]  else 1/orient
-    # reward += -0.5/orient_z if False == approx_list[4]   else 1/orient_z
+    reward = -1/distance if not_approx else 1/distance
 
-    reward /= distance
+    # reward = 0
+    reward += -0.5/distance_ if False in approx_list[:3]   else 0.5/distance_
+    reward += -0.25/orient if False == approx_list[3]  else 0.25/orient
+    reward += -0.25/orient_z if False == approx_list[4]   else 0.25/orient_z
+
+    # reward /= distance
 
     # Updates distance
     dist_obj_wrist = distance_xyz

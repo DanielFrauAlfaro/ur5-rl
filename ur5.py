@@ -486,6 +486,7 @@ if __name__ == "__main__":
         print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
         object_y_axis = np.array([0, 0, -1])
         # print(np.linalg.norm(wrist_or_y - object_y_axis))
+        print(wrist_or_y)
         print("--")
 
         
