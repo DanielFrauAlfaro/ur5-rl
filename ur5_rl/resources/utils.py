@@ -235,7 +235,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     orient = min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or)))
     orient_z = np.linalg.norm(wrist_y_axis - object_y_axis)
 
-    # distance = (distance + orient + orient_z) / 3.0
+    distance = (distance + orient + orient_z) / 3.0
 
     # obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
     # wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
@@ -245,20 +245,22 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     distance_xyz.append(orient)
     distance_xyz.append(orient_z)
 
+    
 
     # Si hay por lo menos uno que es FALSE, le asigna el False
     approx_list = [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
     not_approx = False in approx_list
 
+
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
     # reward = 1 if distance < dist_obj_wrist else -2
     reward = -1 if not_approx else 1
     # reward = 0
-    reward += -0.5/distance if False in approx_list[:3]   else 1/distance
-    reward += -0.5/orient if False == approx_list[3]  else 1/orient
-    reward += -0.5/orient_z if False == approx_list[4]   else 1/orient_z
+    # reward += -0.5/distance if False in approx_list[:3]   else 1/distance
+    # reward += -0.5/orient if False == approx_list[3]  else 1/orient
+    # reward += -0.5/orient_z if False == approx_list[4]   else 1/orient_z
 
-    # reward /= distance
+    reward /= distance
 
     # Updates distance
     dist_obj_wrist = distance_xyz
