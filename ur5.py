@@ -393,9 +393,7 @@ if __name__ == "__main__":
         ee_pos = T.t
         ee_or = T.rpy('yxz')
         ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], g]
-        print(j[3:-1])
-        print(ee_or)
-        print("---")
+
 
         # state = p.getLinkState(bodyUniqueId = ur5_id, linkIndex = 11, computeForwardKinematics = True)
 
@@ -425,13 +423,22 @@ if __name__ == "__main__":
         c3 = col_detector.in_collision(margin = 0.0005)
 
 
+
+
         # --- Wrist ---
         link_state = p.getLinkState(ur5_id, 11, computeLinkVelocity=1, computeForwardKinematics=1, physicsClientId = client)
         pos, orn = link_state[0], link_state[1]
         rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
+        
+        rpy_w = p.getEulerFromQuaternion(orn)
+        # print(rpy_w)
+
+
+
         x_axis_local = rotation_matrix[:, 0]
         y_axis_local = rotation_matrix[:, 1]
-        z_axis_local = rotation_matrix[:, 2]
+        z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
+        
 
         roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
         rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
@@ -441,6 +448,9 @@ if __name__ == "__main__":
         y_axis_local = np.dot(rotation_matrix, y_axis_local)
         x_axis_local *= -1
         y_axis_local, z_axis_local = z_axis_local, y_axis_local
+
+        obj_or = z_axis_local / np.linalg.norm(z_axis_local)
+
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
 
         # print(z_axis_local)
@@ -450,9 +460,21 @@ if __name__ == "__main__":
         # Convert quaternion to rotation matrix
         rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
         
+        rpy_o = p.getEulerFromQuaternion(orn)
+        # print(rpy_o)                                # 0.86 de diferencia entre la YAW (3) del wrist 
+                                                    # y el ROLL (1) del objeto (transversal)
+        
+        diff = (rpy_w[-1]) - (rpy_o[0])
+        # if diff < 0.0:
+        #     print("AAA")
+        #     diff = -1*diff - pi
+        # print("Diff: ", abs(diff))
+
         x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
         y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
         z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
+
+        wrist_or = z_axis_local
 
         down = np.array([-1, 0, 0])
         x_axis_local = np.dot(rotation_matrix, down)
@@ -460,10 +482,13 @@ if __name__ == "__main__":
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) 
 
         # print(z_axis_local)
-        # print("--")
+        print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
+        print("--")
 
-        time.sleep(0.1)
         
+        time.sleep(0.05)
+        
+
         
         
         # print("Pybullet API T: ", state[0])

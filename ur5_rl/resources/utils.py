@@ -237,11 +237,12 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     # distance = (distance + orient + orient_z) / 3.0
 
-    obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
-    wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
+    # obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
+    # wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
 
     distance_xyz = [math.sqrt((round(i - j, 3))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
-    
+    distance_xyz = np.concatenate(distance_xyz, orient, orient_z)
+
     # Si hay por lo menos uno que es FALSE, le asigna el False
     approx_list = [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
     not_approx = False in approx_list
@@ -251,8 +252,8 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     reward = -1 if not_approx else 1
     # reward = 0
     reward += -1.1/distance if False in approx_list[:3]   else 1.1/distance
-    reward += -0.6/orient if False in approx_list[3:6]  else 0.6/orient
-    reward += -0.6/orient_z if False in approx_list[6:]   else 0.6/orient_z
+    reward += -0.6/orient if False == approx_list[3]  else 0.6/orient
+    reward += -0.6/orient_z if False == approx_list[4]   else 0.6/orient_z
 
     # reward /= distance
 
