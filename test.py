@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_6000_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_2000_steps.zip")
     
     model.policy.eval()
     print("|| Testing ...")
