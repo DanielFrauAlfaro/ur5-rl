@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_2000_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_4000_steps.zip")
     
     model.policy.eval()
     print("|| Testing ...")
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
