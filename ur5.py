@@ -296,6 +296,11 @@ def print_axis(client, pos, rotation_matrix):
     p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.3, physicsClientId = client)  # Z-axis (blue)
 
 
+def rotation_matrix_to_euler_xyz(R):
+    theta_y = np.arcsin(-R[0, 2])
+    theta_x = np.arctan2(R[1, 2], R[2, 2])
+    theta_z = np.arctan2(R[0, 1], R[0, 0])
+    return np.array([theta_x, theta_y, theta_z])
 
 # Main
 if __name__ == "__main__":
@@ -433,8 +438,6 @@ if __name__ == "__main__":
         rpy_w = p.getEulerFromQuaternion(orn)
         # print(rpy_w)
 
-
-
         x_axis_local = rotation_matrix[:, 0]
         y_axis_local = rotation_matrix[:, 1]
         z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
@@ -448,9 +451,14 @@ if __name__ == "__main__":
         y_axis_local = np.dot(rotation_matrix, y_axis_local)
         x_axis_local *= -1
         y_axis_local, z_axis_local = z_axis_local, y_axis_local
+        y_axis_local, x_axis_local = x_axis_local, y_axis_local
+        y_axis_local = np.cross(z_axis_local, x_axis_local)
 
-        wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
-        wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
+        rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
+        euler_angles_w = rotation_matrix_to_euler_xyz(rotation_matrix)
+
+        # wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
+        # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
 
@@ -475,19 +483,28 @@ if __name__ == "__main__":
         y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
         z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
 
-        obj_or = z_axis_local
+        # obj_or = z_axis_local
 
-        down = np.array([-1, 0, 0])
-        x_axis_local = np.dot(rotation_matrix, down)
+        x_axis_local = np.array([0, 0, -1])
+        y_axis_local = np.cross(z_axis_local, x_axis_local)
+        # x_axis_local = np.dot(rotation_matrix, down)
+
+        
+        rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
+        euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
+        
+        print(euler_angles)
+        print(euler_angles_w)
+        print("--")
 
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) 
 
         # print(z_axis_local)
-        print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
-        object_y_axis = np.array([0, 0, -1])
+        # print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
+        # object_y_axis = np.array([0, 0, -1])
         # print(np.linalg.norm(wrist_or_y - object_y_axis))
-        print(wrist_or_y)
-        print("--")
+        # print(wrist_or_y)
+        # print("--")
 
         
         time.sleep(0.05)

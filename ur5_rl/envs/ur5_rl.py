@@ -130,12 +130,12 @@ class UR5Env(gym.Env):
                                 math.inf]
 
         # Reward mask
-        self.mask = np.array([-10, 
-                              1, 1, 1,
-                              1, 1, 1,
-                              1, 1, 1,
+        self.mask = np.array([-40, 
+                              8, 8, 8,
+                              8, 8, 8,
+                              8, 8, 8,
                               -1, -1, 
-                              3, 3, 3])
+                              12, 12, 12])
 
 
     
