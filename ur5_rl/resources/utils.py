@@ -231,7 +231,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     # Compures the distance between them
     distance_ = np.linalg.norm(wrist_pos - obj_pos)
-    orient = min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or)))
+    orient = np.linalg.norm(wrist_or - obj_or)
     orient_z = np.linalg.norm(wrist_y_axis - object_y_axis)
 
     distance = (distance_ + orient + orient_z) / 3.0
