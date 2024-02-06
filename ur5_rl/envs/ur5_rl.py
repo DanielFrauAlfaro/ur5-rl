@@ -78,7 +78,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 1300
+        self._t_limit = 13
         self._t_act = time.time()
 
 
@@ -130,12 +130,12 @@ class UR5Env(gym.Env):
                                 math.inf]
 
         # Reward mask
-        self.mask = np.array([-40, 
-                              8, 8, 8,
-                              8, 8, 8,
-                              8, 8, 8,
+        self.mask = np.array([-10, 
+                              1, 1, 1,
+                              1, 1, 1,
+                              1, 1, 1,
                               -1, -1, 
-                              12, 12, 12])
+                              3, 3, 3])
 
 
     
