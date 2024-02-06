@@ -156,7 +156,7 @@ class UR5Env(gym.Env):
                                                 dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
 
         # Collision reward
-        r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
 
