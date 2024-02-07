@@ -28,7 +28,7 @@ class UR5Env(gym.Env):
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -16, np.ones(6) * 16]
+        self._qd_limits = [np.ones(6) * -18, np.ones(6) * 18]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
@@ -40,7 +40,7 @@ class UR5Env(gym.Env):
         # --- Action limits ---
         # Joint actions
         self.max_action = 0.085
-        self.max_action_or = 0.12
+        self.max_action_or = 0.13
         self.max_action_yaw = 3
         self._action_limits = [-np.ones(6), np.ones(6)]
         
@@ -130,12 +130,12 @@ class UR5Env(gym.Env):
                                 math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-20, 
-                              -4, -4, -4,
-                              -4, -4, -4,
-                              -4, -4, -4,
-                              -10, -10, 
-                              12, 12, 12])
+        self.mask = np.array([-2, 
+                              -1, -1, -1,
+                              -1, -1, -1,
+                              -1, -1, -1,
+                              -2, -2, 
+                              0.5, 0.5, 0.5])
 
 
     
