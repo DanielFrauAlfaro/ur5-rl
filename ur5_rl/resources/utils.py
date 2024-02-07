@@ -422,15 +422,15 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # print(approx_list)
     # print("--")
 
-    print(approx_list[3:])
-
     # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
     # reward = 1 if distance < dist_obj_wrist else -2
     # reward = -1/distance if not_approx else 1/distance
 
     reward = 0
-    reward_pos = -1/distance_ if False in approx_list[:3]  else 1/distance_
-    reward_or = -1/orient if approx_list[3:].count(False) > 2  else 1/orient
+    reward += -0.2 if False in approx_list[:3] else 0.2
+    reward += -0.2 if approx_list[3:].count(False) >= 2 else 0.2
+
+    
 
     # print(reward_pos, " -- ", distance_)
     # print(reward_or, " -- ", orient)
