@@ -50,7 +50,7 @@ if __name__ == "__main__":
     vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False}) #vec_env_cls = SubprocVecEnv
 
     # Evaluation environments
-    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
+    # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
 
 
     # Observation space
@@ -87,10 +87,10 @@ if __name__ == "__main__":
     # --- Callbacks ---
     save_freq = 1000
 
-    eval_log_dir = "my_models_eval/"
-    eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
-                             log_path="./logs/", eval_freq=max(save_freq // n_training_envs, 1),
-                             deterministic=True, render=False)
+    # eval_log_dir = "my_models_eval/"
+    # eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
+    #                          log_path="./logs/", eval_freq=max(save_freq // n_training_envs, 1),
+    #                          deterministic=True, render=False)
     
     checkpoint_callback = CheckpointCallback(
         save_freq=max(save_freq // n_training_envs, 1),
@@ -118,4 +118,4 @@ if __name__ == "__main__":
 
     # Close enviroments
     vec_env.close()
-    eval_env.close()
+    # eval_env.close()
