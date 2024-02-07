@@ -92,3 +92,5 @@ c = np.concatenate((a,b,d))
 print(c)
 print(c[3:6])
 print(c[:3])
+
+print(c[-2])
