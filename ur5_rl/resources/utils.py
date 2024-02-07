@@ -174,7 +174,7 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.28 # * x_axis_local
+    pos[-1] += 0.13 # * x_axis_local
 
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
@@ -481,6 +481,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     distance_ = distance_ / 0.5 * (math.pi/2)
 
     distance = (distance_ + orient + orient_z) / 3.0
+    orient_mean = (orient + orient_z) / 2
 
 
     # obj_pos = np.append(obj_pos, obj_or)
@@ -513,6 +514,9 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     reward += -1 if False in approx_list[:3] else 1
     reward += -1 if False in approx_list[3:] else 1
 
+    if reward > 0.0:
+        reward += -1 if False in approx_list[3:] else 1
+        # reward += -0.5 / orient_z if False == approx_list[4] else 0.5 / orient_z
     
 
     # print(reward_pos, " -- ", distance_)
