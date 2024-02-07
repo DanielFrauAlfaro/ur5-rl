@@ -108,6 +108,23 @@ def print_axis(client, pos, rotation_matrix):
     p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.3, physicsClientId = client)  # Z-axis (blue)
 
 
+# Get the rotation Euler angles from the rotation matrix
+def rotation_matrix_to_euler_xyz(R):
+    '''
+    Obtains the Euler angles from a 3x3 rotation matrix
+
+        - R: 3x3 rotation matrix (lists // numpy matrix)
+
+    Returns:
+        - Array of Euler angles (numpy array)
+    '''
+
+    theta_y = np.arcsin(-R[0, 2])
+    theta_x = np.arctan2(R[1, 2], R[2, 2])
+    theta_z = np.arctan2(R[0, 1], R[0, 0])
+
+    return np.array([theta_x, theta_y, theta_z])
+
 
 # Getter for the object position
 def get_object_pos(client, object):
@@ -159,9 +176,17 @@ def get_object_pos(client, object):
     pos = list(pos)
     pos[-1] += 0.28 # * x_axis_local
 
-    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    x_axis_local = np.array([0, 0, -1])
+    y_axis_local = np.cross(z_axis_local, x_axis_local)
+    # x_axis_local = np.dot(rotation_matrix, down)
+
     
-    return np.array(pos), z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
+    rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
+    euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
+
+    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    
+    return np.array(pos), x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
 
 
 # Getter for the wrist position
@@ -187,7 +212,7 @@ def get_wrist_pos(client, robot_id):
     x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
     y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
     z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
-
+    my_rotation = rotation_matrix
     # Euler angles in radians (replace with your actual values)
     roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
 
@@ -200,15 +225,21 @@ def get_wrist_pos(client, robot_id):
     x_axis_local *= -1
 
     y_axis_local, z_axis_local = z_axis_local, y_axis_local
+    y_axis_local, x_axis_local = x_axis_local, y_axis_local
+    y_axis_local = np.cross(z_axis_local, x_axis_local)
 
-    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
+    euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
+
+    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
 
     
-    return np.array(pos), z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
+    return np.array(pos), x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
 # Computes the reward according the approximation to the object
-def approx_reward(client, object, dist_obj_wrist, robot_id):
+# ACUERDATE DE PONDER BIEN LA INICIALIZACION DE dist_obj_wrist
+def approx_reward_prev(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -273,6 +304,146 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     dist_obj_wrist = distance_xyz
 
     return reward, dist_obj_wrist
+
+
+
+# Computes the reward according the approximation to the object
+def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
+    '''
+       Computes the reward due to approximation to the object  
+                                                                       
+           - client: Pybullet client (int)                             
+           - object: class that represents an object (must have        
+        "id" attribute) (object)
+           - dist_obj_wrist: previous distance between the wrist and the object (float)
+           - robot_id: id of the robot in the simulation (int)                          
+                                             
+       Returns:                                                        
+           - The new reward for approximation (int, -1 ó 1)
+           - The new distance between the object and the wrist
+    '''
+
+    # Obtains the object and wrist positions
+    obj_pos, obj_or = get_object_pos(object=object, client = client)
+    wrist_pos, wrist_or = get_wrist_pos(client = client, robot_id=robot_id)
+
+    # Compures the distance between them
+    distance_ = np.linalg.norm(wrist_pos - obj_pos)
+    orient = np.linalg.norm(wrist_or - obj_or)
+
+    distance = (distance_ + orient) / 2.0
+
+    obj_pos = np.append(obj_pos, obj_or)
+    wrist_pos = np.append(wrist_pos, wrist_or)
+
+    # obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
+    # wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
+
+    distance_xyz = [math.sqrt((round(i - j, 3))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
+    
+
+    # Si hay por lo menos uno que es FALSE, le asigna el False
+    approx_list = [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
+    not_approx = False in approx_list
+
+    # print(distance)
+    # print(orient)
+    # print(orient_z)
+    # print(approx_list)
+    # print("--")
+
+    print(approx_list[3:])
+
+    # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
+    # reward = 1 if distance < dist_obj_wrist else -2
+    # reward = -1/distance if not_approx else 1/distance
+
+    reward = 0
+    reward_pos = -1/distance_ if False in approx_list[:3]  else 1/distance_
+    reward_or = -1/orient if approx_list[3:].count(False) > 2  else 1/orient
+
+    # print(reward_pos, " -- ", distance_)
+    # print(reward_or, " -- ", orient)
+    # print("--")
+    
+
+    # reward /= distance
+
+    # Updates distance
+    dist_obj_wrist = distance_xyz
+
+    return reward, dist_obj_wrist
+
+
+
+
+# Computes the reward according the approximation to the object
+def approx_reward(client, object, dist_obj_wrist, robot_id):
+    '''
+       Computes the reward due to approximation to the object  
+                                                                       
+           - client: Pybullet client (int)                             
+           - object: class that represents an object (must have        
+        "id" attribute) (object)
+           - dist_obj_wrist: previous distance between the wrist and the object (float)
+           - robot_id: id of the robot in the simulation (int)                          
+                                             
+       Returns:                                                        
+           - The new reward for approximation (int, -1 ó 1)
+           - The new distance between the object and the wrist
+    '''
+
+    # Obtains the object and wrist positions
+    obj_pos, obj_or = get_object_pos(object=object, client = client)
+    wrist_pos, wrist_or = get_wrist_pos(client = client, robot_id=robot_id)
+
+    # Compures the distance between them
+    distance_ = np.linalg.norm(wrist_pos - obj_pos)
+    orient = np.linalg.norm(wrist_or - obj_or)
+
+    distance = (distance_ + orient) / 2.0
+
+    obj_pos = np.append(obj_pos, obj_or)
+    wrist_pos = np.append(wrist_pos, wrist_or)
+
+    # obj_pos  = np.concatenate((obj_pos, obj_or, object_y_axis))
+    # wrist_pos  = np.concatenate((wrist_pos, wrist_or, wrist_y_axis))
+
+    distance_xyz = [math.sqrt((round(i - j, 3))**2) for i, j in zip(wrist_pos, obj_pos)]      # if round, round to 3
+    
+
+    # Si hay por lo menos uno que es FALSE, le asigna el False
+    approx_list = [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
+    not_approx = False in approx_list
+
+    # print(distance)
+    # print(orient)
+    # print(orient_z)
+    # print(approx_list)
+    # print("--")
+
+    print(approx_list[3:])
+
+    # Assigns 1 as the reward if it has got closer to the object, or -1 otherwise
+    # reward = 1 if distance < dist_obj_wrist else -2
+    # reward = -1/distance if not_approx else 1/distance
+
+    reward = 0
+    reward_pos = -1/distance_ if False in approx_list[:3]  else 1/distance_
+    reward_or = -1/orient if approx_list[3:].count(False) > 2  else 1/orient
+
+    # print(reward_pos, " -- ", distance_)
+    # print(reward_or, " -- ", orient)
+    # print("--")
+    
+
+    # reward /= distance
+
+    # Updates distance
+    dist_obj_wrist = distance_xyz
+
+    return reward, dist_obj_wrist
+
 
 
 # Check the collision between TWO objects IDs

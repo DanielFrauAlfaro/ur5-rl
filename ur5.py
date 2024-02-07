@@ -450,6 +450,7 @@ if __name__ == "__main__":
         x_axis_local = np.dot(rotation_matrix, x_axis_local)
         y_axis_local = np.dot(rotation_matrix, y_axis_local)
         x_axis_local *= -1
+
         y_axis_local, z_axis_local = z_axis_local, y_axis_local
         y_axis_local, x_axis_local = x_axis_local, y_axis_local
         y_axis_local = np.cross(z_axis_local, x_axis_local)
@@ -457,10 +458,13 @@ if __name__ == "__main__":
         rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
         euler_angles_w = rotation_matrix_to_euler_xyz(rotation_matrix)
 
+        axis = x_axis_local + y_axis_local + z_axis_local
+
         # wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
         # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
         print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+        print_axis(client = client, pos = pos, rotation_matrix = [axis, axis, axis])
 
         # print(z_axis_local)
 
@@ -493,12 +497,14 @@ if __name__ == "__main__":
         rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
         euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
         
-        print(euler_angles)
-        print(euler_angles_w)
-        print("--")
+        
+        axis = x_axis_local + y_axis_local + z_axis_local
 
-        print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) 
+        # wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
+        # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
+        print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+        print_axis(client = client, pos = pos, rotation_matrix = [axis, axis, axis])
         # print(z_axis_local)
         # print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
         # object_y_axis = np.array([0, 0, -1])

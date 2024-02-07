@@ -78,7 +78,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 13
+        self._t_limit = 1300
         self._t_act = time.time()
 
 
@@ -126,8 +126,7 @@ class UR5Env(gym.Env):
 
         # Distance between object an wrist
         self._dist_obj_wrist = [math.inf, math.inf, math.inf, 
-                                math.inf, 
-                                math.inf]
+                                math.inf, math.inf, math.inf]
 
         # Reward mask
         self.mask = np.array([-40, 

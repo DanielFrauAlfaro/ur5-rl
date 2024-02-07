@@ -58,17 +58,17 @@ if __name__ == "__main__":
     gui_joints = user_interface()
 
     while True:
-        action, _states = model.predict(obs, deterministic = True)
-        # action = read_gui(gui_joints)
+        # action, _states = model.predict(obs, deterministic = True)
+        action = read_gui(gui_joints)
 
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
         # print(reward)
-        r += reward
-        img = vec_env.render()
+        # r += reward
+        # img = vec_env.render()
 
-        cv.imshow("AA", img)
-        cv.waitKey(1)
+        # cv.imshow("AA", img)
+        # cv.waitKey(1)
 
         if terminated or truncated:
             print(r, "--")
