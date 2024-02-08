@@ -471,6 +471,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     x_axis_obj, y_axis_obj, z_axis_obj = obj_or[:,0], obj_or[:,1], obj_or[:,2]
 
     xy_axis_wrist = x_axis_wrist + y_axis_wrist
+    xy_axis_wrist /= np.linalg.norm(xy_axis_wrist)
 
     # Compures the distance between them
     distance_ = np.linalg.norm(wrist_pos - obj_pos)
@@ -510,7 +511,6 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # reward = 1 if distance < dist_obj_wrist else -2
     reward = -1 if not_approx else 1
 
-    reward = 0
     reward += -1 if False in approx_list[:3] else 1
     reward += -1 if False in approx_list[3:] else 1
 
