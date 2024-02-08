@@ -503,8 +503,15 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     
 
     # Si hay por lo menos uno que es FALSE, le asigna el False
-    approx_list = [i < j for i,j in zip(distance_xyz, dist_obj_wrist)]
+    approx_list = [i - j for i,j in zip(distance_xyz, dist_obj_wrist)]
     not_approx = False in approx_list
+
+
+    approx_list = np.array(approx_list)
+
+    dist_sum = approx_list[:3].sum()
+    orient_sum = approx_list[3:].sum()
+
 
     # print(distance)
     # print(orient)
@@ -518,9 +525,9 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     # DQ robotics
 
     # reward = -1 if not_approx else 1
-    reward = 0
-    reward += -distance_ if False in approx_list[:3] else distance_
-    reward += -orient if False in approx_list[3:] else orient
+    reward = (dist_sum + orient_sum) * 100
+    # reward += -distance_ if False in approx_list[:3] else distance_
+    # reward += -orient if False in approx_list[3:] else orient
     
 
     # print(reward_pos, " -- ", distance_)

@@ -79,7 +79,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 13
+        self._t_limit = 11
         self._t_act = time.time()
 
 
@@ -130,12 +130,12 @@ class UR5Env(gym.Env):
                                 math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-20, 
-                              -8, -8, -8,
-                              -8, -8, -8,
-                              -8, -8, -8,
+        self.mask = np.array([-2, 
+                              -1, -1, -1,
+                              -1, -1, -1,
+                              -1, -1, -1,
                               -2, -2, 
-                              12, 12, 12])
+                              2, 2, 2])
 
 
     
@@ -270,7 +270,7 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 5
+            reward -= 2
 
         # Get the new state after the action
         obs = self.get_observation()

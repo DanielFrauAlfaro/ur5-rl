@@ -116,12 +116,12 @@ def compute_ik(robot_id, action, joints, gripper_joints_id, q):
 
     # Builds up homogeneus matrix
     T = SE3(x, y, z)
-    T_ = SE3.RPY(roll, pitch, yaw, order='zyx')
+    T_ = SE3.RPY(roll, pitch, yaw, order='xyz')
 
     T = T * T_
 
     # print(T.t)
-    # print(T.rpy('zyx'))
+    # print(T.rpy('xyz'))
 
     # Computes inverse kinematics
     new_q = ur5.ik_LM(T,q0 = q)
@@ -320,15 +320,15 @@ if __name__ == "__main__":
     
 
 
-    ee = [0.1332997, 0.49, 0.48, -3.14, 0.0, 0.0,
+    ee = [0.1332997, 0.49, 0.48, 3.14, 0.0, 0.0,
           0.0]
 
     for __ in range(40):
         p.stepSimulation()
 
-    T = ur5.fkine(q, order='yxz')
+    T = ur5.fkine(q, order='xyz')
     ee_pos = T.t
-    ee_or = T.rpy('yxz')
+    ee_or = T.rpy('xyz')
 
     ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], 
           0.0]
@@ -394,9 +394,9 @@ if __name__ == "__main__":
         g = min(min(g) / m1, max_closure)
 
         # render(client, ur5_id)
-        T = ur5.fkine(q, order='yxz')
+        T = ur5.fkine(q, order='xyz')
         ee_pos = T.t
-        ee_or = T.rpy('yxz')
+        ee_or = T.rpy('xyz')
         ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], g]
 
 
