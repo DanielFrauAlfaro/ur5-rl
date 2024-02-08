@@ -28,7 +28,7 @@ class UR5Env(gym.Env):
 
         # --- Observation limit values ---
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -18, np.ones(6) * 18]
+        self._qd_limits = [np.ones(6) * -20, np.ones(6) * 20]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
@@ -42,7 +42,7 @@ class UR5Env(gym.Env):
         self.max_action = 0.085
         self.max_action_or = 0.13
         self.max_action_yaw = 3
-        self._action_limits = [-np.ones(6), np.ones(6)]
+        self._action_limits = [-np.ones(4), np.ones(4)]
         
         # Appends gripper actions
         self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
@@ -250,7 +250,7 @@ class UR5Env(gym.Env):
         action[-2]   *= self.max_action_yaw
         action[-1]   *= self.max_action_g
         
-
+        action = np.array([action[0], action[1], action[2], 0, 0, action[3], action[4]])
 
         # Computes the action
         self._ur5.apply_action_c(action)
