@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_17000_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_10000_steps.zip")
     
     model.policy.eval()
     print("|| Testing ...")
@@ -52,23 +52,23 @@ if __name__ == "__main__":
     
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
 
     while True:
-        # action, _states = model.predict(obs, deterministic = True)
-        action = read_gui(gui_joints)
+        action, _states = model.predict(obs, deterministic = True)
+        # action = read_gui(gui_joints)
 
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
         # print(reward)
-        # r += reward
-        # img = vec_env.render()
+        r += reward
+        img = vec_env.render()
 
-        # cv.imshow("AA", img)
-        # cv.waitKey(1)
+        cv.imshow("AA", img)
+        cv.waitKey(1)
 
         if terminated or truncated:
             print(r, "--")

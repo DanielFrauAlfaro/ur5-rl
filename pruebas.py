@@ -94,3 +94,9 @@ print(c[3:6])
 print(c[:3])
 
 print(c[-2])
+
+v1 = np.array([1,2,3]) 
+v2 = np.array([1,2,3]) 
+print(np.dot(v1, v2))
+
+print(c[:3].tolist().sum())
