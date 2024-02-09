@@ -85,7 +85,7 @@ if __name__ == "__main__":
     )
 
     # --- Callbacks ---
-    save_freq = 1000
+    save_freq = 1500
 
     # eval_log_dir = "my_models_eval/"
     # eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
