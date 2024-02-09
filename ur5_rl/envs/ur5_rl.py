@@ -126,15 +126,16 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = [math.inf, math.inf]
+        self._dist_obj_wrist = [math.inf, math.inf, math.inf, 
+                                math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-2, 
-                              -1, -1, -1,
-                              -1, -1, -1,
-                              -1, -1, -1,
+        self.mask = np.array([-20, 
+                              -5, -5, -5,
+                              -5, -5, -5,
+                              -5, -5, -5,
                               -2, -2, 
-                              2, 2, 2])
+                              6, 6, 6])
 
 
     
@@ -155,7 +156,7 @@ class UR5Env(gym.Env):
                                                 dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
 
         # Collision reward
-        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
 
@@ -244,7 +245,7 @@ class UR5Env(gym.Env):
             - Info (dict)
         '''
         
-        action[0:3]  *= self.max_action * 0
+        action[0:3]  *= self.max_action
         action[3:-1] *= self.max_action_or
         action[-2]   *= self.max_action_yaw
         action[-1]   *= self.max_action_g
@@ -269,7 +270,7 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 0
+            reward -= 10
 
         # Get the new state after the action
         obs = self.get_observation()
