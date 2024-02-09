@@ -12,6 +12,7 @@ import os
 import pyb_utils
 import time
 from scipy.spatial.transform import Rotation
+import dqrobotics
 
 
 ur5 = rtb.DHRobot([
@@ -116,7 +117,7 @@ def compute_ik(robot_id, action, joints, gripper_joints_id, q):
 
     # Builds up homogeneus matrix
     T = SE3(x, y, z)
-    T_ = SE3.RPY(roll, pitch, yaw, order='xyz')
+    T_ = SE3.RPY(roll, pitch, yaw, order='zyx')
 
     T = T * T_
 
@@ -302,6 +303,12 @@ def rotation_matrix_to_euler_xyz(R):
     theta_z = np.arctan2(R[0, 1], R[0, 0])
     return np.array([theta_x, theta_y, theta_z])
 
+def get_quaternion(q):
+    return q[-1] + dqrobotics.i_ * q[0] + dqrobotics.j_ * q[1] + dqrobotics.k_ * q[2]
+
+def get_dualQuaternion(q_r, q_t):
+    return q_r + 0.5*dqrobotics.E_*q_t*q_r
+
 # Main
 if __name__ == "__main__":
     client = p.connect(p.GUI)
@@ -326,9 +333,9 @@ if __name__ == "__main__":
     for __ in range(40):
         p.stepSimulation()
 
-    T = ur5.fkine(q, order='xyz')
+    T = ur5.fkine(q, order='yxz')
     ee_pos = T.t
-    ee_or = T.rpy('xyz')
+    ee_or = T.rpy('yxz')
 
     ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], 
           0.0]
@@ -432,10 +439,10 @@ if __name__ == "__main__":
 
         # --- Wrist ---
         link_state = p.getLinkState(ur5_id, 11, computeLinkVelocity=1, computeForwardKinematics=1, physicsClientId = client)
-        pos, orn = link_state[0], link_state[1]
-        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
+        pos_w, orn_w = link_state[0], link_state[1]
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn_w, physicsClientId = client)).reshape((3, 3))
         
-        rpy_w = p.getEulerFromQuaternion(orn)
+        rpy_w = p.getEulerFromQuaternion(orn_w)
         # print(rpy_w)
 
         x_axis_local = rotation_matrix[:, 0]
@@ -463,17 +470,17 @@ if __name__ == "__main__":
         # wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
         # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
-        print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
-        print_axis(client = client, pos = pos, rotation_matrix = [axis, axis, axis])
+        print_axis(client = client, pos = pos_w, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+        print_axis(client = client, pos = pos_w, rotation_matrix = [axis, axis, axis])
 
         # print(z_axis_local)
 
         # --- Object ---
-        pos, orn = p.getBasePositionAndOrientation(object, physicsClientId=client)
+        pos_obj, orn_obj = p.getBasePositionAndOrientation(object, physicsClientId=client)
         # Convert quaternion to rotation matrix
-        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn_obj, physicsClientId = client)).reshape((3, 3))
         
-        rpy_o = p.getEulerFromQuaternion(orn)
+        rpy_o = p.getEulerFromQuaternion(orn_obj)
         # print(rpy_o)                                # 0.86 de diferencia entre la YAW (3) del wrist 
                                                     # y el ROLL (1) del objeto (transversal)
         
@@ -503,8 +510,8 @@ if __name__ == "__main__":
         # wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
         # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
-        print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
-        print_axis(client = client, pos = pos, rotation_matrix = [axis, axis, axis])
+        print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+        print_axis(client = client, pos = pos_obj, rotation_matrix = [axis, axis, axis])
         # print(z_axis_local)
         # print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
         # object_y_axis = np.array([0, 0, -1])
@@ -512,6 +519,20 @@ if __name__ == "__main__":
         # print(wrist_or_y)
         # print("--")
 
+        aux = dqrobotics._dqrobotics.DQ([1,1,1,1,1,1,1,1])
+        
+        pos_w = list(pos_w)
+        pos_w.append(0.0)
+        
+        pos_wQ = get_quaternion(pos_w)
+        orn_wQ = get_quaternion(orn_w)
+
+        DQ_w = get_dualQuaternion(q_r=orn_wQ, q_t=pos_wQ)
+
+        print(DQ_w)
+        
+        
+        # print(dqrobotics.conj(aux))
         
         time.sleep(0.05)
         

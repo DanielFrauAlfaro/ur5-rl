@@ -507,10 +507,10 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     not_approx = False in approx_list
 
 
-    # approx_list = np.array(approx_list)
+    approx_list = np.array(approx_list)
 
-    # dist_sum = approx_list[:3].sum()
-    # orient_sum = approx_list[3:].sum()
+    dist_sum = approx_list[:3].sum()
+    orient_sum = approx_list[3:].sum()
 
 
     # DQ robotics
