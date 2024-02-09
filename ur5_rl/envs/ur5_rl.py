@@ -50,8 +50,8 @@ class UR5Env(gym.Env):
         self._action_limits[1] = np.append(self._action_limits[1],  1)
 
         # Frame height and width
-        self.frame_h = 150
-        self.frame_w = 150
+        self.frame_h = 160
+        self.frame_w = 160
 
         '''
         Box space in action space:
@@ -268,8 +268,8 @@ class UR5Env(gym.Env):
         # Gets the terminal state
         terminated, truncated = self.get_terminal()
 
-        # if truncated:
-        #     reward -= 2
+        if truncated:
+            reward -= 0
 
         # Get the new state after the action
         obs = self.get_observation()
