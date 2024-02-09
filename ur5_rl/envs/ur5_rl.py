@@ -130,12 +130,12 @@ class UR5Env(gym.Env):
                                 math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-5, 
-                              -2, -2, -2,
-                              -2, -2, -2,
-                              -2, -2, -2,
-                              -2, -2, 
-                              3, 3, 3])
+        self.mask = np.array([-20, 
+                              -8, -8, -8,
+                              -8, -8, -8,
+                              -8, -8, -8,
+                              -8, -8, 
+                              9, 9, 9])
 
 
     
@@ -270,7 +270,7 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 5
+            reward -= 10
 
         # Get the new state after the action
         obs = self.get_observation()

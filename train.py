@@ -112,6 +112,8 @@ if __name__ == "__main__":
     
     # Training 
     print("|| Training ...")
+    model.set_parameters("./my_models_eval/best_sac_2_approx(only_pos).zip")
+
     model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
