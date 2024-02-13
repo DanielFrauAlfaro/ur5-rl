@@ -39,8 +39,8 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.075
-        self.max_action_or = 0.09
+        self.max_action = 0.07
+        self.max_action_or = 0.08
         self.max_action_yaw = 2
         self._action_limits = [-np.ones(6), np.ones(6)]
         
@@ -176,8 +176,12 @@ class UR5Env(gym.Env):
 
         col_r = collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
 
+        obj_pos, __, __ = get_object_pos(object=self._object, client = self._client)
+        wrist_pos, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
+
         terminated = (time.time() - self._t_act) > self._t_limit \
-                      or col_r > 0.0 
+                      or col_r > 0.0 \
+                      or wrist_pos[-2] <= obj_pos[-2]
                                                                            
         
         truncated = out_of_bounds(self._limits, self._ur5) \
