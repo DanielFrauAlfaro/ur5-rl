@@ -39,9 +39,9 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.085
-        self.max_action_or = 0.13
-        self.max_action_yaw = 3
+        self.max_action = 0.075
+        self.max_action_or = 0.09
+        self.max_action_yaw = 2
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
@@ -79,7 +79,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 11
+        self._t_limit = 18
         self._t_act = time.time()
 
 
@@ -126,15 +126,14 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = [math.inf, math.inf, math.inf, 
-                                math.inf, math.inf]
+        self._dist_obj_wrist = math.inf
 
         # Reward mask
         self.mask = np.array([-20, 
-                              -8, -8, -8,
-                              -8, -8, -8,
-                              -8, -8, -8,
-                              -8, -8, 
+                              -6, -6, -6,
+                              -6, -6, -6,
+                              -6, -6, -6,
+                              -6, -6, 
                               9, 9, 9])
 
 
@@ -270,7 +269,7 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 10
+            reward -= 30
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -308,8 +307,8 @@ class UR5Env(gym.Env):
         # --- Create Entities ---
         
         # Random object position and orientation
-        pos, orn = np.random.uniform([[0.01, 0.45, 0.85], [-pi, -pi/2, -3.1415]], 
-                                     [[0.3,  0.65, 0.85], [pi,  -pi/2,  3.1415]])
+        pos, orn = np.random.uniform([[0.05, 0.5, 0.85], [-pi, -pi/2, -3.1415]], 
+                                     [[0.275,  0.62, 0.85], [pi,  -pi/2,  3.1415]])
 
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         

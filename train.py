@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     # --- Arquitecture ---    
     residual = True
-    channels = [in_channels, 16, 32, 32]
+    channels = [in_channels, 16, 32, 32, 48]
     kernel = 3          
     m_kernel = 3
     n_layers = len(channels) - 1
@@ -78,9 +78,9 @@ if __name__ == "__main__":
                                        channels = channels, kernel = kernel, m_kernel = m_kernel,
                                        n_layers = n_layers, out_vector_features = out_vector_features),
         net_arch=dict(
-            pi=[features_dim, 32],  # Adjust the size of these layers based on the requirements
-            vf=[features_dim, 32],  # Adjust the size of these layers based on the requirements
-            qf=[features_dim, 32]),
+            pi=[features_dim, 64, 32],  # Adjust the size of these layers based on the requirements
+            vf=[features_dim, 64, 32],  # Adjust the size of these layers based on the requirements
+            qf=[features_dim, 64, 32]),
         share_features_extractor = False
     )
 
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     
     # Training 
     print("|| Training ...")
-    model.set_parameters("./my_models_eval/best_sac_2_approx(only_pos).zip")
+    # model.set_parameters("./my_models_eval/best_sac_2_approx(only_pos).zip")
 
     model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")

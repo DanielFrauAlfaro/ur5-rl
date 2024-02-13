@@ -178,7 +178,13 @@ def dq_to_screw(dq):
     d = torch.zeros(*dq.shape[:-1], device=dq.device)
 
     l[with_rot] = dq_r[with_rot, 1:].float() / torch.sin(theta[with_rot] / 2).float()
+    # Se usa la ecuación para pasar de screw coordinates a dual quaternion coordinates del paper donde salen las coordenadas de Plucker pero
+    #   despejando la "l"
+
     d[with_rot] = (dq_t[with_rot] * l[with_rot]).sum(dim=-1)  # batched dot product
+    # Se hace el producto interno con el cuaternio de desplazamiento y el vector director de la recta para comprobar como de parecidos son,
+    #    sería algo similar a la distancia del coseno, por no decir que es eso directamente pero sin la funcion coseno
+
     t_l_cross = torch.cross(dq_t[with_rot].float(), l[with_rot].float(), dim=-1)
     m[with_rot] = 0.5 * (t_l_cross.float() + torch.cross(l[with_rot].float(), t_l_cross.float() / torch.tan(theta[with_rot].float() / 2), dim=-1).float()).float()
 
@@ -199,7 +205,7 @@ def dq_to_screw(dq):
 # these parameters can be tuned!
 LAMBDA_ROT = 1 / math.pi  # divide by maxmimum possible rotation angle (pi)
 # for LAMBDA_TRANS, assume that translation coeffs. are normalized in 3D eucl. space
-LAMBDA_TRANS = 1 / (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
+LAMBDA_TRANS = 2 / (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
 
 def dq_distance(dq_pred, dq_real):
     '''

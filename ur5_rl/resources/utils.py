@@ -6,6 +6,9 @@ from scipy.spatial.transform import Rotation
 import cv2 as cv
 import time
 import copy
+import dqrobotics
+from dq_cosas import *
+import torch
 
 # Adds noise to an array
 def add_noise(array, std = 0.5):
@@ -126,6 +129,14 @@ def rotation_matrix_to_euler_xyz(R):
     return np.array([theta_x, theta_y, theta_z])
 
 
+def get_quaternion(q):
+    return q[-1] + dqrobotics.i_ * q[0] + dqrobotics.j_ * q[1] + dqrobotics.k_ * q[2]
+
+def get_dualQuaternion(q_r, q_t):
+    return q_r + 0.5*dqrobotics.E_*q_t*q_r
+
+
+
 # Getter for the object position
 def get_object_pos(client, object):
     '''
@@ -174,19 +185,36 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.13 # * x_axis_local
+    pos[-1] += 0.16 # * x_axis_local
 
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
-    # x_axis_local = np.dot(rotation_matrix, down)
 
-    
+    z_axis_local_ = -1*z_axis_local
+    y_axis_local_ = np.cross(z_axis_local_, x_axis_local)
+
     rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
+    rotation_matrix_ = np.vstack((x_axis_local, y_axis_local_, z_axis_local_)).T
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
-
-    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    euler_angles_ = rotation_matrix_to_euler_xyz(rotation_matrix_)
     
-    return np.array(pos), rotation_matrix# euler_angles # x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+
+    pos = list(pos)
+    pos.append(0.0)
+    pos_Q = get_quaternion(pos)
+    orn = p.getQuaternionFromEuler(euler_angles)
+    orn_Q = get_quaternion(orn)
+    DQ = get_dualQuaternion(q_r=orn_Q, q_t=pos_Q)
+
+
+    orn_ = p.getQuaternionFromEuler(euler_angles_)
+    orn_Q_ = get_quaternion(orn_)
+    DQ_ = get_dualQuaternion(q_r=orn_Q_, q_t=pos_Q)
+
+     # --> blue (z)
+    
+    return np.array(pos), DQ, DQ_# rotation_matrix# euler_angles # x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
 
 
 # Getter for the wrist position
@@ -212,6 +240,24 @@ def get_wrist_pos(client, robot_id):
     x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
     y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
     z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
+
+    x_axis_local = x_axis_local + y_axis_local
+    x_axis_local /= np.linalg.norm(x_axis_local)
+    y_axis_local = np.cross(z_axis_local, x_axis_local)
+
+    x_axis_local, z_axis_local = z_axis_local, -x_axis_local
+    
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    
+    rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
+    euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
+
+    pos = list(pos)
+    pos.append(0.0)
+    pos_Q = get_quaternion(pos)
+    orn = p.getQuaternionFromEuler(euler_angles)
+    orn_Q = get_quaternion(orn)
+    DQ = get_dualQuaternion(q_r=orn_Q, q_t=pos_Q)
     
     # my_rotation = rotation_matrix
     # # Euler angles in radians (replace with your actual values)
@@ -232,10 +278,7 @@ def get_wrist_pos(client, robot_id):
     # rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     # euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
 
-    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
-
-    
-    return np.array(pos), rotation_matrix# euler_angles #x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
+    return np.array(pos), DQ #rotation_matrix# euler_angles #x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
 # Computes the reward according the approximation to the object
@@ -306,8 +349,6 @@ def approx_reward_prev(client, object, dist_obj_wrist, robot_id):
 
     return reward, dist_obj_wrist
 
-
-
 # Computes the reward according the approximation to the object
 def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
     '''
@@ -372,9 +413,6 @@ def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
     dist_obj_wrist = distance_xyz
 
     return reward, dist_obj_wrist
-
-
-
 
 # Computes the reward according the approximation to the object
 def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
@@ -445,10 +483,8 @@ def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
 
     return reward, dist_obj_wrist
 
-
-
 # Computes the reward according the approximation to the object
-def approx_reward(client, object, dist_obj_wrist, robot_id):
+def approx_reward_prev4(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -535,6 +571,71 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     return reward, dist_obj_wrist
 
 
+# Computes the reward according the approximation to the object
+def approx_reward(client, object, dist_obj_wrist, robot_id):
+    '''
+       Computes the reward due to approximation to the object  
+                                                                       
+           - client: Pybullet client (int)                             
+           - object: class that represents an object (must have        
+        "id" attribute) (object)
+           - dist_obj_wrist: previous distance between the wrist and the object (float)
+           - robot_id: id of the robot in the simulation (int)                          
+                                             
+       Returns:                                                        
+           - The new reward for approximation (int, -1 ó 1)
+           - The new distance between the object and the wrist
+    '''
+
+    # Obtains the object and wrist positions
+    obj_pos, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
+    wrist_pos, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)
+
+    # Primary parts
+    p_w = dqrobotics.P(DQ_w)
+    p_obj = dqrobotics.P(DQ_obj)
+    p_obj_ = dqrobotics.P(DQ_obj_)
+
+    # Dual parts
+    d_w = dqrobotics.D(DQ_w)
+    d_obj = dqrobotics.D(DQ_obj)
+    d_obj_ = dqrobotics.D(DQ_obj_)
+
+    # Vectors
+    # --- Dual quaternion vectors ---
+    w_DQ_vec = dqrobotics.vec8(DQ_w)
+    obj_DQ_vec = dqrobotics.vec8(DQ_obj)
+    obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
+
+    # --- Primary parts vector ---
+    p_w_vec = dqrobotics.vec4(p_w)
+    p_obj_vec = dqrobotics.vec4(p_obj)
+    p_obj_vec_ = dqrobotics.vec4(p_obj_)
+
+    # --- Dual parts vector ---
+    d_w_vec = dqrobotics.vec4(d_w)
+    d_obj_vec = dqrobotics.vec4(d_obj)
+    d_obj_vec_ = dqrobotics.vec4(d_obj_)
+
+    # Angular distance using quaternion
+    d_p = math.acos(2*np.dot(p_w_vec, p_obj_vec) ** 2 - 1)
+    d_p_ = math.acos(2*np.dot(p_w_vec, p_obj_vec_) ** 2 - 1)
+
+    distance = 0
+    if d_p < d_p_:
+        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
+    else:
+        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
+
+
+    distance = distance.item()
+    reward = min(1/distance, 10) if distance - dist_obj_wrist < 0 else -1/distance
+    
+    # Updates distance
+    dist_obj_wrist = distance
+
+    return reward, dist_obj_wrist
+
 
 
 # Check the collision between TWO objects IDs
@@ -597,7 +698,7 @@ def out_of_bounds(limits, robot):
     for idx, limit in enumerate(limits[:2]):
         if True in list(limit[0] > qs[idx]) or  \
            True in list(limit[1] < qs[idx]):
-            print("Limites ", idx)
+
             return True
 
     return False
