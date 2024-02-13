@@ -83,7 +83,7 @@ def q_normalize(q):
 
     norm = torch.sqrt(torch.sum(torch.square(q), dim=-1))  # ||q|| = sqrt(w²+x²+y²+z²)
     assert not torch.any(torch.isclose(norm, torch.zeros_like(norm, device=q.device)))  # check for singularities
-    return  torch.div(q, norm[:, None])  # q_norm = q / ||q||
+    return  q#torch.div(q, norm[:, None])  # q_norm = q / ||q||
 
 
 def q_conjugate(q):
@@ -139,6 +139,7 @@ def dq_normalize(dq):
     dq_r = dq[..., :4]
     norm = torch.sqrt(torch.sum(torch.square(dq_r), dim=-1))  # ||q|| = sqrt(w²+x²+y²+z²)
     assert not torch.any(torch.isclose(norm, torch.zeros_like(norm, device=dq.device)))  # check for singularities
+    
     return torch.div(dq, norm[:, None])  # dq_norm = dq / ||q|| = dq_r / ||dq_r|| + dq_d / ||dq_r||
 
 
@@ -176,16 +177,16 @@ def dq_to_screw(dq):
     m = torch.ones(*dq.shape[:-1], 3, device=dq.device)
     d = torch.zeros(*dq.shape[:-1], device=dq.device)
 
-    l[with_rot] = dq_r[with_rot, 1:] / torch.sin(theta[with_rot] / 2)
+    l[with_rot] = dq_r[with_rot, 1:].float() / torch.sin(theta[with_rot] / 2).float()
     d[with_rot] = (dq_t[with_rot] * l[with_rot]).sum(dim=-1)  # batched dot product
-    t_l_cross = torch.cross(dq_t[with_rot], l[with_rot], dim=-1)
-    m[with_rot] = 0.5 * (t_l_cross + torch.cross(l[with_rot], t_l_cross / torch.tan(theta[with_rot] / 2), dim=-1))
+    t_l_cross = torch.cross(dq_t[with_rot].float(), l[with_rot].float(), dim=-1)
+    m[with_rot] = 0.5 * (t_l_cross.float() + torch.cross(l[with_rot].float(), t_l_cross.float() / torch.tan(theta[with_rot].float() / 2), dim=-1).float()).float()
 
-    d[no_rot] = torch.linalg.norm(dq_t[no_rot], dim=-1)
+    d[no_rot] = torch.linalg.norm(dq_t[no_rot].float(), dim=-1)
     no_trans = torch.isclose(d, torch.zeros_like(d, device=dq.device))
     unit_transform = torch.logical_and(no_rot, no_trans)
     only_trans = torch.logical_and(no_rot, ~no_trans)
-    l[unit_transform] = dq_t[unit_transform] / d[unit_transform].unsqueeze(dim=-1)
+    l[unit_transform] = dq_t[unit_transform].float() / d[unit_transform].unsqueeze(dim=-1).float()
     l[only_trans] = 0
     m[no_rot] *= float("inf")
 
@@ -208,7 +209,7 @@ def dq_distance(dq_pred, dq_real):
     => "Distance" between two dual quaternions: weighted sum of screw motion axis magnitude and rotation angle.
     '''
 
-    dq_pred, dq_real = dq_normalize(dq_pred), dq_normalize(dq_real)
+    # dq_pred, dq_real = dq_normalize(dq_pred), dq_normalize(dq_real)
     dq_pred_inv = dq_quaternion_conjugate(dq_pred)  # inverse is quat. conj. because it's normalized
     dq_diff = dq_mul(dq_pred_inv, dq_real)
     _, _, theta, d = dq_to_screw(dq_diff)

@@ -14,6 +14,8 @@ import time
 from scipy.spatial.transform import Rotation
 import dqrobotics
 import math
+from dq_cosas import *
+import torch
 
 
 ur5 = rtb.DHRobot([
@@ -558,7 +560,10 @@ if __name__ == "__main__":
 
 
         # diff = dqrobotics.P(DQ_w) * dqrobotics.conj(dqrobotics.P(DQ_obj))
-        
+        w_DQ_vec = dqrobotics.vec8(DQ_w)
+        obj_DQ_vec = dqrobotics.vec8(DQ_obj)
+        obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
+
         p_w = dqrobotics.P(DQ_w)
         p_obj = dqrobotics.P(DQ_obj)
         p_obj_ = dqrobotics.P(DQ_obj_)
@@ -567,15 +572,29 @@ if __name__ == "__main__":
         d_obj = dqrobotics.D(DQ_obj)
         d_obj_ = dqrobotics.D(DQ_obj_)
 
+        # Vectors
         p_w_vec = dqrobotics.vec4(p_w)
         p_obj_vec = dqrobotics.vec4(p_obj)
         p_obj_vec_ = dqrobotics.vec4(p_obj_)
 
+        d_w_vec = dqrobotics.vec4(d_w)
+        d_obj_vec = dqrobotics.vec4(d_obj)
+        d_obj_vec_ = dqrobotics.vec4(d_obj_)
+
         d_p = math.acos(2*np.dot(p_w_vec, p_obj_vec) ** 2 - 1)
         d_p_ = math.acos(2*np.dot(p_w_vec, p_obj_vec_) ** 2 - 1)
 
-        print(min(d_p, d_p_))
+        
+        # print(np.linalg.norm(d_w_vec - d_obj_vec))
+        # print(np.linalg.norm(d_w_vec - d_obj_vec_))
+        # print(d_p)
         # print(d_p_)
+
+        if d_p < d_p_:
+            print(dq_distance(torch.tensor([obj_DQ_vec]), torch.tensor([w_DQ_vec])))
+        else:
+            print(dq_distance(torch.tensor([obj_DQ_vec_]), torch.tensor([w_DQ_vec])))
+
         print("--")
         
         # print(dqrobotics.conj(aux))
