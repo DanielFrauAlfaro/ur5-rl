@@ -205,7 +205,7 @@ def dq_to_screw(dq):
 # these parameters can be tuned!
 LAMBDA_ROT = 1 / math.pi  # divide by maxmimum possible rotation angle (pi)
 # for LAMBDA_TRANS, assume that translation coeffs. are normalized in 3D eucl. space
-LAMBDA_TRANS = 2 / (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
+LAMBDA_TRANS = 1 / (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
 
 def dq_distance(dq_pred, dq_real):
     '''
