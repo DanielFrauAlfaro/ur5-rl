@@ -115,7 +115,7 @@ def compute_ik(robot_id, action, joints, gripper_joints_id, q):
     roll = action[3]
     pitch = action[4]
     yaw = action[5]
-
+    
     # print(action)
 
     # Builds up homogeneus matrix

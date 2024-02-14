@@ -629,7 +629,8 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
 
     distance = distance.item()
-    reward = 1/distance if distance - dist_obj_wrist < 0 else -1/distance
+    # reward = 1/distance if distance - dist_obj_wrist < 0 else -1/distance
+    reward = -(distance - dist_obj_wrist) / distance
     
     # Updates distance
     dist_obj_wrist = distance

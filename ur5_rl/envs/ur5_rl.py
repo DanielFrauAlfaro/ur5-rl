@@ -39,9 +39,12 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action = 0.07
-        self.max_action_or = 0.08
-        self.max_action_yaw = 2
+        self.max_action_original = 0.07
+        self.max_action_or_original = 0.1
+
+        self.max_action = self.max_action_original
+        self.max_action_or = self.max_action_or_original
+        self.max_action_yaw = 2.25
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
@@ -247,6 +250,10 @@ class UR5Env(gym.Env):
             - Terminated and trucanted (bool)
             - Info (dict)
         '''
+
+        # self.steps += 1
+        # self.max_action -= math.log(self.steps)*0.00007
+        # self.max_action_or -= math.log(self.steps)*0.00013
         
         action[0:3]  *= self.max_action
         action[3:-1] *= self.max_action_or
@@ -273,7 +280,10 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 30
+            reward -= 20
+
+            if out_of_bounds(self._limits, self._ur5):
+                reward -= 20
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -295,6 +305,10 @@ class UR5Env(gym.Env):
         Resets the entire simulation and re - samples positions:
             - Re - samples camera positionining
         '''
+
+        self.steps = 0
+        self.max_action = self.max_action_original
+        self.max_action_or = self.max_action_or_original
 
         # Reset simulation and gravity establishment
         p.resetSimulation(self._client)

@@ -43,11 +43,11 @@ if __name__ == "__main__":
     
 
     # Test
-    print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_28500_steps.zip")
+    # print("|| Loading model for testing ...")
+    # model = SAC.load("./my_models_eval/rl_model_37500_steps.zip")
     
-    model.policy.eval()
-    print("|| Testing ...")
+    # model.policy.eval()
+    # print("|| Testing ...")
 
     
 
@@ -58,10 +58,10 @@ if __name__ == "__main__":
     gui_joints = user_interface()
 
     while True:
-        action, _states = model.predict(obs, deterministic = True)
+        # action, _states = model.predict(obs, deterministic = True)
         # action = read_gui(gui_joints)
 
-        obs, reward, terminated, truncated, info = vec_env.step(action)
+        obs, reward, terminated, truncated, info = vec_env.step(np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]))
         
         # print(reward)
         r += reward
