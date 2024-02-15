@@ -255,8 +255,10 @@ def get_wrist_pos(client, robot_id):
     pos = list(pos)
     pos.append(0.0)
     pos_Q = get_quaternion(pos)
+
     orn = p.getQuaternionFromEuler(euler_angles)
     orn_Q = get_quaternion(orn)
+
     DQ = get_dualQuaternion(q_r=orn_Q, q_t=pos_Q)
     
     # my_rotation = rotation_matrix
@@ -621,15 +623,15 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     d_p = math.acos(2*np.dot(p_w_vec, p_obj_vec) ** 2 - 1)
     d_p_ = math.acos(2*np.dot(p_w_vec, p_obj_vec_) ** 2 - 1)
 
-    distance = 0
+
     if d_p < d_p_:
         distance = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
     else:
         distance = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
 
 
-    distance = round(distance.item(), 3)
-    
+    distance = distance.item()
+
     reward = 1/distance if distance - dist_obj_wrist < 0 else -1/distance
     
     # Updates distance
@@ -699,7 +701,7 @@ def out_of_bounds(limits, robot):
     for idx, limit in enumerate(limits[:2]):
         if True in list(limit[0] > qs[idx]) or  \
            True in list(limit[1] < qs[idx]):
-
+            print("Limites ", idx)
             return True
 
     return False

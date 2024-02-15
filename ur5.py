@@ -369,8 +369,14 @@ if __name__ == "__main__":
         
         j = read_gui(gui_joints)
         j[-1] *= 10
+
         j = (np.array(j) + np.array(ee)).tolist()
         # j = ee
+
+        if j[-2] >= math.pi:
+            j[-2] = math.pi - 0.01 
+        if j[-2] <= -math.pi:
+            j[-2] = -math.pi
 
         # set_joints(ur5_id, j)
         compute_ik(ur5_id, j, joints, gripper_joints_id, q)
@@ -593,11 +599,13 @@ if __name__ == "__main__":
         # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj)))
         
 
+
+
         if d_p < d_p_:
-            print(dq_distance(torch.tensor([w_DQ_vec]), torch.tensor([obj_DQ_vec])))
+            print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec]))))
         else:
             # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj_)))
-            print(dq_distance(torch.tensor([w_DQ_vec]), torch.tensor([obj_DQ_vec_])))
+            print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec_]))))
 
         print("--")
         

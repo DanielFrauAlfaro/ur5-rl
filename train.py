@@ -13,7 +13,7 @@ import os
 
 
 env_id = "ur5_rl/Ur5Env-v0"
-n_training_envs = 3
+n_training_envs = 1
 n_eval_envs = 1
 
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     print("|| Training ...")
     # model.set_parameters("./my_models_eval/best_sac_2_approx(only_pos).zip")
 
-    model.learn(total_timesteps=80000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 
