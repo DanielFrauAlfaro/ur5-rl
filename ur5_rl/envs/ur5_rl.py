@@ -39,8 +39,8 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action_original = 0.07
-        self.max_action_or_original = 0.1
+        self.max_action_original = 0.075
+        self.max_action_or_original = 0.12
 
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
@@ -132,12 +132,12 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = math.inf
 
         # Reward mask
-        self.mask = np.array([-20, 
-                              -6, -6, -6,
-                              -6, -6, -6,
-                              -6, -6, -6,
-                              -6, -6, 
-                              9, 9, 9])
+        self.mask = np.array([-10, 
+                              -4, -4, -4,
+                              -4, -4, -4,
+                              -4, -4, -4,
+                              -4, -4, 
+                              5, 5, 5])
 
 
     
@@ -161,7 +161,6 @@ class UR5Env(gym.Env):
         r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
-
 
     # Computes if the environmen has reach a terminal state
     def get_terminal(self):
@@ -192,7 +191,6 @@ class UR5Env(gym.Env):
                     # or check_collision(client = self._client, objects = [self._table.id, self._ur5.id])
 
         return terminated, truncated
-
 
     # Getter for the observations
     def get_observation(self):
@@ -251,9 +249,9 @@ class UR5Env(gym.Env):
             - Info (dict)
         '''
 
-        # self.steps += 1
-        # self.max_action -= math.log(self.steps)*0.00007
-        # self.max_action_or -= math.log(self.steps)*0.00013
+        self.steps += 1
+        self.max_action -= math.log(self.steps)*0.00007
+        self.max_action_or -= math.log(self.steps)*0.0001
         
         action[0:3]  *= self.max_action
         action[3:-1] *= self.max_action_or
@@ -280,10 +278,10 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 20
+            reward -= 8
 
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 20
+                reward -= 8
 
         # Get the new state after the action
         obs = self.get_observation()

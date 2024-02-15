@@ -628,9 +628,9 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
         distance = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
 
 
-    distance = distance.item()
-    # reward = 1/distance if distance - dist_obj_wrist < 0 else -1/distance
-    reward = -(distance - dist_obj_wrist) / distance
+    distance = round(distance.item(), 3)
+    
+    reward = 1/distance if distance - dist_obj_wrist < 0 else -1/distance
     
     # Updates distance
     dist_obj_wrist = distance

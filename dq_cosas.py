@@ -182,6 +182,7 @@ def dq_to_screw(dq):
     #   despejando la "l"
 
     d[with_rot] = (dq_t[with_rot] * l[with_rot]).sum(dim=-1)  # batched dot product
+    d[with_rot] = torch.norm(dq_t[with_rot])
     # Se hace el producto interno con el cuaternio de desplazamiento y el vector director de la recta para comprobar como de parecidos son,
     #    sería algo similar a la distancia del coseno, por no decir que es eso directamente pero sin la funcion coseno
 
@@ -203,9 +204,9 @@ def dq_to_screw(dq):
 
 
 # these parameters can be tuned!
-LAMBDA_ROT = 1 / math.pi  # divide by maxmimum possible rotation angle (pi)
+LAMBDA_ROT = 1.3 / math.pi  # divide by maxmimum possible rotation angle (pi)
 # for LAMBDA_TRANS, assume that translation coeffs. are normalized in 3D eucl. space
-LAMBDA_TRANS = 1 / (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
+LAMBDA_TRANS = 1 / 1.5 # (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
 
 def dq_distance(dq_pred, dq_real):
     '''
@@ -219,5 +220,8 @@ def dq_distance(dq_pred, dq_real):
     dq_pred_inv = dq_quaternion_conjugate(dq_pred)  # inverse is quat. conj. because it's normalized
     dq_diff = dq_mul(dq_pred_inv, dq_real)
     _, _, theta, d = dq_to_screw(dq_diff)
-    distances = LAMBDA_ROT * torch.abs(theta) + LAMBDA_TRANS * torch.abs(d)
+
+    
+
+    distances = LAMBDA_ROT * torch.abs(theta)  + LAMBDA_TRANS * torch.abs(d)
     return torch.mean(distances)

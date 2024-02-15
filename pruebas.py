@@ -99,4 +99,6 @@ v1 = np.array([1,2,3])
 v2 = np.array([1,2,3]) 
 print(np.dot(v1, v2))
 
-print(c[:3].tolist().sum())
+# print(c[:3].tolist().sum())
+
+print(np.tanh(-1))

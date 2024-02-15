@@ -1,6 +1,6 @@
 import ur5_rl
 import gymnasium as gym
-from stable_baselines3 import SAC
+from stable_baselines3 import SAC, PPO
 from stable_baselines3.common.vec_env import VecNormalize, VecEnv, SubprocVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.env_util import make_vec_env
@@ -13,7 +13,7 @@ import os
 
 
 env_id = "ur5_rl/Ur5Env-v0"
-n_training_envs = 1
+n_training_envs = 3
 n_eval_envs = 1
 
 
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # Model declaration
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
-                verbose=100, buffer_size = 10000,  batch_size = 256, tensorboard_log="logs/", 
+                verbose=100, buffer_size = 11000,  batch_size = 256, tensorboard_log="logs/", 
                 train_freq=10, learning_rate = 0.00073, gamma = 0.99, seed = 42,
                 use_sde = False, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
     
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     print("|| Training ...")
     # model.set_parameters("./my_models_eval/best_sac_2_approx(only_pos).zip")
 
-    model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=80000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

@@ -591,9 +591,9 @@ if __name__ == "__main__":
         # print(d_p_)
 
         if d_p < d_p_:
-            print(dq_distance(torch.tensor([obj_DQ_vec]), torch.tensor([w_DQ_vec])))
+            print(dq_distance(torch.tensor([w_DQ_vec]), torch.tensor([obj_DQ_vec])))
         else:
-            print(dq_distance(torch.tensor([obj_DQ_vec_]), torch.tensor([w_DQ_vec])))
+            print(dq_distance(torch.tensor([w_DQ_vec]), torch.tensor([obj_DQ_vec_])))
 
         print("--")
         
