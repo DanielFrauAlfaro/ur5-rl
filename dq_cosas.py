@@ -200,6 +200,31 @@ def dq_to_screw(dq):
     return l, m, theta.squeeze(-1), d
 
 
+def dq_rotate_vector(q_rot, vector):
+    """
+    Rotate a vector using a rotation quaternion.
+
+    Parameters:
+        q_rot (torch.Tensor): Rotation quaternion(s) of shape [..., 4].
+        vector (torch.Tensor): Vector(s) to be rotated of shape [..., 3].
+
+    Returns:
+        rotated_vector (torch.Tensor): Rotated vector(s) of shape [..., 3].
+    """
+    # Ensure the rotation quaternion has the correct shape
+    q_rot = q_rot.squeeze(-1)  # Expand dims to match the shape of vector
+    vector = vector.squeeze(-1)
+
+    # Apply quaternion rotation: q_rot * vector_quat * q_rot_conjugate
+    rotated_quat = q_mul(q_conjugate(q_rot), q_mul(vector, q_rot))
+
+    # Extract the rotated vector from the resulting quaternion
+    # rotated_vector = rotated_quat[..., 1:]                        # ---> no importa si hacerlo con esto o sin
+
+    return rotated_quat
+
+
+
 # === LOSSES =================================================================================
 
 
@@ -219,9 +244,21 @@ def dq_distance(dq_pred, dq_real):
     # dq_pred, dq_real = dq_normalize(dq_pred), dq_normalize(dq_real)
     dq_pred_inv = dq_quaternion_conjugate(dq_pred)  # inverse is quat. conj. because it's normalized
     dq_diff = dq_mul(dq_pred_inv, dq_real)
-    _, _, theta, d = dq_to_screw(dq_diff)
-
     
+
+    dq_diff_rot = dq_diff[..., :4]  # Rotation part
+    dq_diff_trans = dq_diff[..., 4:]  # Translation part
+
+    # Rotate the translation part using the rotation quaternion
+    dq_diff_trans_rotated = dq_rotate_vector(dq_diff_rot, dq_diff_trans)
+    translation_magnitude = torch.linalg.norm(dq_diff_trans_rotated, dim=-1)
+    # print("DQ: ", translation_magnitude )
+
+    # print(dq_diff)
+    dq_diff[:,4:] = dq_diff_trans_rotated[:,:]
+    # print(dq_diff)
+    _, _, theta, d = dq_to_screw(dq_diff)
+    print("DQ d: ", d)
 
     distances = LAMBDA_ROT * torch.abs(theta)  + LAMBDA_TRANS * torch.abs(d)
     return torch.mean(distances)

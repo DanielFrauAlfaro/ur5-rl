@@ -590,9 +590,13 @@ if __name__ == "__main__":
         # print(d_p)
         # print(d_p_)
 
+        # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj)))
+        
+
         if d_p < d_p_:
             print(dq_distance(torch.tensor([w_DQ_vec]), torch.tensor([obj_DQ_vec])))
         else:
+            # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj_)))
             print(dq_distance(torch.tensor([w_DQ_vec]), torch.tensor([obj_DQ_vec_])))
 
         print("--")
