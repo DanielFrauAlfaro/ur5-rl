@@ -132,10 +132,10 @@ class UR5e:
         # Converts the action to a
         action = self.ee + action
 
-        if action[-2] >= pi:
-            action[-2] = pi - 0.01 
-        if action[-2] <= -pi:
-            action[-2] = -pi
+        # if action[-2] >= pi:
+        #     action[-2] = pi - 0.01 
+        # if action[-2] <= -pi:
+        #     action[-2] = -pi
 
         x = action[0]                                 
         y = action[1]
