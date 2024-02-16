@@ -133,11 +133,11 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-10, 
-                              0.1, 0.1, 0.1,
-                              0.1, 0.1, 0.1,
-                              0.1, 0.1, 0.1,
-                              0.1, 0.1, 
-                              3, 3, 3])
+                              -1, -1, -1,
+                              -1, -1, -1,
+                              -1, -1, -1,
+                              -1, -1, 
+                              2, 2, 2])
 
 
     
@@ -285,11 +285,9 @@ class UR5Env(gym.Env):
             if out_of_bounds(self._limits, self._ur5):
                 reward -= 8
 
-        if terminated and (time.time() - self._t_act) < self._t_limit:
-            reward += abs(time.time() - self._t_act) / 3
+        # if terminated and (time.time() - self._t_act) < self._t_limit:
+        #     reward += abs(time.time() - self._t_act) / 3
 
-        if (time.time() - self._t_act) > self._t_limit:
-            reward -= 10
 
         # Get the new state after the action
         obs = self.get_observation()
