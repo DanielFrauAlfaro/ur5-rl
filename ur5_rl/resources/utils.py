@@ -185,7 +185,7 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.24 # * x_axis_local
+    pos[-1] += 0.245 # * x_axis_local
 
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
@@ -625,14 +625,21 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
 
     if d_p < d_p_:
-        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
     else:
-        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
 
 
-    distance = distance.item()
+    r = r.item()
+    d = d.item()
+    theta = theta.item()
 
-    reward = 1/distance if distance - dist_obj_wrist < 0 else -1/distance
+    distance = [d, theta]
+
+    approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
+    not_approx = False in approx_list
+
+    reward = -r if not_approx else r
     
     # Updates distance
     dist_obj_wrist = distance

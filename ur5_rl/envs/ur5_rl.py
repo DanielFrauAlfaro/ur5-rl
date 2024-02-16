@@ -129,14 +129,14 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = math.inf
+        self._dist_obj_wrist = [math.inf, math.inf]
 
         # Reward mask
         self.mask = np.array([-10, 
-                              -2, -2, -2,
-                              -2, -2, -2,
-                              -2, -2, -2,
-                              -2, -2, 
+                              0.1, 0.1, 0.1,
+                              0.1, 0.1, 0.1,
+                              0.1, 0.1, 0.1,
+                              0.1, 0.1, 
                               3, 3, 3])
 
 
@@ -252,6 +252,9 @@ class UR5Env(gym.Env):
         self.steps += 1
         self.max_action -= math.log(self.steps)*0.00007
         self.max_action_or -= math.log(self.steps)*0.0001
+
+        self.max_action = max(self.max_action, 0.001)
+        self.max_action_or = max(self.max_action_or, 0.001)
         
         action[0:3]  *= self.max_action
         action[3:-1] *= self.max_action_or
@@ -283,9 +286,10 @@ class UR5Env(gym.Env):
                 reward -= 8
 
         if terminated and (time.time() - self._t_act) < self._t_limit:
-            reward += 8
+            reward += abs(time.time() - self._t_act) / 3
+
         if (time.time() - self._t_act) > self._t_limit:
-            reward -= 8
+            reward -= 10
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -327,8 +331,8 @@ class UR5Env(gym.Env):
         # --- Create Entities ---
         
         # Random object position and orientation
-        pos, orn = np.random.uniform([[0.05, 0.5, 0.85], [-pi, -pi/2, -3.1415]], 
-                                     [[0.275,  0.62, 0.85], [pi,  -pi/2,  3.1415]])
+        pos, orn = np.random.uniform([[0.05, 0.45, 0.85], [-pi, -pi/2, -3.1415]], 
+                                     [[0.3,  0.65, 0.85], [pi,  -pi/2,  3.1415]])
 
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         
