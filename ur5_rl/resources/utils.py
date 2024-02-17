@@ -634,12 +634,9 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     d = d.item()
     theta = theta.item()
 
-    distance = [d, theta]
+    distance = r
 
-    approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
-    not_approx = False in approx_list
-
-    reward = -r if not_approx else r
+    reward = 1/distance if distance - dist_obj_wrist < 0 else -1/distance
     
     # Updates distance
     dist_obj_wrist = distance

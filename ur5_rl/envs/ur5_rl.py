@@ -129,7 +129,7 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = [math.inf, math.inf]
+        self._dist_obj_wrist = math.inf
 
         # Reward mask
         self.mask = np.array([-10, 
