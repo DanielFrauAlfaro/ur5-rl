@@ -231,7 +231,7 @@ def dq_rotate_vector(q_rot, vector):
 # these parameters can be tuned!
 LAMBDA_ROT = 0.9 / math.pi  # 1.3 # divide by maxmimum possible rotation angle (pi)
 # for LAMBDA_TRANS, assume that translation coeffs. are normalized in 3D eucl. space
-LAMBDA_TRANS = 4 / 1 # 1.7 # 1.2 # (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
+LAMBDA_TRANS = 3 / 1 # 1.7 # 1.2 # (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
 
 def dq_distance(dq_pred, dq_real):
     '''
@@ -257,10 +257,10 @@ def dq_distance(dq_pred, dq_real):
 
     _, _, theta, _ = dq_to_screw(dq_diff)
 
-    # print(1/(LAMBDA_TRANS * torch.abs(d)))
-    # print(1/(LAMBDA_ROT * torch.abs(theta)))
+    # print((LAMBDA_TRANS * torch.abs(d)))
+    # print((LAMBDA_ROT * torch.abs(theta)))
     # print("---")
     
 
-    distances = (1/(LAMBDA_ROT * torch.abs(theta))  + 1/(LAMBDA_TRANS * torch.abs(d))) / 2
+    distances = (1/(LAMBDA_ROT * torch.abs(theta))  + 1/(LAMBDA_TRANS * torch.abs(d))) / 3
     return torch.mean(distances), torch.abs(d), torch.abs(theta)
