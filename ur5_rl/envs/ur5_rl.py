@@ -39,12 +39,12 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action_original = 0.07
+        self.max_action_original = 0.075
         self.max_action_or_original = 0.12
 
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
-        self.max_action_yaw = 2.5
+        self.max_action_yaw = 2.25
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
