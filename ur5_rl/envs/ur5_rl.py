@@ -158,7 +158,7 @@ class UR5Env(gym.Env):
                                                 dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
 
         # Collision reward
-        r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
 
@@ -283,7 +283,7 @@ class UR5Env(gym.Env):
         if truncated:
             reward -= 1
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 8
+                reward -= 5
 
         # if terminated and (time.time() - self._t_act) < self._t_limit:
         #     reward += abs(time.time() - self._t_act) / 3

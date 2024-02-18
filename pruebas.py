@@ -101,4 +101,3 @@ print(np.dot(v1, v2))
 
 # print(c[:3].tolist().sum())
 
-print(np.tanh(-1))

@@ -185,7 +185,7 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.245 # * x_axis_local
+    pos[-1] += 0.24 # * x_axis_local
 
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
@@ -285,7 +285,7 @@ def get_wrist_pos(client, robot_id):
 
 # Computes the reward according the approximation to the object
 # ACUERDATE DE PONDER BIEN LA INICIALIZACION DE dist_obj_wrist
-def approx_reward_prev(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -352,7 +352,7 @@ def approx_reward_prev(client, object, dist_obj_wrist, robot_id):
     return reward, dist_obj_wrist
 
 # Computes the reward according the approximation to the object
-def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev3(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -405,8 +405,8 @@ def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
     reward += -0.2 if False in approx_list[:3] else 0.2
     reward += -0.2 if not approx_list[-1] else 0.2
 
-    # print(reward_pos, " -- ", distance_)
-    # print(reward_or, " -- ", orient)
+    # print(rewardpos, " -- ", distance_)
+    # print(rewardor, " -- ", orient)
     
 
     # reward /= distance
@@ -417,7 +417,7 @@ def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
     return reward, dist_obj_wrist
 
 # Computes the reward according the approximation to the object
-def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev2(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -473,8 +473,8 @@ def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
 
     
 
-    # print(reward_pos, " -- ", distance_)
-    # print(reward_or, " -- ", orient)
+    # print(rewardpos, " -- ", distance_)
+    # print(rewardor, " -- ", orient)
     # print("--")
     
 
@@ -486,7 +486,7 @@ def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
     return reward, dist_obj_wrist
 
 # Computes the reward according the approximation to the object
-def approx_reward_prev4(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev4(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -560,8 +560,8 @@ def approx_reward_prev4(client, object, dist_obj_wrist, robot_id):
     reward += -1/orient_mean if False in approx_list[3:] else 1/orient_mean
     
 
-    # print(reward_pos, " -- ", distance_)
-    # print(reward_or, " -- ", orient)
+    # print(rewardpos, " -- ", distance_)
+    # print(rewardor, " -- ", orient)
     # print("--")
     
 
@@ -630,16 +630,30 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
         r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
 
 
-    r = min(r.item(), 5)
+    # r = min(r.item(), 5)
+    r = r.item()
     d = d.item()
     theta = theta.item()
 
     distance = [d, theta]
 
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
-    not_approx = False in approx_list
+    
 
-    reward = -r if not_approx else r
+    if r <= 3.0:
+        not_approx = False in approx_list
+        reward = -r if not_approx else r
+
+    elif not math.inf in dist_obj_wrist:
+        approx = True in approx_list
+
+        # new_d = (1/dist_obj_wrist[0] + 1/dist_obj_wrist[1]) / 2.5
+        # reward = r if r > new_d else -r
+
+        reward = r if approx else -r
+
+        if approx_list == [True, True] and reward > 0:
+            reward *= 1.3
     
     # Updates distance
     dist_obj_wrist = distance

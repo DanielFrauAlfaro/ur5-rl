@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_40500_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_28500_steps.zip")
     
     model.policy.eval()
     print("|| Testing ...")
@@ -64,6 +64,7 @@ if __name__ == "__main__":
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
         print(reward)
+        print("--")
         r += reward
         img = vec_env.render()
 
