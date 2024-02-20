@@ -249,12 +249,12 @@ class UR5Env(gym.Env):
             - Info (dict)
         '''
 
-        # self.steps += 1
-        # self.max_action -= math.log(self.steps)*0.00007
-        # self.max_action_or -= math.log(self.steps)*0.0001
+        self.steps += 1
+        self.max_action -= math.log(self.steps)*0.00007
+        self.max_action_or -= math.log(self.steps)*0.0001
 
-        # self.max_action = max(self.max_action, 0.001)
-        # self.max_action_or = max(self.max_action_or, 0.001)
+        self.max_action = max(self.max_action, 0.001)
+        self.max_action_or = max(self.max_action_or, 0.001)
         
         action[0:3]  *= self.max_action
         action[3:-1] *= self.max_action_or
