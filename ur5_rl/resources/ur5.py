@@ -156,7 +156,7 @@ class UR5e:
 
         # Applies the joint action (joint and gripper)
         self.apply_action(new_q[0])
-        self.apply_action_g(int(action[-1]))
+        # self.apply_action_g(int(action[-1]))
 
 
     # Moves the robot to a desired position

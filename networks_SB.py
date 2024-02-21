@@ -134,7 +134,7 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
 
         # --- Feature extractors ---
         self.image_extractor = nn.Sequential(*(self.build_conv()))      # Images
-        self.vector_extractor = nn.Sequential(nn.BatchNorm1d(num_features=7),                          # Position Vector
+        self.vector_extractor = nn.Sequential(nn.BatchNorm1d(num_features=6),                          # Position Vector
             nn.Linear(in_features=q_space.shape[0], out_features = self.out_vector_features),
             nn.Tanh())
         

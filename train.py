@@ -58,6 +58,7 @@ if __name__ == "__main__":
     image_space = vec_env.observation_space["image"]
 
     q_shape = q_space.shape
+    
     in_channels, frame_w, frame_h = image_space.shape
 
     # --- Arquitecture ---    
@@ -81,7 +82,7 @@ if __name__ == "__main__":
             pi=[features_dim, 64, 32],  # Adjust the size of these layers based on the requirements
             vf=[features_dim, 64, 32],  # Adjust the size of these layers based on the requirements
             qf=[features_dim, 64, 32]),
-        share_features_extractor = False
+        share_features_extractor = True
     )
 
     # --- Callbacks ---
@@ -105,16 +106,15 @@ if __name__ == "__main__":
     action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
 
     # Model declaration
-    model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, 
-                verbose=100, buffer_size = 11000,  batch_size = 256, tensorboard_log="logs/", 
-                train_freq=10, learning_rate = 0.00073, gamma = 0.99, seed = 42,
-                use_sde = False, sde_sample_freq = 8, action_noise = None)         # See logs: tensorboard --logdir logs/
+    model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
+                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
     # model.set_parameters("./my_models_eval/best_sac_2_approx(only_pos).zip")
 
-    model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    # model.load("./my_models_eval/best_model_DQ3.0_(posDQ + orn).zip")
+    model.learn(total_timesteps=70000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

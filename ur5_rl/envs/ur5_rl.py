@@ -30,7 +30,7 @@ class UR5Env(gym.Env):
         self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
         self._qd_limits = [np.ones(6) * -20, np.ones(6) * 20]
         self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
-        self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
+        self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi], [1, 1, 1, pi, pi, pi]]
 
         self._limits = [self._q_limits,  
                        self._qd_limits,  
@@ -39,8 +39,8 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action_original = 0.07
-        self.max_action_or_original = 0.12
+        self.max_action_original = 0.06
+        self.max_action_or_original = 0.13
 
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
@@ -48,9 +48,9 @@ class UR5Env(gym.Env):
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
-        self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
-        self._action_limits[0] = np.append(self._action_limits[0], -1)
-        self._action_limits[1] = np.append(self._action_limits[1],  1)
+        # self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
+        # self._action_limits[0] = np.append(self._action_limits[0], -1)
+        # self._action_limits[1] = np.append(self._action_limits[1],  1)
 
         # Frame height and width
         self.frame_h = 160
@@ -82,7 +82,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 18
+        self._t_limit = 16
         self._t_act = time.time()
 
 
@@ -133,11 +133,11 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-10, 
-                              -1, -1, -1,
-                              -1, -1, -1,
-                              -1, -1, -1,
-                              -1, -1, 
-                              2, 2, 2])
+                              -6, -6, -6,
+                              -6, -6, -6,
+                              -6, -6, -6,
+                              -6, -6, 
+                              -1, -1, -1])
 
 
     
@@ -158,7 +158,7 @@ class UR5Env(gym.Env):
                                                 dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
 
         # Collision reward
-        r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
 
@@ -208,7 +208,7 @@ class UR5Env(gym.Env):
         obs = {}
 
         # Appends the gripper observation to the end - effector observation
-        observation[-1].append(observation[2])
+        # observation[-1].append(observation[2])
 
         # Assigns robot observation to the dictionary
         obs[self._indices[0]] = np.array(observation[-1], dtype="float32")
@@ -257,9 +257,9 @@ class UR5Env(gym.Env):
         # self.max_action_or = max(self.max_action_or, 0.001)
         
         action[0:3]  *= self.max_action
-        action[3:-1] *= self.max_action_or
-        action[-2]   *= self.max_action_yaw
-        action[-1]   *= self.max_action_g
+        action[3:] *= self.max_action_or
+        action[-1]   *= self.max_action_yaw
+        # action[-1]   *= self.max_action_g
         
 
 
@@ -281,12 +281,12 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 1
+            reward -= 0
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 8
+                reward -= 10
 
-        # if terminated and (time.time() - self._t_act) < self._t_limit:
-        #     reward += abs(time.time() - self._t_act) / 3
+        if terminated and (time.time() - self._t_act) < self._t_limit:
+            reward += 10/abs(time.time() - self._t_act)
 
 
         # Get the new state after the action
