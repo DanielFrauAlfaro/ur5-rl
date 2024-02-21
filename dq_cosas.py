@@ -256,10 +256,6 @@ def dq_distance(dq_pred, dq_real):
     dq_diff[:,4:] = dq_diff_trans_rotated[:,:]
 
     _, _, theta, _ = dq_to_screw(dq_diff)
-
-    # print((LAMBDA_TRANS * torch.abs(d)))
-    # print((LAMBDA_ROT * torch.abs(theta)))
-    # print("---")
     
 
     distances = 1/((LAMBDA_ROT * torch.abs(theta))  + (LAMBDA_TRANS * torch.abs(d)))

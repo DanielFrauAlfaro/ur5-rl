@@ -40,11 +40,11 @@ class UR5Env(gym.Env):
         # --- Action limits ---
         # Joint actions
         self.max_action_original = 0.06
-        self.max_action_or_original = 0.13
+        self.max_action_or_original = 0.12
 
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
-        self.max_action_yaw = 2.5
+        self.max_action_yaw = 2.25
         self._action_limits = [-np.ones(6), np.ones(6)]
         
         # Appends gripper actions
@@ -129,7 +129,7 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = [math.inf, math.inf]
+        self._dist_obj_wrist = math.inf
 
         # Reward mask
         self.mask = np.array([-10, 
@@ -249,12 +249,12 @@ class UR5Env(gym.Env):
             - Info (dict)
         '''
 
-        # self.steps += 1
-        # self.max_action -= math.log(self.steps)*0.00007
-        # self.max_action_or -= math.log(self.steps)*0.0001
+        self.steps += 1
+        self.max_action -= math.log(self.steps)*0.00007
+        self.max_action_or -= math.log(self.steps)*0.0001
 
-        # self.max_action = max(self.max_action, 0.001)
-        # self.max_action_or = max(self.max_action_or, 0.001)
+        self.max_action = max(self.max_action, 0.001)
+        self.max_action_or = max(self.max_action_or, 0.001)
         
         action[0:3]  *= self.max_action
         action[3:] *= self.max_action_or
@@ -286,8 +286,10 @@ class UR5Env(gym.Env):
                 reward -= 10
 
         if terminated and (time.time() - self._t_act) < self._t_limit:
-            reward += 10/abs(time.time() - self._t_act)
+            reward += abs(time.time() - self._t_act) / 3
 
+        if (time.time() - self._t_act) > self._t_limit:
+            reward -= 10
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -329,8 +331,8 @@ class UR5Env(gym.Env):
         # --- Create Entities ---
         
         # Random object position and orientation
-        pos, orn = np.random.uniform([[0.05, 0.45, 0.85], [-pi, -pi/2, -3.1415]], 
-                                     [[0.3,  0.65, 0.85], [pi,  -pi/2,  3.1415]])
+        pos, orn = np.random.uniform([[0.05, 0.5, 0.85], [-pi, -pi/2, -3.1415]], 
+                                     [[0.275,  0.62, 0.85], [pi,  -pi/2,  3.1415]])
 
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         

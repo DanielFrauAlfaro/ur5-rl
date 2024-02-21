@@ -285,7 +285,7 @@ def get_wrist_pos(client, robot_id):
 
 # Computes the reward according the approximation to the object
 # ACUERDATE DE PONDER BIEN LA INICIALIZACION DE dist_obj_wrist
-def approx_reward_prev(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -352,7 +352,7 @@ def approx_reward_prev(client, object, dist_obj_wrist, robot_id):
     return reward, dist_obj_wrist
 
 # Computes the reward according the approximation to the object
-def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev3(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -405,8 +405,8 @@ def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
     reward += -0.2 if False in approx_list[:3] else 0.2
     reward += -0.2 if not approx_list[-1] else 0.2
 
-    # print(reward_pos, " -- ", distance_)
-    # print(reward_or, " -- ", orient)
+    # print(rewardpos, " -- ", distance_)
+    # print(rewardor, " -- ", orient)
     
 
     # reward /= distance
@@ -417,7 +417,7 @@ def approx_reward_prev3(client, object, dist_obj_wrist, robot_id):
     return reward, dist_obj_wrist
 
 # Computes the reward according the approximation to the object
-def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev2(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -473,8 +473,8 @@ def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
 
     
 
-    # print(reward_pos, " -- ", distance_)
-    # print(reward_or, " -- ", orient)
+    # print(rewardpos, " -- ", distance_)
+    # print(rewardor, " -- ", orient)
     # print("--")
     
 
@@ -486,7 +486,7 @@ def approx_reward_prev2(client, object, dist_obj_wrist, robot_id):
     return reward, dist_obj_wrist
 
 # Computes the reward according the approximation to the object
-def approx_reward_prev4(client, object, dist_obj_wrist, robot_id):
+def approx_rewardprev4(client, object, dist_obj_wrist, robot_id):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -560,8 +560,8 @@ def approx_reward_prev4(client, object, dist_obj_wrist, robot_id):
     reward += -1/orient_mean if False in approx_list[3:] else 1/orient_mean
     
 
-    # print(reward_pos, " -- ", distance_)
-    # print(reward_or, " -- ", orient)
+    # print(rewardpos, " -- ", distance_)
+    # print(rewardor, " -- ", orient)
     # print("--")
     
 
@@ -625,9 +625,9 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
 
     if d_p < d_p_:
-        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
+        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
     else:
-        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
+        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
 
 
     r = r.item()
