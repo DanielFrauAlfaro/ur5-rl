@@ -39,13 +39,13 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action_original = 0.06
+        self.max_action_original = 0.0666
         self.max_action_or_original = 0.12
 
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
-        self.max_action_yaw = 2.25
-        self._action_limits = [-np.ones(6), np.ones(6)]
+        self.max_action_yaw = 2.5
+        self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1, 1, 0, 1, 1, 1])]
         
         # Appends gripper actions
         # self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
@@ -129,7 +129,7 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = math.inf
+        self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
         self.mask = np.array([-10, 
@@ -249,12 +249,12 @@ class UR5Env(gym.Env):
             - Info (dict)
         '''
 
-        self.steps += 1
-        self.max_action -= math.log(self.steps)*0.00007
-        self.max_action_or -= math.log(self.steps)*0.0001
+        # self.steps += 1
+        # self.max_action -= math.log(self.steps)*0.00007
+        # self.max_action_or -= math.log(self.steps)*0.0001
 
-        self.max_action = max(self.max_action, 0.001)
-        self.max_action_or = max(self.max_action_or, 0.001)
+        # self.max_action = max(self.max_action, 0.001)
+        # self.max_action_or = max(self.max_action_or, 0.001)
         
         action[0:3]  *= self.max_action
         action[3:] *= self.max_action_or
@@ -283,13 +283,10 @@ class UR5Env(gym.Env):
         if truncated:
             reward -= 0
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 10
+                reward -= 5
 
         if terminated and (time.time() - self._t_act) < self._t_limit:
-            reward += abs(time.time() - self._t_act) / 3
-
-        if (time.time() - self._t_act) > self._t_limit:
-            reward -= 10
+            reward += 1/abs(time.time() - self._t_act)
 
         # Get the new state after the action
         obs = self.get_observation()

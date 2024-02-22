@@ -625,31 +625,34 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
 
     if d_p < d_p_:
-        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
     else:
-        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
 
 
     r = r.item()
     d = d.item()
     theta = theta.item()
 
-    distance = [d, theta]
+    distance = [r, d, theta]
 
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
     not_approx = False in approx_list
 
-    reward = -r if not_approx else r
+    reward = np.tanh(-r)*3 if approx_list[0] else np.tanh(r)*3
 
     # if (d < 0.07 or theta < 0.09):
     #     reward += r*0.4
 
-    if d < 0.1 and theta < 0.1:
+
+    if approx_list[-1]:
+        reward += np.tanh(r)
+
+    if d < 0.08 and theta < 0.07:
         print("AAA")
         reward = r
 
-    # print("Distance ", d)
-    # print("Orientation ", theta)
+    
     
     # Updates distance
     dist_obj_wrist = distance
