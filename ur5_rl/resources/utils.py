@@ -198,7 +198,7 @@ def get_object_pos(client, object):
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
     euler_angles_ = rotation_matrix_to_euler_xyz(rotation_matrix_)
     
-    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
 
     pos = list(pos)
     pos.append(0.0)
@@ -247,7 +247,7 @@ def get_wrist_pos(client, robot_id):
 
     x_axis_local, z_axis_local = z_axis_local, -x_axis_local
     
-    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
     rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
