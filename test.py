@@ -64,13 +64,15 @@ if __name__ == "__main__":
 
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
+        
+
         print(reward)
         print("--")
-        # r += reward
-        # img = vec_env.render()
+        r += reward
+        img = vec_env.render()
 
-        # cv.imshow("AA", img)
-        # cv.waitKey(1)
+        cv.imshow("AA", img)
+        cv.waitKey(1)
 
         if terminated or truncated:
             print(r, "--")

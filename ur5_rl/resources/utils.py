@@ -25,7 +25,7 @@ def add_noise(array, std = 0.5):
     return np.random.normal(loc=0, scale=std, size=np.array(array).shape)
 
 # Sets the camera with the class parameters and the desiresd coordiantes
-def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
+def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, first = True):
     '''
        Obtains the intrinsic and extrinsic parameters of cameras       
                                                                        
@@ -47,8 +47,9 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
 
     # Adds noise to the camera coordinates (just the first one)
     cameras_coord_aux = copy.deepcopy(cameras_coord)
-    cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
-    cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
+    if first:
+        cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
+        cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
     
     # For each camera ...
     for camera in cameras_coord_aux:
@@ -589,6 +590,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
            - The new distance between the object and the wrist
     '''
 
+    
     # Obtains the object and wrist positions
     obj_pos, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
     wrist_pos, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)

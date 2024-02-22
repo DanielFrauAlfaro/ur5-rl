@@ -66,11 +66,12 @@ class UR5e:
             
             list_attr[jointName] = jointID
 
+            # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
+            # print("--")
             
             # If a joint is controllable ...
             if controllable:
-                # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
-                # print("--")
+                
                 
 
                 # ... enables torque sensors, ...

@@ -707,7 +707,7 @@
     </inertial>
   </link>
   <joint name="camera_link_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0.0175 0.0125"/>
+    <origin rpy="0 -0.4 0" xyz="0 0.0175 0.0125"/>   <!-- RPY: 0 0 0 -->
     <parent link="camera_bottom_screw_frame"/>
     <child link="camera_link"/>
   </joint>

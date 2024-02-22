@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     # --- Arquitecture ---    
     residual = True
-    channels = [2, 16, 32, 32]
+    channels = [2, 16, 32, 32,48]
     kernel = 3          
     m_kernel = 3
     n_layers = len(channels) - 1
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     # Model declaration
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
-                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42,
+                verbose=100, buffer_size = 5, tensorboard_log="logs/", seed = 42,
                 train_freq=3)         # See logs: tensorboard --logdir logs/
     
     # Training 

@@ -78,11 +78,11 @@ class UR5Env(gym.Env):
                                high= np.float32(np.array(self._ee_limits[1])), dtype=np.float32),
 
 
-            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(4, self.frame_w, self.frame_h), dtype=np.float16)
+            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(6, self.frame_w, self.frame_h), dtype=np.float16)
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 16
+        self._t_limit = 16000
         self._t_act = time.time()
 
 
@@ -106,7 +106,9 @@ class UR5Env(gym.Env):
         self.obj_pos = [0.2, 0.55, 0.9]
 
         # Image to be rendered
-        self.frame = [np.ones((self.frame_w, self.frame_h), dtype=np.int16), np.ones((self.frame_w, self.frame_h), dtype=np.int16)]
+        self.frame = [np.ones((self.frame_w, self.frame_h), dtype=np.int16), 
+                      np.ones((self.frame_w, self.frame_h), dtype=np.int16),
+                      np.ones((self.frame_w, self.frame_h), dtype=np.int16)]
 
 
         # Camera Parameters
@@ -121,7 +123,10 @@ class UR5Env(gym.Env):
 
         # Coordinates of the cameras
         self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],     # External Camera 1
-                              [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]]        # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
+                              [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]],        # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
+                              [[0.048, 0.353, 1.1712], [-1.62160814, -0.78472898,  1.57433526]]]        
+
+
 
         self.std_cam = 0.02 # 0.05
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
@@ -224,7 +229,10 @@ class UR5Env(gym.Env):
         normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
         normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
 
-        merged = cv.merge([normalized_image_0, normalized_image_1, normalized_image_0_, normalized_image_1_])
+        normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / (np.max(self.frame[2][0]) - np.min(self.frame[2][0]))
+        normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / (np.max(self.frame[2][1]) - np.min(self.frame[2][1]))
+
+        merged = cv.merge([normalized_image_0, normalized_image_1, normalized_image_0_, normalized_image_1_, normalized_image_0_2, normalized_image_1_2])
         merged = np.transpose(merged, (2,0,1))
         
         
@@ -268,6 +276,28 @@ class UR5Env(gym.Env):
         
         # Advances the simulation
         p.stepSimulation(self._client)
+
+        link_state = p.getLinkState(self._ur5.id, 22, computeLinkVelocity=1, computeForwardKinematics=1, physicsClientId = self._client)
+        pos, orn = link_state[0], link_state[1]
+
+        rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = self._client)).reshape((3, 3))
+
+        x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
+        y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
+        z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
+
+        x_axis_local, z_axis_local = z_axis_local, x_axis_local
+        x_axis_local, z_axis_local = -x_axis_local, -z_axis_local
+
+
+        rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
+        pos = list(pos)
+        pos[-1] -= 0.01
+        self.cameras_coord[-1][0] = pos
+        self.cameras_coord[-1][-1] = rotation_matrix_to_euler_xyz(rotation_matrix)
+        self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
+                                     near_val=self.near_plane, far_val=self.far_plane, 
+                                     cameras_coord = self.cameras_coord, std = self.std_cam, first = False)
         
         # --- Debugger ---
         if self.show:
@@ -382,7 +412,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        return self.frame[0][0]
+        return self.frame[2][1]
         cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 
