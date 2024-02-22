@@ -637,9 +637,12 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     distance = [r, d, theta]
 
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
-    not_approx = False in approx_list
+    not_approx = False in approx_list[1:]
 
-    reward = np.tanh(-r)*3 if approx_list[0] else np.tanh(r)*3
+    # print(approx_list)
+    # print(approx_list[1:])
+
+    reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
 
     # if (d < 0.07 or theta < 0.09):
     #     reward += r*0.4
