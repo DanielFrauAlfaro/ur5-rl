@@ -45,7 +45,7 @@ class UR5Env(gym.Env):
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
         self.max_action_yaw = 2.5
-        self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1, 1, 0, 1, 1, 1])]
+        self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1, 1, 1, 1, 1, 1])]
         
         # Appends gripper actions
         # self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
@@ -82,7 +82,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 16000
+        self._t_limit = 14
         self._t_act = time.time()
 
 
@@ -137,12 +137,11 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-10, 
-                              -6, -6, -6,
-                              -6, -6, -6,
-                              -6, -6, -6,
-                              -6, -6, 
-                              -1, -1, -1])
+        self.mask = np.array([-2, 
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1])
 
 
     
@@ -313,10 +312,10 @@ class UR5Env(gym.Env):
         if truncated:
             reward -= 0
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 5
+                reward -= 10
 
         if terminated and (time.time() - self._t_act) < self._t_limit:
-            reward += 1/abs(time.time() - self._t_act)
+            reward += 5/abs(time.time() - self._t_act)
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -384,11 +383,11 @@ class UR5Env(gym.Env):
                                     [self._object.id, (self._ur5.id, "robotiq_finger_middle_link_1")],
                                     
                                     [self._object.id, (self._ur5.id, "robotiq_tool0")],
-                                    [self._object.id, (self._ur5.id, "robotiq_palm")],
-                                    
-                                    [self._object.id, (self._ur5.id, "contact1")], 
-                                    [self._object.id, (self._ur5.id, "contact2")], 
-                                    [self._object.id, (self._ur5.id, "contact3")]]      
+                                    [self._object.id, (self._ur5.id, "robotiq_palm")]]
+
+                                    # [self._object.id, (self._ur5.id, "contact1")], 
+                                    # [self._object.id, (self._ur5.id, "contact2")], 
+                                    # [self._object.id, (self._ur5.id, "contact3")]      
 
         # --- Simulation advanced ---
         # Advances the simulation to robot's initial state
@@ -412,7 +411,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        return self.frame[2][1]
+        return self.frame[0][0]
         cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 

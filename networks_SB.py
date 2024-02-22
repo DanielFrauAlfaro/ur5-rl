@@ -100,10 +100,9 @@ class ResidualBlock(nn.Module):
     
     # Forward method
     def forward(self, x):
-        
         # First layer
         x = self.conv1(x)
-        
+    
         # Residual connection
         x = x + self.end_l_tensor * self.residual_tensor * self.conv2(x)
         
@@ -153,7 +152,6 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
                 torch.tensor(observation_space.sample()["image"][:2], dtype=torch.float32, device = self.device)
             )
 
-
         # Obtains the features dimensions combined
         self.features_dim_ = n_flatten.shape[0] * n_flatten.shape[1] * 3 + self.out_vector_features
         
@@ -174,16 +172,10 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         image_features_1 = self.image_extractor_1(image_tensor_1)
         image_features_2 = self.image_extractor_2(image_tensor_2)
         image_features_3 = self.image_extractor_3(image_tensor_3)
-        
-        print(image_features_3.shape)
-
 
         image_features = torch.cat((image_features_1, image_features_2, image_features_3), dim=1)
 
         vector_features = self.vector_extractor(q_tensor)
-
-        print(image_features.shape)
-        print(vector_features.shape)
 
         ret = self.n_linear(torch.cat([image_features, vector_features], dim=1))
 

@@ -68,7 +68,7 @@ if __name__ == "__main__":
     m_kernel = 3
     n_layers = len(channels) - 1
 
-    out_vector_features = 100
+    out_vector_features = 120
     features_dim = 256   
     
     # Use  custom feature extractor in the policy_kwargs
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     # Model declaration
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
-                verbose=100, buffer_size = 5, tensorboard_log="logs/", seed = 42,
+                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42,
                 train_freq=3)         # See logs: tensorboard --logdir logs/
     
     # Training 

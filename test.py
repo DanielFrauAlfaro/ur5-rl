@@ -11,6 +11,7 @@ import numpy as np
 import cv2 as cv
 import os
 import pybullet as p
+import time
 
 
 # Define GUI elements
@@ -43,23 +44,24 @@ if __name__ == "__main__":
     
 
     # Test
-    # print("|| Loading model for testing ...")
-    # model = SAC.load("./my_models_eval/uno_que_va_bien.zip")
-    # model.policy.eval()
-    # print("|| Testing ...")
+    print("|| Loading model for testing ...")
+    model = SAC.load("./my_models_eval/best_model_DQ5.0_(topCameras)).zip")
+    model.policy.eval()
+    print("|| Testing ...")
 
     
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
 
+    t = time.time()
     while True:
         # obs["ee_position"] = np.append(obs["ee_position"], 0)
-        # action, _states = model.predict(obs, deterministic = True)
-        action = read_gui(gui_joints)
+        action, _states = model.predict(obs, deterministic = True)
+        # action = read_gui(gui_joints)
 
 
         obs, reward, terminated, truncated, info = vec_env.step(action)
@@ -75,6 +77,8 @@ if __name__ == "__main__":
         cv.waitKey(1)
 
         if terminated or truncated:
+            print("Tiempo: ", time.time() - t)
+            t = time.time()
             print(r, "--")
             r = 0
             obs, info = vec_env.reset()

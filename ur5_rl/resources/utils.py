@@ -199,7 +199,7 @@ def get_object_pos(client, object):
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
     euler_angles_ = rotation_matrix_to_euler_xyz(rotation_matrix_)
     
-    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
 
     pos = list(pos)
     pos.append(0.0)
@@ -248,7 +248,7 @@ def get_wrist_pos(client, robot_id):
 
     x_axis_local, z_axis_local = z_axis_local, -x_axis_local
     
-    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
     rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
@@ -639,20 +639,20 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     distance = [r, d, theta]
 
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
-    not_approx = False in approx_list
+    not_approx = False in approx_list[1:]
 
-    reward = -r if not_approx else r
+    reward = np.tanh(-r)*5 if not_approx else np.tanh(r)*5
 
     # if (d < 0.07 or theta < 0.09):
     #     reward += r*0.4
 
 
-    if approx_list[-1]:
-        reward += np.tanh(r)
+    if True in approx_list[1:]:
+        reward += np.tanh(r)*0.7
 
-    if d < 0.08 and theta < 0.07:
+    if d < 0.085 and theta < 0.085:
         print("AAA")
-        reward = r
+        reward = np.tanh(r)*6.6
 
     
     
@@ -679,7 +679,7 @@ def check_collision(client, objects):
     col_detector = pyb_utils.CollisionDetector(client, [(objects[0], objects[1])])
 
     # Detects collision with a certain margin (0.0)
-    return col_detector.in_collision(margin = 0.0005)
+    return col_detector.in_collision(margin = 0.0)        # 0.0005
     
 
 # Computes the reward associated with collision reward
