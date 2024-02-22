@@ -45,7 +45,7 @@ class UR5Env(gym.Env):
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
         self.max_action_yaw = 2.5
-        self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1, 1, 0, 1, 1, 1])]
+        self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1, 1, 1, 1, 1, 1])]
         
         # Appends gripper actions
         # self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
