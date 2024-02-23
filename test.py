@@ -27,7 +27,6 @@ def user_interface():
 
     return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui, gripper_gui]
 
-
 # Read GUI elements
 def read_gui(gui_joints):
     j1 = p.readUserDebugParameter(gui_joints[0])
@@ -45,7 +44,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_13500_steps.zip")
+    model = SAC.load("./my_models_eval/rl_model_7500_steps.zip")
 
     model.policy.eval()
     print("|| Testing ...")

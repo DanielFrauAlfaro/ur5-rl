@@ -1139,7 +1139,7 @@
     <origin rpy="0.0 3.14 0.0" xyz="0.055 0.068 0.1735"/>
   </joint>
 
-<!--   
+
   <link name="contact1">
     <visual>
       <geometry>
@@ -1207,7 +1207,7 @@
     <parent link="robotiq_finger_2_link_3"/>
     <child link="contact3"/>
     <origin  xyz="-0.018 -0.0075 0.0" rpy="0.0 0.0 2.21"/> 
-  </joint> -->
+  </joint> 
 
 
 

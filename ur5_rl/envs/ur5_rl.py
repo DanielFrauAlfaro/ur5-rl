@@ -83,7 +83,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 43
+        self._step_limit = 45
         self.steps = 0
 
 
@@ -142,7 +142,8 @@ class UR5Env(gym.Env):
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1, -0.1,
-                              -0.1, -0.1])
+                              -0.1, -0.1,
+                              -0.1, -0.1, -0.1])
 
 
     
@@ -311,12 +312,12 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 3
+            reward -= 0
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 6
+                reward -= 10
         
-        if reward > 0 and terminated:
-            reward += 0.75
+        # if reward > 0 and terminated:
+        #     reward += 0.75
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -384,11 +385,11 @@ class UR5Env(gym.Env):
                                     [self._object.id, (self._ur5.id, "robotiq_finger_middle_link_1")],
                                     
                                     [self._object.id, (self._ur5.id, "robotiq_tool0")],
-                                    [self._object.id, (self._ur5.id, "robotiq_palm")]]
+                                    [self._object.id, (self._ur5.id, "robotiq_palm")],
 
-                                    # [self._object.id, (self._ur5.id, "contact1")], 
-                                    # [self._object.id, (self._ur5.id, "contact2")], 
-                                    # [self._object.id, (self._ur5.id, "contact3")]      
+                                    [self._object.id, (self._ur5.id, "contact1")], 
+                                    [self._object.id, (self._ur5.id, "contact2")], 
+                                    [self._object.id, (self._ur5.id, "contact3")]]      
 
         # --- Simulation advanced ---
         # Advances the simulation to robot's initial state
@@ -412,7 +413,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        return self.frame[0][0]
+        return self.frame[2][0]
         cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 
