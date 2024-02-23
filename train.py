@@ -64,11 +64,8 @@ if __name__ == "__main__":
 
     # --- Arquitecture ---    
     residual = True
-<<<<<<< HEAD
     channels = [2, 16, 32, 32,48]
-=======
-    channels = [in_channels, 16, 32, 32, 48]
->>>>>>> parent of fb6b5ce (DQ_6.0)
+
     kernel = 3          
     m_kernel = 3
     n_layers = len(channels) - 1

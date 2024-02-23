@@ -44,14 +44,10 @@ class UR5Env(gym.Env):
 
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
-<<<<<<< HEAD
+
         self.max_action_yaw = 2.5
-        self._action_limits = [np.array([-1, -1, -1, -1, -1, -1]), np.array([1, 1, 1, 1, 1, 1])]
-=======
-        self.max_action_yaw = 2.25
         self._action_limits = [-np.ones(6), np.ones(6)]
->>>>>>> parent of fb6b5ce (DQ_6.0)
-        
+
         # Appends gripper actions
         # self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
         # self._action_limits[0] = np.append(self._action_limits[0], -1)
@@ -317,11 +313,7 @@ class UR5Env(gym.Env):
         if truncated:
             reward -= 4
             if out_of_bounds(self._limits, self._ur5):
-<<<<<<< HEAD
                 reward -= 3
-=======
-                reward -= 10
->>>>>>> parent of fb6b5ce (DQ_6.0)
 
         if terminated and (time.time() - self._t_act) < self._t_limit:
             reward += abs(time.time() - self._t_act) / 3

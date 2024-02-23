@@ -641,11 +641,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
     not_approx = False in approx_list[1:]
 
-<<<<<<< HEAD
     reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
-=======
-    reward = -r if not_approx else r
->>>>>>> parent of fb6b5ce (DQ_6.0)
 
     # if (d < 0.07 or theta < 0.09):
     #     reward += r*0.4

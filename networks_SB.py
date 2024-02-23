@@ -132,14 +132,10 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         image_space = observation_space["image"]    # Image
 
         # --- Feature extractors ---
-<<<<<<< HEAD
         self.image_extractor_1 = nn.Sequential(*(self.build_conv()))      # Images
         self.image_extractor_2 = nn.Sequential(*(self.build_conv()))
         self.image_extractor_3 = nn.Sequential(*(self.build_conv()))
 
-=======
-        self.image_extractor = nn.Sequential(*(self.build_conv()))      # Images
->>>>>>> parent of fb6b5ce (DQ_6.0)
         self.vector_extractor = nn.Sequential(nn.BatchNorm1d(num_features=6),                          # Position Vector
             nn.Linear(in_features=q_space.shape[0], out_features = self.out_vector_features),
             nn.Tanh())
@@ -152,12 +148,9 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
             )
 
         # Obtains the features dimensions combined
-<<<<<<< HEAD
         self.features_dim_ = n_flatten.shape[0] * n_flatten.shape[1] * 3 + self.out_vector_features
-=======
-        self.features_dim_ = n_flatten.shape[0] * n_flatten.shape[1] + self.out_vector_features
->>>>>>> parent of fb6b5ce (DQ_6.0)
-        
+
+
         # MLP for combining features layers' outputs into a fixed dimension vector specified
         self.n_linear = nn.Sequential(nn.Linear(in_features = self.features_dim_, out_features = features_dim), nn.ReLU())
         
@@ -166,7 +159,6 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
     def forward(self, observations) -> torch.Tensor:
 
         # Obtain inputs as torch tensors for GPU computation
-<<<<<<< HEAD
         image_tensor_1 = torch.as_tensor(observations["image"][:, :2], device=self.device, dtype=torch.float32)
         image_tensor_2 = torch.as_tensor(observations["image"][:, 2:4], device=self.device, dtype=torch.float32)
         image_tensor_3 = torch.as_tensor(observations["image"][:, 4:], device=self.device, dtype=torch.float32)
@@ -179,13 +171,7 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
 
         image_features = torch.cat((image_features_1, image_features_2, image_features_3), dim=1)
 
-=======
-        image_tensor = torch.as_tensor(observations["image"], device=self.device, dtype=torch.float32)
-        q_tensor = torch.as_tensor(observations["ee_position"], device=self.device, dtype=torch.float32)
 
-        # Computes separate feature extractor
-        image_features = self.image_extractor(image_tensor)
->>>>>>> parent of fb6b5ce (DQ_6.0)
         vector_features = self.vector_extractor(q_tensor)
 
         ret = self.n_linear(torch.cat([image_features, vector_features], dim=1))

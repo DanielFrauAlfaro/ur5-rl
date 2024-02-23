@@ -45,11 +45,8 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-<<<<<<< HEAD
     model = SAC.load("./my_models_eval/rl_model_19500_steps.zip")
-=======
-    model = SAC.load("./my_models_eval/best_model_DQ2.1_(pos+or).zip")
->>>>>>> parent of fb6b5ce (DQ_6.0)
+
     model.policy.eval()
     print("|| Testing ...")
 
@@ -63,15 +60,10 @@ if __name__ == "__main__":
 
     t = time.time()
     while True:
-<<<<<<< HEAD
         # obs["ee_position"] = np.append(obs["ee_position"], 0)
         action, _states = model.predict(obs, deterministic = True)
         # action = read_gui(gui_joints)
 
-=======
-        action, _states = model.predict(obs, deterministic = True)
-        # action = read_gui(gui_joints)
->>>>>>> parent of fb6b5ce (DQ_6.0)
 
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
