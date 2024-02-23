@@ -131,7 +131,7 @@ class UR5e:
         '''
 
         # Converts the action to a
-        action = self.ee + action#[:-1]
+        action = self.ee + action
 
         # if action[-2] >= pi:
         #     action[-2] = pi - 0.01 

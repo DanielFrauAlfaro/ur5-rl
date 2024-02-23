@@ -69,19 +69,17 @@ class ResidualBlock(nn.Module):
             self.conv1 = nn.Sequential(nn.InstanceNorm2d(in_channels),
                                     nn.Conv2d(in_channels  = in_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
                                     nn.MaxPool2d(kernel_size = kernel_max), 
-                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1))
-            
-            torch.nn.init.xavier_uniform_(self.conv1[1].weight)
-            torch.nn.init.xavier_uniform_(self.conv1[3].weight)
+                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
+                                    nn.Dropout(p = dropout_prob))
             
             # Residual convolutional
             self.conv2 = nn.Sequential(nn.ReLU(), 
                                     nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
                                     nn.ReLU(), 
                                     nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = kernel_size, padding = kernel_size // 2),
-                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1))               
-            torch.nn.init.xavier_uniform_(self.conv2[1].weight)
-            torch.nn.init.xavier_uniform_(self.conv2[3].weight)
+                                    nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
+                                    nn.Dropout(p = dropout_prob))               
+
 
         # Final layer: adds softmax and flatten with reshaping convolutionals 
         else:
@@ -89,11 +87,9 @@ class ResidualBlock(nn.Module):
             self.conv1 = nn.Sequential(nn.ReLU(),
                                        nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 1), 
                                        nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 1),
+                                       nn.Dropout(p = dropout_prob),
                                        nn.Softmax2d(),
-                                       nn.Flatten(),
-                                       nn.Dropout(p = dropout_prob))
-            torch.nn.init.xavier_uniform_(self.conv1[1].weight)
-            torch.nn.init.xavier_uniform_(self.conv1[2].weight)
+                                       nn.Flatten())
             
             # Empty convlution
             self.conv2 = nn.Sequential()
@@ -136,33 +132,41 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         image_space = observation_space["image"]    # Image
 
         # --- Feature extractors ---
+<<<<<<< HEAD
         self.image_extractor_1 = nn.Sequential(*(self.build_conv()))      # Images
         self.image_extractor_2 = nn.Sequential(*(self.build_conv()))
         self.image_extractor_3 = nn.Sequential(*(self.build_conv()))
 
+=======
+        self.image_extractor = nn.Sequential(*(self.build_conv()))      # Images
+>>>>>>> parent of fb6b5ce (DQ_6.0)
         self.vector_extractor = nn.Sequential(nn.BatchNorm1d(num_features=6),                          # Position Vector
             nn.Linear(in_features=q_space.shape[0], out_features = self.out_vector_features),
             nn.Tanh())
-        torch.nn.init.xavier_uniform_(self.vector_extractor[1].weight)
         
 
         # Obtains the output dimensions of the flatten convoutioanl extractor layers
         with torch.no_grad():
-            n_flatten = self.image_extractor_1(
-                torch.tensor(observation_space.sample()["image"][:2], dtype=torch.float32, device = self.device)
+            n_flatten = self.image_extractor(
+                torch.tensor(observation_space.sample()["image"], dtype=torch.float32, device = self.device)
             )
 
         # Obtains the features dimensions combined
+<<<<<<< HEAD
         self.features_dim_ = n_flatten.shape[0] * n_flatten.shape[1] * 3 + self.out_vector_features
+=======
+        self.features_dim_ = n_flatten.shape[0] * n_flatten.shape[1] + self.out_vector_features
+>>>>>>> parent of fb6b5ce (DQ_6.0)
         
         # MLP for combining features layers' outputs into a fixed dimension vector specified
-        self.n_linear = nn.Sequential(nn.Linear(in_features = self.features_dim_, out_features = features_dim), nn.Tanh())
-        torch.nn.init.xavier_uniform_(self.n_linear[0].weight)
+        self.n_linear = nn.Sequential(nn.Linear(in_features = self.features_dim_, out_features = features_dim), nn.ReLU())
+        
 
     # Forward method
     def forward(self, observations) -> torch.Tensor:
 
         # Obtain inputs as torch tensors for GPU computation
+<<<<<<< HEAD
         image_tensor_1 = torch.as_tensor(observations["image"][:, :2], device=self.device, dtype=torch.float32)
         image_tensor_2 = torch.as_tensor(observations["image"][:, 2:4], device=self.device, dtype=torch.float32)
         image_tensor_3 = torch.as_tensor(observations["image"][:, 4:], device=self.device, dtype=torch.float32)
@@ -175,6 +179,13 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
 
         image_features = torch.cat((image_features_1, image_features_2, image_features_3), dim=1)
 
+=======
+        image_tensor = torch.as_tensor(observations["image"], device=self.device, dtype=torch.float32)
+        q_tensor = torch.as_tensor(observations["ee_position"], device=self.device, dtype=torch.float32)
+
+        # Computes separate feature extractor
+        image_features = self.image_extractor(image_tensor)
+>>>>>>> parent of fb6b5ce (DQ_6.0)
         vector_features = self.vector_extractor(q_tensor)
 
         ret = self.n_linear(torch.cat([image_features, vector_features], dim=1))

@@ -23,9 +23,9 @@ def user_interface():
     roll_gui = p.addUserDebugParameter('Roll', -1, 1, 0)
     pitch_gui = p.addUserDebugParameter('Pitch', -1, 1, 0)
     yaw_gui = p.addUserDebugParameter('Yaw', -1, 1, 0)
-    # gripper_gui = p.addUserDebugParameter('Gripper', -1, 1, 0)
+    gripper_gui = p.addUserDebugParameter('Gripper', -1, 1, 0)
 
-    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
+    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui, gripper_gui]
 
 
 # Read GUI elements
@@ -36,16 +36,20 @@ def read_gui(gui_joints):
     j4 = p.readUserDebugParameter(gui_joints[3])
     j5 = p.readUserDebugParameter(gui_joints[4])
     j6 = p.readUserDebugParameter(gui_joints[5])
-    # g =  p.readUserDebugParameter(gui_joints[6])
+    g =  p.readUserDebugParameter(gui_joints[6])
 
-    return np.array([j1, j2, j3, j4, j5, j6])
+    return np.array([j1, j2, j3, j4, j5, j6, g])
 
 if __name__ == "__main__":
     
 
     # Test
     print("|| Loading model for testing ...")
+<<<<<<< HEAD
     model = SAC.load("./my_models_eval/rl_model_19500_steps.zip")
+=======
+    model = SAC.load("./my_models_eval/best_model_DQ2.1_(pos+or).zip")
+>>>>>>> parent of fb6b5ce (DQ_6.0)
     model.policy.eval()
     print("|| Testing ...")
 
@@ -59,10 +63,15 @@ if __name__ == "__main__":
 
     t = time.time()
     while True:
+<<<<<<< HEAD
         # obs["ee_position"] = np.append(obs["ee_position"], 0)
         action, _states = model.predict(obs, deterministic = True)
         # action = read_gui(gui_joints)
 
+=======
+        action, _states = model.predict(obs, deterministic = True)
+        # action = read_gui(gui_joints)
+>>>>>>> parent of fb6b5ce (DQ_6.0)
 
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
