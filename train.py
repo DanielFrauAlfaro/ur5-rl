@@ -65,7 +65,6 @@ if __name__ == "__main__":
     # --- Arquitecture ---    
     residual = True
     channels = [2, 16, 32, 32,48]
-
     kernel = 3          
     m_kernel = 3
     n_layers = len(channels) - 1
@@ -85,7 +84,7 @@ if __name__ == "__main__":
             vf=[features_dim, 64, 32],  # Adjust the size of these layers based on the requirements
             qf=[features_dim, 64, 32]),
         share_features_extractor = True,
-        activation_fn = torch.nn.modules.activation.Tanh
+        # activation_fn = torch.nn.modules.activation.Tanh
     )
 
     # --- Callbacks ---
@@ -110,14 +109,12 @@ if __name__ == "__main__":
 
     # Model declaration
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
-                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42)         # See logs: tensorboard --logdir logs/
+                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42,
+                train_freq=3)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
-    # model.set_parameters("./my_models_eval/best_sac_2_approx(only_pos).zip")
-
-    # model.load("./my_models_eval/best_model_DQ3.0_(posDQ + orn).zip")
-    model.learn(total_timesteps=70000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

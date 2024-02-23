@@ -47,7 +47,7 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
 
     # Adds noise to the camera coordinates (just the first one)
     cameras_coord_aux = copy.deepcopy(cameras_coord)
-    if first:
+    if True:
         cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
         cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
     
@@ -186,7 +186,7 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.215 # * x_axis_local
+    pos[-1] += 0.225 # * x_axis_local
 
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
@@ -627,31 +627,30 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
 
     if d_p < d_p_:
-        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
     else:
-        distance = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
 
 
     r = r.item()
     d = d.item()
     theta = theta.item()
 
-    distance = [d, theta]
+    distance = [r, d, theta]
 
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
     not_approx = False in approx_list[1:]
 
     reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
 
-    # if (d < 0.07 or theta < 0.09):
-    #     reward += r*0.4
+    if approx_list[-1]:
+        reward += np.tanh(r)*0.75
 
-    if d < 0.1 and theta < 0.1:
+    if d < 0.07 and theta < 0.055:
         print("AAA")
         reward = r
 
-    # print("Distance ", d)
-    # print("Orientation ", theta)
+    
     
     # Updates distance
     dist_obj_wrist = distance

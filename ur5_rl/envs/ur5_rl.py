@@ -83,8 +83,8 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 9
-        self._t_act = time.time()
+        self._step_limit = 43
+        self.steps = 0
 
 
 
@@ -135,7 +135,7 @@ class UR5Env(gym.Env):
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
 
         # Distance between object an wrist
-        self._dist_obj_wrist = math.inf
+        self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
         self.mask = np.array([-2, 
@@ -186,7 +186,7 @@ class UR5Env(gym.Env):
         obj_pos, __, __ = get_object_pos(object=self._object, client = self._client)
         wrist_pos, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
-        terminated = (time.time() - self._t_act) > self._t_limit \
+        terminated = self.steps >= self._step_limit \
                       or col_r > 0.0 \
                       or wrist_pos[-2] <= obj_pos[-2]
                                                                            
@@ -258,15 +258,15 @@ class UR5Env(gym.Env):
         '''
 
         self.steps += 1
-        self.max_action -= math.log(self.steps)*0.00007
-        self.max_action_or -= math.log(self.steps)*0.0001
+        # self.max_action -= math.log(self.steps)*0.00007
+        # self.max_action_or -= math.log(self.steps)*0.0001
 
-        self.max_action = max(self.max_action, 0.001)
-        self.max_action_or = max(self.max_action_or, 0.001)
+        # self.max_action = max(self.max_action, 0.001)
+        # self.max_action_or = max(self.max_action_or, 0.001)
         
-        action[0:3]  *= self.max_action
-        action[3:] *= self.max_action_or
-        action[-1]   *= self.max_action_yaw
+        action[0:3] *= self.max_action
+        action[3:]  *= self.max_action_or
+        action[-1]  *= self.max_action_yaw
         # action[-1]   *= self.max_action_g
         
 
@@ -311,15 +311,12 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 4
+            reward -= 3
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 3
-
-        if terminated and (time.time() - self._t_act) < self._t_limit:
-            reward += abs(time.time() - self._t_act) / 3
-
-        if (time.time() - self._t_act) > self._t_limit:
-            reward -= 10
+                reward -= 6
+        
+        if reward > 0 and terminated:
+            reward += 0.75
 
         # Get the new state after the action
         obs = self.get_observation()
