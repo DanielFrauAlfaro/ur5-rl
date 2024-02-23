@@ -231,7 +231,7 @@ def dq_rotate_vector(q_rot, vector):
 # these parameters can be tuned!
 LAMBDA_ROT = 0.8 / math.pi  # 1.3 # divide by maxmimum possible rotation angle (pi)
 # for LAMBDA_TRANS, assume that translation coeffs. are normalized in 3D eucl. space
-LAMBDA_TRANS = 3.3 / 1# 1.7 # 1.2 # (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
+LAMBDA_TRANS = 3.5 / 1# 1.7 # 1.2 # (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
 
 def dq_distance(dq_pred, dq_real):
     '''

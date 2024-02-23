@@ -82,7 +82,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._t_limit = 14
+        self._t_limit = 9
         self._t_act = time.time()
 
 
@@ -310,12 +310,12 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         if truncated:
-            reward -= 0
+            reward -= 4
             if out_of_bounds(self._limits, self._ur5):
-                reward -= 10
+                reward -= 3
 
         if terminated and (time.time() - self._t_act) < self._t_limit:
-            reward += 5/abs(time.time() - self._t_act)
+            reward += 1/abs(time.time() - self._t_act)
 
         # Get the new state after the action
         obs = self.get_observation()

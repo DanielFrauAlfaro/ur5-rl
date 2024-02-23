@@ -10,6 +10,7 @@ from networks_SB import CustomCombinedExtractor
 import numpy as np
 import cv2 as cv
 import os
+import torch
 
 
 env_id = "ur5_rl/Ur5Env-v0"
@@ -82,7 +83,8 @@ if __name__ == "__main__":
             pi=[features_dim, 64, 32],  # Adjust the size of these layers based on the requirements
             vf=[features_dim, 64, 32],  # Adjust the size of these layers based on the requirements
             qf=[features_dim, 64, 32]),
-        share_features_extractor = True
+        share_features_extractor = True,
+        activation_fn = torch.nn.modules.activation.Tanh
     )
 
     # --- Callbacks ---
