@@ -69,7 +69,7 @@ if __name__ == "__main__":
     m_kernel = 3
     n_layers = len(channels) - 1
 
-    out_vector_features = 120
+    out_vector_features = 100
     features_dim = 256   
     
     # Use  custom feature extractor in the policy_kwargs
@@ -108,13 +108,20 @@ if __name__ == "__main__":
     action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.01 * np.ones(n_actions))
 
     # Model declaration
+    
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
                 verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42,
                 train_freq=3)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
-    model.learn(total_timesteps=50000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    # model.load("./my_models_eval/best_model_DQ5.0_(topCameras)).zip")
+    # model.set_env(vec_env)
+    # model.learning_starts = 15000
+    # model.buffer_size = 15000
+    # model.learning_rate = 0.0001
+    # model.train_freq = 3
+    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

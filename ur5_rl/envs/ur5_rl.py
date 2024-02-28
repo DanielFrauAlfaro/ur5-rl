@@ -83,7 +83,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 45
+        self._step_limit = 280
         self.steps = 0
 
 
@@ -316,8 +316,8 @@ class UR5Env(gym.Env):
             if out_of_bounds(self._limits, self._ur5):
                 reward -= 10
         
-        # if reward > 0 and terminated:
-        #     reward += 0.75
+        if reward > 0 and terminated:
+            reward += reward*0.25
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -413,7 +413,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        return self.frame[2][0]
+        return self.frame[0][0]
         cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 

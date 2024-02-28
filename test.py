@@ -25,7 +25,7 @@ def user_interface():
     yaw_gui = p.addUserDebugParameter('Yaw', -1, 1, 0)
     gripper_gui = p.addUserDebugParameter('Gripper', -1, 1, 0)
 
-    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui, gripper_gui]
+    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
 
 # Read GUI elements
 def read_gui(gui_joints):
@@ -35,16 +35,16 @@ def read_gui(gui_joints):
     j4 = p.readUserDebugParameter(gui_joints[3])
     j5 = p.readUserDebugParameter(gui_joints[4])
     j6 = p.readUserDebugParameter(gui_joints[5])
-    g =  p.readUserDebugParameter(gui_joints[6])
+    # g =  p.readUserDebugParameter(gui_joints[6])
 
-    return np.array([j1, j2, j3, j4, j5, j6, g])
+    return np.array([j1, j2, j3, j4, j5, j6])
 
 if __name__ == "__main__":
     
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_7500_steps.zip")
+    model = SAC.load("./5.0_aux/rl_model_25500_steps.zip")
 
     model.policy.eval()
     print("|| Testing ...")

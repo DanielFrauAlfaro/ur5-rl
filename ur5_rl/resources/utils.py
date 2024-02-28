@@ -643,10 +643,13 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
 
+    # if theta < 0.06:
+    #     reward += np.tanh(r)
+
     if approx_list[-1]:
         reward += np.tanh(r)
 
-    if d < 0.08 and theta < 0.08:
+    if d < 0.07 and theta < 0.07:
         print("AAA")
         reward = r
 
@@ -675,7 +678,7 @@ def check_collision(client, objects):
     col_detector = pyb_utils.CollisionDetector(client, [(objects[0], objects[1])])
 
     # Detects collision with a certain margin (0.0)
-    return col_detector.in_collision(margin = 0.0)        # 0.0005
+    return col_detector.in_collision(margin = 0.0005)
     
 
 # Computes the reward associated with collision reward
