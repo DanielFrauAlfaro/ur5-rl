@@ -200,6 +200,7 @@ def get_object_pos(client, object):
     euler_angles_ = rotation_matrix_to_euler_xyz(rotation_matrix_)
     
     # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
 
     pos = list(pos)
     pos.append(0.0)
@@ -642,17 +643,15 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     not_approx = False in approx_list[1:]
 
     reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
+    
+    if approx_list[-1] or theta < 0.08:
+            reward += np.tanh(r)
 
-    # if theta < 0.06:
-    #     reward += np.tanh(r)
+        
 
-    if approx_list[-1]:
-        reward += np.tanh(r)
-
-    if d < 0.07 and theta < 0.07:
+    if d < 0.08 and theta < 0.08:
         print("AAA")
         reward = r
-
     
     
     # Updates distance

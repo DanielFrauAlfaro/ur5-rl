@@ -1,6 +1,6 @@
 import ur5_rl
 import gymnasium as gym
-from stable_baselines3 import SAC
+from stable_baselines3 import SAC, TD3
 from stable_baselines3.common.vec_env import VecNormalize, VecEnv, SubprocVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.env_util import make_vec_env
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./5.0_aux/rl_model_25500_steps.zip")
+    model = SAC.load("./5.2_aux/rl_model_31500_steps.zip")
 
     model.policy.eval()
     print("|| Testing ...")

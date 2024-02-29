@@ -31,7 +31,7 @@
     </inertial>
   </link>
 
-  <link name="aruco">
+  <!-- <link name="aruco">
     <visual>
       <geometry>
         <mesh filename="./untitled.obj" scale="0.1 0.1 0.1"/>
@@ -48,7 +48,7 @@
     <parent link="table"/>
     <child link="aruco"/>
     <origin rpy="0.0 0.0 -1.57" xyz="0.35 -0.01 0.055"/>
-  </joint> 
+  </joint>  -->
 
   <joint name="background_table_joint" type="fixed">
     <parent link="table"/>

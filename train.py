@@ -1,6 +1,6 @@
 import ur5_rl
 import gymnasium as gym
-from stable_baselines3 import SAC, PPO
+from stable_baselines3 import SAC, PPO, TD3
 from stable_baselines3.common.vec_env import VecNormalize, VecEnv, SubprocVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.env_util import make_vec_env
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     # --- Arquitecture ---    
     residual = True
-    channels = [2, 16, 32, 32,48]
+    channels = [2, 16, 32, 32, 48]
     kernel = 3          
     m_kernel = 3
     n_layers = len(channels) - 1
@@ -109,19 +109,19 @@ if __name__ == "__main__":
 
     # Model declaration
     
-    model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
-                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42,
+    model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, learning_starts = 2000,
+                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42, learning_rate = 0.0001,
                 train_freq=3)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
-    # model.load("./my_models_eval/best_model_DQ5.0_(topCameras)).zip")
+    model.set_parameters("./my_models_eval/best_model_DQ5.0_(topCameras).zip")
     # model.set_env(vec_env)
     # model.learning_starts = 15000
     # model.buffer_size = 15000
     # model.learning_rate = 0.0001
     # model.train_freq = 3
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=43000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

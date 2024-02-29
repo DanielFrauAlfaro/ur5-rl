@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action_original = 0.06
+        self.max_action_original = 0.0666
         self.max_action_or_original = 0.12
 
         self.max_action = self.max_action_original
@@ -83,7 +83,8 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 280
+        self._step_limit = 40
+        self.global_steps = 0
         self.steps = 0
 
 
@@ -129,7 +130,7 @@ class UR5Env(gym.Env):
 
 
 
-        self.std_cam = 0.02 # 0.05
+        self.std_cam = 0.01 # 0.05
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
                                      near_val=self.near_plane, far_val=self.far_plane, 
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
@@ -151,7 +152,7 @@ class UR5Env(gym.Env):
     def compute_reward(self):
         '''
         Computes the environment reward according to the approximation reward
-    and the collision reward
+            and the collision reward
 
         Returns:
             - The reward (int / float)
@@ -187,13 +188,14 @@ class UR5Env(gym.Env):
         obj_pos, __, __ = get_object_pos(object=self._object, client = self._client)
         wrist_pos, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
-        terminated = self.steps >= self._step_limit \
-                      or col_r > 0.0 \
+        terminated = col_r > 0.0 \
                       or wrist_pos[-2] <= obj_pos[-2]
                                                                            
         
         truncated = out_of_bounds(self._limits, self._ur5) \
-                    or col_r < 0.0
+                    or col_r < 0.0 \
+                    or self.steps >= self._step_limit 
+            
                     # or check_collision(client = self._client, objects = [self._table.id, self._ur5.id])
 
         return terminated, truncated
@@ -259,6 +261,8 @@ class UR5Env(gym.Env):
         '''
 
         self.steps += 1
+        self.global_steps += 1
+        
         # self.max_action -= math.log(self.steps)*0.00007
         # self.max_action_or -= math.log(self.steps)*0.0001
 
@@ -317,7 +321,7 @@ class UR5Env(gym.Env):
                 reward -= 10
         
         if reward > 0 and terminated:
-            reward += reward*0.25
+            reward += reward*0.3
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -339,8 +343,13 @@ class UR5Env(gym.Env):
         Resets the entire simulation and re - samples positions:
             - Re - samples camera positionining
         '''
-
         self.steps = 0
+        # if self.global_steps > 30:
+        #     self._step_limit = 45
+        # if self.global_steps > 60:
+        #     self._step_limit = 37
+            
+        
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
 
