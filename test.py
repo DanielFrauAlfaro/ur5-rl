@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./5.2_aux/rl_model_31500_steps.zip")
+    model = SAC.load("./5.2_aux/rl_model_33000_steps.zip")
 
     model.policy.eval()
     print("|| Testing ...")
@@ -56,6 +56,7 @@ if __name__ == "__main__":
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
+    
 
     t = time.time()
     while True:
