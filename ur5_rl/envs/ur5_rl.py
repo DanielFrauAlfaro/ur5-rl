@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action_original = 0.075
+        self.max_action_original = 0.0666
         self.max_action_or_original = 0.12
 
         self.max_action = self.max_action_original
