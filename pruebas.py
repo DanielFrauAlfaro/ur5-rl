@@ -102,26 +102,29 @@ print(np.dot(v1, v2))
 # print(c[:3].tolist().sum())
 
 
-from matplotlib import pyplot as plt
+a= [1,2,3]
+print(sum(a))
 
-x = [20, 30, 40, 50, 60, 70]
-y_t = [0.007, 0.008, 0.02, 0.007, 0.014, 0.01]
-y_l = [0.06, 0.05, 0.04, 0.047, 0.06, 0.05]
+# from matplotlib import pyplot as plt
 
-# Plotting both the curves simultaneously 
-plt.plot(x, y_t, color='r', label='Transformer time') 
-plt.plot(x, y_l, color='g', label='LSTM time') 
+# x = [20, 30, 40, 50, 60, 70]
+# y_t = [0.007, 0.008, 0.02, 0.007, 0.014, 0.01]
+# y_l = [0.06, 0.05, 0.04, 0.047, 0.06, 0.05]
+
+# # Plotting both the curves simultaneously 
+# plt.plot(x, y_t, color='r', label='Transformer time') 
+# plt.plot(x, y_l, color='g', label='LSTM time') 
   
-# Naming the x-axis, y-axis and the whole graph 
-plt.xlabel("Sequence Length") 
-plt.ylabel("Time (s)") 
-plt.title("") 
+# # Naming the x-axis, y-axis and the whole graph 
+# plt.xlabel("Sequence Length") 
+# plt.ylabel("Time (s)") 
+# plt.title("") 
   
-# Adding legend, which helps us recognize the curve according to it's color 
-plt.legend() 
+# # Adding legend, which helps us recognize the curve according to it's color 
+# plt.legend() 
   
-# To load the display window 
-plt.show() 
+# # To load the display window 
+# plt.show() 
   
 
 

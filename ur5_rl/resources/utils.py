@@ -199,8 +199,8 @@ def get_object_pos(client, object):
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
     euler_angles_ = rotation_matrix_to_euler_xyz(rotation_matrix_)
     
-    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
-    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
+    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
 
     pos = list(pos)
     pos.append(0.0)
@@ -216,7 +216,7 @@ def get_object_pos(client, object):
 
      # --> blue (z)
     
-    return np.array(pos), DQ, DQ_# rotation_matrix# euler_angles # x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
+    return np.array(pos), [x_axis_local, y_axis_local, z_axis_local], [x_axis_local, y_axis_local_, z_axis_local_]# rotation_matrix# euler_angles # x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
 
 
 # Getter for the wrist position
@@ -249,7 +249,7 @@ def get_wrist_pos(client, robot_id):
 
     x_axis_local, z_axis_local = z_axis_local, -x_axis_local
     
-    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
+    print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
     rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
@@ -282,7 +282,7 @@ def get_wrist_pos(client, robot_id):
     # rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     # euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
 
-    return np.array(pos), DQ #rotation_matrix# euler_angles #x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
+    return np.array(pos), [x_axis_local, y_axis_local, z_axis_local]  #rotation_matrix# euler_angles #x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
 # Computes the reward according the approximation to the object
@@ -596,46 +596,19 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     obj_pos, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
     wrist_pos, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)
 
-    # Primary parts
-    p_w = dqrobotics.P(DQ_w)
-    p_obj = dqrobotics.P(DQ_obj)
-    p_obj_ = dqrobotics.P(DQ_obj_)
 
-    # Dual parts
-    d_w = dqrobotics.D(DQ_w)
-    d_obj = dqrobotics.D(DQ_obj)
-    d_obj_ = dqrobotics.D(DQ_obj_)
+    d = np.linalg.norm(wrist_pos[:-1] - obj_pos[:-1])
+    theta = [abs(np.dot(r_w, r_obj)/(np.linalg.norm(r_w)*np.linalg.norm(r_obj))) for r_w, r_obj in zip(DQ_w, DQ_obj)]
+    theta_ = [abs(np.dot(r_w, r_obj)/(np.linalg.norm(r_w)*np.linalg.norm(r_obj))) for r_w, r_obj in zip(DQ_w, DQ_obj_)]
 
-    # Vectors
-    # --- Dual quaternion vectors ---
-    w_DQ_vec = dqrobotics.vec8(DQ_w)
-    obj_DQ_vec = dqrobotics.vec8(DQ_obj)
-    obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
+    theta = max(sum(theta), sum(theta_)) / len(theta)
 
-    # --- Primary parts vector ---
-    p_w_vec = dqrobotics.vec4(p_w)
-    p_obj_vec = dqrobotics.vec4(p_obj)
-    p_obj_vec_ = dqrobotics.vec4(p_obj_)
-
-    # --- Dual parts vector ---
-    d_w_vec = dqrobotics.vec4(d_w)
-    d_obj_vec = dqrobotics.vec4(d_obj)
-    d_obj_vec_ = dqrobotics.vec4(d_obj_)
-
-    # Angular distance using quaternion
-    d_p = math.acos(2*np.dot(p_w_vec, p_obj_vec) ** 2 - 1)
-    d_p_ = math.acos(2*np.dot(p_w_vec, p_obj_vec_) ** 2 - 1)
-
-
-    if d_p < d_p_:
-        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
-    else:
-        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
-
-
-    r = r.item()
-    d = d.item()
-    theta = theta.item()
+    d *= 4.5 / math.pi
+    theta = (1/theta - 1) / math.pi
+    
+    r = 1 / (d + theta)
+    # d = d.item()
+    # theta = theta.item()
 
     distance = [r, d, theta]
 
@@ -651,14 +624,13 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     #     if approx_list[1]:
     #         reward += np.tanh(r)*0.33
 
-    if approx_list[-1] or theta < 0.09:
+    if approx_list[-1]:# or theta < 0.015:
         reward += np.tanh(r)
 
-    if d < 0.09 and theta < 0.09:
+    if d < 0.07 and theta < 0.015:
         print("AAA")
         reward = r
 
-    print("Distance: ", d)
     
     
     # Updates distance
