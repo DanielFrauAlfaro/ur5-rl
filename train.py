@@ -115,7 +115,7 @@ if __name__ == "__main__":
     
     # Training 
     print("|| Training ...")
-    model.set_parameters("./5.2_aux/rl_model_33000_steps.zip")
+    model.set_parameters("./5.0_aux/rl_model_43500_steps.zip")
     # model.set_env(vec_env)
     # model.learning_starts = 15000
     # model.buffer_size = 15000

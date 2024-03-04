@@ -39,7 +39,7 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions
-        self.max_action_original = 0.075
+        self.max_action_original = 0.0666
         self.max_action_or_original = 0.12
 
         self.max_action = self.max_action_original
@@ -83,7 +83,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 50
+        self._step_limit = 40
         self.global_steps = 0
         self.steps = 0
 
@@ -140,11 +140,11 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-2, 
-                              -0.0, -0.0, -0.0,
-                              -0.0, -0.0, -0.0,
-                              -0.0, -0.0, -0.0,
-                              -0.0, -0.0,
-                              -0.0, -0.0, -0.0])
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1,
+                              -0.1, -0.1, -0.1])
 
 
     
@@ -321,7 +321,7 @@ class UR5Env(gym.Env):
                 reward -= 10
         
         if reward > 0 and terminated:
-            reward += reward*0.5
+            reward += reward*0.3
 
         # Get the new state after the action
         obs = self.get_observation()
