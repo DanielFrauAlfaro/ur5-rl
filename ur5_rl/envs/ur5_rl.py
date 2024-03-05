@@ -83,7 +83,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 50
+        self._step_limit = 10
         self.global_steps = 0
         self.steps = 0
 
@@ -374,8 +374,9 @@ class UR5Env(gym.Env):
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         
                 
-        # Creates a object, a table and the robot
-        self._object = Object(self._client, object=0, position=pos, orientation=rand_orientation)
+        # Creates a object, a table and the robot        
+        object_chosen = random.randint(0,9)
+        self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
         self._table = Table(self._client)  
 

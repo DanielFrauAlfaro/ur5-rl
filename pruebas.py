@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+import random
 
 # # Define a simple residual block with a 3x3 kernel
 # class ResidualBlock(nn.Module):
@@ -101,27 +102,29 @@ print(np.dot(v1, v2))
 
 # print(c[:3].tolist().sum())
 
+aux = [0, 2, 3, 4, 6, 7, 8, 9, 17]
+print(random.randint(0,9))
 
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 
-x = [20, 30, 40, 50, 60, 70]
-y_t = [0.007, 0.008, 0.02, 0.007, 0.014, 0.01]
-y_l = [0.06, 0.05, 0.04, 0.047, 0.06, 0.05]
+# x = [20, 30, 40, 50, 60, 70]
+# y_t = [0.007, 0.008, 0.02, 0.007, 0.014, 0.01]
+# y_l = [0.06, 0.05, 0.04, 0.047, 0.06, 0.05]
 
-# Plotting both the curves simultaneously 
-plt.plot(x, y_t, color='r', label='Transformer time') 
-plt.plot(x, y_l, color='g', label='LSTM time') 
+# # Plotting both the curves simultaneously 
+# plt.plot(x, y_t, color='r', label='Transformer time') 
+# plt.plot(x, y_l, color='g', label='LSTM time') 
   
-# Naming the x-axis, y-axis and the whole graph 
-plt.xlabel("Sequence Length") 
-plt.ylabel("Time (s)") 
-plt.title("") 
+# # Naming the x-axis, y-axis and the whole graph 
+# plt.xlabel("Sequence Length") 
+# plt.ylabel("Time (s)") 
+# plt.title("") 
   
-# Adding legend, which helps us recognize the curve according to it's color 
-plt.legend() 
+# # Adding legend, which helps us recognize the curve according to it's color 
+# plt.legend() 
   
-# To load the display window 
-plt.show() 
+# # To load the display window 
+# plt.show() 
   
 
 

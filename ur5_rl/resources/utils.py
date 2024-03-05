@@ -191,8 +191,14 @@ def get_object_pos(client, object):
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
 
+    if "box" in object.name:
+        z_axis_local, y_axis_local = -y_axis_local, z_axis_local
+
     z_axis_local_ = -1*z_axis_local
     y_axis_local_ = np.cross(z_axis_local_, x_axis_local)
+
+    
+
 
     rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     rotation_matrix_ = np.vstack((x_axis_local, y_axis_local_, z_axis_local_)).T
@@ -657,8 +663,6 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     if d < 0.09 and theta < 0.09:
         print("AAA")
         reward = r
-
-    print("Distance: ", d)
     
     
     # Updates distance
