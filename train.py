@@ -115,7 +115,8 @@ if __name__ == "__main__":
     
     # Training 
     print("|| Training ...")
-    model.set_parameters("./my_models_eval/best_model_DQ5.0_(topCameras).zip")
+    # model.set_parameters("./my_models_eval/best_model_DQ5.0_(topCameras).zip")
+
     # model.set_env(vec_env)
     # model.learning_starts = 15000
     # model.buffer_size = 15000
