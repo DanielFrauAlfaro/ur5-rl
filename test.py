@@ -43,16 +43,20 @@ if __name__ == "__main__":
     
 
     # Test
-    # print("|| Loading model for testing ...")
-    # model = SAC.load("./my_models_eval/rl_model_25500_steps.zip")
+    print("|| Loading model for testing ...")
+    model = SAC.load("./5.2_aux/rl_model_30000_steps.zip")       # 31500 --> 8 / 10
+                                                                        # 30000 --> 8o9 / 10
+                                                                        # 28500 --> 8o9 / 10
+                                                                        # 12500 --> 7o8 / 10
+                                                                        # rl_33_5.2 --> 
 
-    # model.policy.eval()
-    # print("|| Testing ...")
+    model.policy.eval()
+    print("|| Testing ...")
 
     
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
@@ -61,8 +65,8 @@ if __name__ == "__main__":
     t = time.time()
     while True:
         # obs["ee_position"] = np.append(obs["ee_position"], 0)
-        # action, _states = model.predict(obs, deterministic = True)
-        action = read_gui(gui_joints)
+        action, _states = model.predict(obs, deterministic = True)
+        # action = read_gui(gui_joints)
 
 
         obs, reward, terminated, truncated, info = vec_env.step(action)

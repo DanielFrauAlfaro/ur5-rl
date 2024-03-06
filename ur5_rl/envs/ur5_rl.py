@@ -321,7 +321,7 @@ class UR5Env(gym.Env):
                 reward -= 10
         
         if reward > 0 and terminated:
-            reward += reward*0.3
+            reward += reward*0.5
 
         # Get the new state after the action
         obs = self.get_observation()
@@ -375,7 +375,7 @@ class UR5Env(gym.Env):
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = random.randint(0,9)
+        object_chosen = 0 #random.randint(0,9)
         self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
         self._table = Table(self._client)  
