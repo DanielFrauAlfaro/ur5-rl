@@ -140,14 +140,24 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-2, 
-                              -0.1, -0.1, -0.1,
-                              -0.1, -0.1, -0.1,
-                              -0.1, -0.1, -0.1,
-                              -0.1, -0.1,
-                              -0.1, -0.1, -0.1])
+                              0.1, 0.1, 0.1,
+                              0.1, 0.1, 0.1,
+                              0.1, 0.1, 0.1,
+                              0.1, 0.1,
+                              0.1, 0.1, 0.1])
+        
+        self.g = 0
 
 
-    
+    def grasping(self):
+        
+        self._ur5.apply_action_g(self.g)
+        self.g += 10
+
+        return collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask) > 0.0
+
+
+
     # Computes the whole reward
     def compute_reward(self):
         '''
@@ -188,8 +198,8 @@ class UR5Env(gym.Env):
         obj_pos, __, __ = get_object_pos(object=self._object, client = self._client)
         wrist_pos, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
-        terminated = col_r > 0.0 \
-                      or wrist_pos[-2] <= obj_pos[-2]
+        terminated = wrist_pos[-2] <= obj_pos[-2] + 0.025 # \
+                    # or col_r > 0.0
                                                                            
         
         truncated = out_of_bounds(self._limits, self._ur5) \
@@ -344,6 +354,7 @@ class UR5Env(gym.Env):
             - Re - samples camera positionining
         '''
         self.steps = 0
+        self.g = 0
         # if self.global_steps > 30:
         #     self._step_limit = 45
         # if self.global_steps > 60:

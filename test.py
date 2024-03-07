@@ -39,16 +39,18 @@ def read_gui(gui_joints):
 
     return np.array([j1, j2, j3, j4, j5, j6])
 
+COMPLETE = True
+
 if __name__ == "__main__":
     
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./5.2_aux/rl_model_30000_steps.zip")       # 31500 --> 8 / 10
-                                                                        # 30000 --> 8o9 / 10
-                                                                        # 28500 --> 8o9 / 10
-                                                                        # 12500 --> 7o8 / 10
-                                                                        # rl_33_5.2 --> 
+    model = SAC.load("./5.2_aux/rl_model_33000_steps.zip")       # rl_31500_5.5 --> 8 / 10
+                                                                 # rl_30000_5.5 --> 8o9 / 10
+                                                                 # rl_28500_5.5 --> 8o9 / 10
+                                                                 # rl_12500_5.5 --> 7o8 / 10
+                                                                 # rl_33000_5.2 --> 7o8 / 10
 
     model.policy.eval()
     print("|| Testing ...")
@@ -60,6 +62,8 @@ if __name__ == "__main__":
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
+
+    list_actions = []
     
 
     t = time.time()
@@ -68,7 +72,7 @@ if __name__ == "__main__":
         action, _states = model.predict(obs, deterministic = True)
         # action = read_gui(gui_joints)
 
-
+        list_actions.append(action)
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
         
@@ -82,9 +86,35 @@ if __name__ == "__main__":
         cv.waitKey(1)
 
         if terminated or truncated:
+
+            if COMPLETE:
+
+                grasped = False
+
+                while len(list_actions) > 0:
+                    if not grasped:
+                        obs, reward, terminated, truncated, info = vec_env.step(np.zeros(6))
+                        vec_env.grasping()
+
+                    else:
+                        obs, reward, terminated, truncated, info = vec_env.step(list_actions.pop())
+
+                    img = vec_env.render()
+
+                    cv.imshow("AA", img)
+                    cv.waitKey(1)
+
+
+
+
+
             print("Tiempo: ", time.time() - t)
             t = time.time()
             print(r, "--")
             r = 0
+            list_actions = []
+
+            
+
             obs, info = vec_env.reset()
 

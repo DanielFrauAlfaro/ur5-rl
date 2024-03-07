@@ -157,7 +157,7 @@ class UR5e:
 
         # Applies the joint action (joint and gripper)
         self.apply_action(new_q[0])
-        # self.apply_action_g(int(action[-1]))
+        # self.apply_action_g(0)
 
 
     # Moves the robot to a desired position
@@ -186,6 +186,8 @@ class UR5e:
         # Computes pseudo - inverse kinematics. Transforms "g" action to closure angles 
         action = min(self.m1 * action, self.max_closure)
         action = np.ones(3) * action
+
+        print("GRASP: ", action)
 
         p.setJointMotorControlArray(bodyUniqueId=self.id, 
                                     jointIndices=self.gripper_joints_id, 
