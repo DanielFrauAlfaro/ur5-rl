@@ -186,9 +186,7 @@ class UR5e:
         # Computes pseudo - inverse kinematics. Transforms "g" action to closure angles 
         action = min(self.m1 * action, self.max_closure)
         action = np.ones(3) * action
-
-        print("GRASP: ", action)
-
+        
         p.setJointMotorControlArray(bodyUniqueId=self.id, 
                                     jointIndices=self.gripper_joints_id, 
                                     controlMode=p.POSITION_CONTROL,

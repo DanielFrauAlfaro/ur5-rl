@@ -46,10 +46,10 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./5.2_aux/rl_model_33000_steps.zip")       # rl_31500_5.5 --> 8 / 10
+    model = SAC.load("./5.5_aux/rl_model_12000_steps.zip")       # rl_31500_5.5 --> 8 / 10
                                                                  # rl_30000_5.5 --> 8o9 / 10
                                                                  # rl_28500_5.5 --> 8o9 / 10
-                                                                 # rl_12500_5.5 --> 7o8 / 10
+                                                                 # rl_12000_5.5 --> 7o8 / 10
                                                                  # rl_33000_5.2 --> 7o8 / 10
 
     model.policy.eval()
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         action, _states = model.predict(obs, deterministic = True)
         # action = read_gui(gui_joints)
 
-        list_actions.append(action)
+        list_actions.append(-action)
         obs, reward, terminated, truncated, info = vec_env.step(action)
         
         
@@ -90,14 +90,28 @@ if __name__ == "__main__":
             if COMPLETE:
 
                 grasped = False
+                is_touching = False
+                cnt = 0
 
-                while len(list_actions) > 0:
+                while len(list_actions) > 1:
                     if not grasped:
                         obs, reward, terminated, truncated, info = vec_env.step(np.zeros(6))
-                        vec_env.grasping()
+                        is_touching, g = vec_env.unwrapped.grasping()
+
+                        grasped = cnt == 4
+
+                        if is_touching:
+                            cnt += 1
+                        else:
+                            cnt = 0
+
+                        if g >= 100:
+                            break
 
                     else:
-                        obs, reward, terminated, truncated, info = vec_env.step(list_actions.pop())
+                        action = list_actions.pop()
+                        print("Action: ", len(list_actions))
+                        obs, reward, terminated, truncated, info = vec_env.step(action)
 
                     img = vec_env.render()
 
@@ -105,16 +119,11 @@ if __name__ == "__main__":
                     cv.waitKey(1)
 
 
-
-
-
             print("Tiempo: ", time.time() - t)
             t = time.time()
             print(r, "--")
             r = 0
             list_actions = []
-
-            
 
             obs, info = vec_env.reset()
 

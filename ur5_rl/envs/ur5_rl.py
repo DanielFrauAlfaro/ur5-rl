@@ -144,7 +144,7 @@ class UR5Env(gym.Env):
                               0.1, 0.1, 0.1,
                               0.1, 0.1, 0.1,
                               0.1, 0.1,
-                              0.1, 0.1, 0.1])
+                              4, 2, 2])
         
         self.g = 0
 
@@ -152,9 +152,9 @@ class UR5Env(gym.Env):
     def grasping(self):
         
         self._ur5.apply_action_g(self.g)
-        self.g += 10
+        self.g += 5
 
-        return collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask) > 0.0
+        return collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask) >= 6, self._ur5.g
 
 
 
@@ -198,7 +198,7 @@ class UR5Env(gym.Env):
         obj_pos, __, __ = get_object_pos(object=self._object, client = self._client)
         wrist_pos, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
-        terminated = wrist_pos[-2] <= obj_pos[-2] + 0.025 # \
+        terminated = wrist_pos[-2] <= obj_pos[-2] + 0.0 # \
                     # or col_r > 0.0
                                                                            
         

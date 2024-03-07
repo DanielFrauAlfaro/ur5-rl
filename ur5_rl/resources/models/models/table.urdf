@@ -2,6 +2,14 @@
 <robot name="ur5e_robot" xmlns:xacro="http://wiki.ros.org/xacro">
 
   <link name="table">
+    <contact>
+      <friction_anchor/>
+      <lateral_friction value="0.1"/>
+      <spinning_friction value="0.001"/>
+      <rolling_friction value="0.001"/>
+      <contact_cfm value="0.1"/>
+      <contact_erp value="1.0"/>
+    </contact>
     <visual>
       <geometry>
         <mesh filename="./stl/mesa_lab.dae" scale="0.001 0.001 0.001"/>
