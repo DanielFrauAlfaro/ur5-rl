@@ -11,9 +11,9 @@ class Object:
         # List of object directories
         spawnables = ("002_master_chef_can", "005_tomato_soup_can", 
                       "sugar_box", "cracker_box", 
-                      "006_mustard_bottle", "021_bleach_cleanser", 
+                      "006_mustard_bottle", 
                       "017_orange", "cleanser", 
-                      "conditioner", "magic_clean",                 "potato_chip_1", "repellent", "pen_container_1", "orion_pie")
+                      "conditioner", "magic_clean",                  "repellent", "potato_chip_1", "021_bleach_cleanser", "pen_container_1", "orion_pie")
         
         self.name = spawnables[object]
 

@@ -1143,11 +1143,11 @@
   <link name="contact1">
     <contact>
       <friction_anchor/>
-      <lateral_friction value="10"/>
+      <lateral_friction value="1"/>
       <spinning_friction value="0.001"/>
       <rolling_friction value="0.001"/>
-      <contact_cfm value="20"/>
-      <contact_erp value="10.0"/>
+      <contact_cfm value="2"/>
+      <contact_erp value="1.0"/>
     </contact>
     <visual>
       <geometry>
@@ -1174,11 +1174,11 @@
   <link name="contact2">
     <contact>
       <friction_anchor/>
-      <lateral_friction value="10"/>
+      <lateral_friction value="1"/>
       <spinning_friction value="0.001"/>
       <rolling_friction value="0.001"/>
-      <contact_cfm value="20"/>
-      <contact_erp value="10.0"/>
+      <contact_cfm value="2"/>
+      <contact_erp value="1.0"/>
     </contact>
     
     <visual>

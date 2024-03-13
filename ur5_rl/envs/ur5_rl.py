@@ -96,6 +96,7 @@ class UR5Env(gym.Env):
 
         # Start seed
         self.np_random, __ = gym.utils.seeding.np_random()
+        np.random.seed(0)
 
         # Client in Pybullet simulation
         self._client = 0
@@ -140,11 +141,11 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-2, 
-                              0.1, 0.1, 0.1,
-                              0.1, 0.1, 0.1,
-                              0.1, 0.1, 0.1,
-                              0.1, 0.1,
-                              4, 2, 2])
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1, -0.1,
+                              -0.1, -0.1,
+                              -0.1, -0.1, -0.1])
         
         self.g = 0
 
@@ -386,7 +387,8 @@ class UR5Env(gym.Env):
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = 0 #random.randint(0,9)
+        object_chosen = random.randint(0,9)
+        
         self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
         self._table = Table(self._client)  

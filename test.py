@@ -39,21 +39,21 @@ def read_gui(gui_joints):
 
     return np.array([j1, j2, j3, j4, j5, j6])
 
-COMPLETE = True
+COMPLETE = False
 
 if __name__ == "__main__":
     
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./5.5_aux/rl_model_12000_steps.zip")       # rl_31500_5.5 --> 8 / 10
+    model = SAC.load("./my_models_eval/rl_model_40500_steps.zip")       # rl_31500_5.5 --> 8 / 10
                                                                  # rl_30000_5.5 --> 8o9 / 10
                                                                  # rl_28500_5.5 --> 8o9 / 10
                                                                  # rl_12000_5.5 --> 7o8 / 10
                                                                  # rl_33000_5.2 --> 7o8 / 10
 
     model.policy.eval()
-    print("|| Testing ...")
+    print("|| Testing ...") # sugar, cracker
 
     
 

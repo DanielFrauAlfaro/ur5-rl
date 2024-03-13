@@ -4,11 +4,11 @@
   <link name="table">
     <contact>
       <friction_anchor/>
-      <lateral_friction value="0.1"/>
-      <spinning_friction value="0.001"/>
-      <rolling_friction value="0.001"/>
-      <contact_cfm value="0.1"/>
-      <contact_erp value="1.0"/>
+      <lateral_friction value="5"/>
+      <spinning_friction value="0.005"/>
+      <rolling_friction value="0.005"/>
+      <contact_cfm value="5"/>
+      <contact_erp value="5"/>
     </contact>
     <visual>
       <geometry>
@@ -30,6 +30,19 @@
     <visual>
       <geometry>
         <mesh filename="./background.obj" scale="2 2 2"/>
+      </geometry>
+    </visual>
+    <inertial>
+        <mass value="0.0" />
+        <origin xyz="0.0 0.0 0.0"/>
+        <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+    </inertial>
+  </link>
+
+  <link name="background_2">
+    <visual>
+      <geometry>
+        <mesh filename="./background_2.obj" scale="2 2 2"/>
       </geometry>
     </visual>
     <inertial>
@@ -62,6 +75,12 @@
     <parent link="table"/>
     <child link="background"/>
     <origin rpy="3.1415 3.1415 0.0" xyz="1.1 -0.6 0.3"/>
+  </joint> 
+
+  <joint name="background2_table_joint" type="fixed">
+    <parent link="table"/>
+    <child link="background_2"/>
+    <origin rpy="3.1415 -1.57 -0.08" xyz="0.0 -0.5 -0.2"/>
   </joint> 
 
 </robot>

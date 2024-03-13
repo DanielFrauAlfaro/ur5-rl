@@ -47,7 +47,7 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
 
     # Adds noise to the camera coordinates (just the first one)
     cameras_coord_aux = copy.deepcopy(cameras_coord)
-    if first:
+    if True:
         cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
         cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
     
@@ -66,7 +66,7 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
         view_matrix = p.computeViewMatrix(cameraEyePosition = camera[0], cameraTargetPosition = camera[0] + camera_vec, cameraUpVector = up_vec, physicsClientId = client)
         
         # Computes projection matrix
-        proj_matrix = p.computeProjectionMatrixFOV(fov = 80, aspect = 1, nearVal = 0.01, farVal = 1, physicsClientId = client)
+        proj_matrix = p.computeProjectionMatrixFOV(fov = 80, aspect = 1, nearVal = 0.01, farVal = 1.4, physicsClientId = client)
         
         # Convert the tuple to a NumPy array and reshape
         proj_matrix_3x3 = np.array(proj_matrix)
