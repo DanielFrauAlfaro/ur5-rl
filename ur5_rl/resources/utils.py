@@ -47,7 +47,7 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
 
     # Adds noise to the camera coordinates (just the first one)
     cameras_coord_aux = copy.deepcopy(cameras_coord)
-    if True:
+    if first:
         cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
         cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
     
@@ -646,23 +646,30 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     distance = [r, d, theta]
 
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
-    not_approx = False in approx_list[1:]
+    not_approx = False in [approx_list[1]]
 
-    reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
+    reward = 0.0
+
+    if obj_pos[-2] < 1.015:
+        reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
+        
+        # if not approx_list[0]:
+        #     if approx_list[-1] or theta < 0.09:
+        #         reward += np.tanh(r)
+
+        #     if approx_list[1]:
+        #         reward += np.tanh(r)*0.33
+
+        if approx_list[-1] or theta < 0.08:
+            reward += np.tanh(r)
+
+        if d < 0.08 and theta < 0.08:
+            print("AAA")
+            reward = r
     
-    # if not approx_list[0]:
-    #     if approx_list[-1] or theta < 0.09:
-    #         reward += np.tanh(r)
-
-    #     if approx_list[1]:
-    #         reward += np.tanh(r)*0.33
-
-    if approx_list[-1] or theta < 0.08:
-        reward += np.tanh(r)
-
-    if d < 0.08 and theta < 0.08:
-        print("AAA")
-        reward = r
+    else:
+        reward = 4.5*obj_pos[-2]
+    
     
     
     # Updates distance
@@ -715,7 +722,7 @@ def collision_reward(client, collisions_to_check, mask = np.array([0,0])):
 # Check if the robot is out of bounds
 def out_of_bounds(limits, robot):
     '''
-       Checks if the robot is out of bounds articularlly
+       Checks if the robot is out of bounds articularly
                                                                        
            - limits: list of list of limits. Must have in index 0 and 1
         the position and velocities upper and lower bounds for each joint                             
@@ -725,8 +732,15 @@ def out_of_bounds(limits, robot):
            -If the robot is out of bounds (bool)
     '''
 
+    q = copy.deepcopy(robot.q)
+    qd = copy.deepcopy(robot.qd)
+
+    q.append(robot.g)
+    qd.append(0.0)
+
+
     # Obtains the joint position of the robot
-    qs = [robot.q, robot.qd]
+    qs = [q, qd]
     
     # Iterates the first two limits
     for idx, limit in enumerate(limits[:2]):

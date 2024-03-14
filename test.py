@@ -25,7 +25,7 @@ def user_interface():
     yaw_gui = p.addUserDebugParameter('Yaw', -1, 1, 0)
     gripper_gui = p.addUserDebugParameter('Gripper', -1, 1, 0)
 
-    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
+    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui, gripper_gui]
 
 # Read GUI elements
 def read_gui(gui_joints):
@@ -35,9 +35,9 @@ def read_gui(gui_joints):
     j4 = p.readUserDebugParameter(gui_joints[3])
     j5 = p.readUserDebugParameter(gui_joints[4])
     j6 = p.readUserDebugParameter(gui_joints[5])
-    # g =  p.readUserDebugParameter(gui_joints[6])
+    g =  p.readUserDebugParameter(gui_joints[6])
 
-    return np.array([j1, j2, j3, j4, j5, j6])
+    return np.array([j1, j2, j3, j4, j5, j6, g])
 
 COMPLETE = False
 
@@ -45,20 +45,20 @@ if __name__ == "__main__":
     
 
     # Test
-    print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_40500_steps.zip")       # rl_31500_5.5 --> 8 / 10
-                                                                 # rl_30000_5.5 --> 8o9 / 10
-                                                                 # rl_28500_5.5 --> 8o9 / 10
-                                                                 # rl_12000_5.5 --> 7o8 / 10
-                                                                 # rl_33000_5.2 --> 7o8 / 10
+    # print("|| Loading model for testing ...")
+    # model = SAC.load("./my_models_eval/rl_model_15000_steps.zip")       # rl_31500_5.5 --> 8 / 10
+    #                                                              # rl_30000_5.5 --> 8o9 / 10
+    #                                                              # rl_28500_5.5 --> 8o9 / 10
+    #                                                              # rl_12000_5.5 --> 7o8 / 10
+    #                                                              # rl_33000_5.2 --> 7o8 / 10
 
-    model.policy.eval()
-    print("|| Testing ...") # sugar, cracker
+    # model.policy.eval()
+    # print("|| Testing ...") # sugar, cracker
 
     
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
@@ -69,13 +69,12 @@ if __name__ == "__main__":
     t = time.time()
     while True:
         # obs["ee_position"] = np.append(obs["ee_position"], 0)
-        action, _states = model.predict(obs, deterministic = True)
-        # action = read_gui(gui_joints)
+        # action, _states = model.predict(obs, deterministic = True)
+        action = read_gui(gui_joints)
 
         list_actions.append(-action)
         obs, reward, terminated, truncated, info = vec_env.step(action)
-        
-        
+    
 
         print(reward)
         print("--")

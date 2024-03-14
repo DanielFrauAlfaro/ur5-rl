@@ -157,7 +157,7 @@ class UR5e:
 
         # Applies the joint action (joint and gripper)
         self.apply_action(new_q[0])
-        # self.apply_action_g(0)
+        self.apply_action_g(action[-1])
 
 
     # Moves the robot to a desired position
@@ -233,7 +233,7 @@ class UR5e:
         T = self.__ur5.fkine(self.q, order='yxz')
         ee_pos = T.t
         ee_or = T.rpy('yxz')
-        self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
+        self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2], self.g]
         
         # Builds and returns the message
         observation = [self.q, self.qd, self.g,  self.ee]

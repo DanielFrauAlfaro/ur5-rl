@@ -27,10 +27,10 @@ class UR5Env(gym.Env):
     def __init__(self, render_mode="DIRECT", show = False):    
 
         # --- Observation limit values ---
-        self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -20, np.ones(6) * 20]
-        self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
-        self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi], [1, 1, 1, pi, pi, pi]]
+        self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831, 0]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831, 100])]
+        self._qd_limits = [np.ones(7) * -20, np.ones(7) * 20]
+        self._qdd_limits = [np.ones(7) * -5000, np.ones(7) * 5000]
+        self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
         self._limits = [self._q_limits,  
                        self._qd_limits,  
@@ -46,7 +46,11 @@ class UR5Env(gym.Env):
         self.max_action_or = self.max_action_or_original
 
         self.max_action_yaw = 2.5
-        self._action_limits = [-np.ones(6), np.ones(6)]
+        self.max_action_g = 25       
+
+        self._action_limits = [-np.ones(7), np.ones(7)]
+
+        
 
         # Appends gripper actions
         # self.max_action_g = 15       # Max action G is two because the robot class converts it to integer
@@ -83,7 +87,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 40
+        self._step_limit = 280
         self.global_steps = 0
         self.steps = 0
 
@@ -131,7 +135,7 @@ class UR5Env(gym.Env):
 
 
 
-        self.std_cam = 0.01 # 0.05
+        self.std_cam = 0.0 # 0.01
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
                                      near_val=self.near_plane, far_val=self.far_plane, 
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
@@ -140,23 +144,12 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-2, 
-                              -0.1, -0.1, -0.1,
-                              -0.1, -0.1, -0.1,
-                              -0.1, -0.1, -0.1,
-                              -0.1, -0.1,
-                              -0.1, -0.1, -0.1])
-        
-        self.g = 0
-
-
-    def grasping(self):
-        
-        self._ur5.apply_action_g(self.g)
-        self.g += 5
-
-        return collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask) >= 6, self._ur5.g
-
+        self.mask = np.array([-5.0, 
+                              0.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0,
+                              0.0, 0.0,
+                              0.0, 0.0, 0.0])
 
 
     # Computes the whole reward
@@ -199,8 +192,8 @@ class UR5Env(gym.Env):
         obj_pos, __, __ = get_object_pos(object=self._object, client = self._client)
         wrist_pos, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
-        terminated = wrist_pos[-2] <= obj_pos[-2] + 0.0 # \
-                    # or col_r > 0.0
+        terminated = wrist_pos[-2] <= obj_pos[-2] - 0.125  \
+                     or obj_pos[-2] > 1.3
                                                                            
         
         truncated = out_of_bounds(self._limits, self._ur5) \
@@ -281,11 +274,10 @@ class UR5Env(gym.Env):
         # self.max_action_or = max(self.max_action_or, 0.001)
         
         action[0:3] *= self.max_action
-        action[3:]  *= self.max_action_or
-        action[-1]  *= self.max_action_yaw
-        # action[-1]   *= self.max_action_g
+        action[3:-1]  *= self.max_action_or
+        action[-2]  *= self.max_action_yaw
+        action[-1]   *= self.max_action_g
         
-
 
         # Computes the action
         self._ur5.apply_action_c(action)
@@ -387,7 +379,7 @@ class UR5Env(gym.Env):
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = random.randint(0,9)
+        object_chosen = 0 # random.randint(0,9)
         
         self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)

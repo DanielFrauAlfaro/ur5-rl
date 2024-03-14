@@ -140,7 +140,7 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         self.image_extractor_2 = nn.Sequential(*(self.build_conv()))
         self.image_extractor_3 = nn.Sequential(*(self.build_conv()))
 
-        self.vector_extractor = nn.Sequential(nn.BatchNorm1d(num_features=6),                          # Position Vector
+        self.vector_extractor = nn.Sequential(nn.BatchNorm1d(num_features=7),                          # Position Vector
             nn.Linear(in_features=q_space.shape[0], out_features = self.out_vector_features),
             nn.Tanh())
         torch.nn.init.xavier_uniform_(self.vector_extractor[1].weight)
