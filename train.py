@@ -14,7 +14,7 @@ import torch
 
 
 env_id = "ur5_rl/Ur5Env-v0"
-n_training_envs = 1
+n_training_envs = 8
 n_eval_envs = 1
 
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     print("|| Compiling ...")
     
     # Training environments
-    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False}) #vec_env_cls = SubprocVecEnv
+    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True}) #vec_env_cls = SubprocVecEnv
 
     # Evaluation environments
     # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
@@ -88,13 +88,15 @@ if __name__ == "__main__":
     )
 
     # --- Callbacks ---
-    save_freq = 1500
+    save_freq = 1000
 
-    # eval_log_dir = "my_models_eval/"
+    eval_log_dir = "my_models_eval/"
     # eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
     #                          log_path="./logs/", eval_freq=max(save_freq // n_training_envs, 1),
-    #                          deterministic=True, render=False)
+    #                          deterministic=True, render=False, n_eval_episodes=3)
     
+
+
     checkpoint_callback = CheckpointCallback(
         save_freq=max(save_freq // n_training_envs, 1),
         save_path="./my_models_eval/",
@@ -109,9 +111,8 @@ if __name__ == "__main__":
 
     # Model declaration
     
-    model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, learning_starts = 5000,
-                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42, learning_rate = 0.0003,
-                train_freq=3)         # See logs: tensorboard --logdir logs/
+    model = PPO("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
+                verbose=100, tensorboard_log="logs/", seed = 42, learning_rate = 0.0003, n_steps = 30, batch_size = 240)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
@@ -121,7 +122,7 @@ if __name__ == "__main__":
     # model.buffer_size = 15000
     # model.learning_rate = 0.0001
     # model.train_freq = 3
-    model.learn(total_timesteps=60000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

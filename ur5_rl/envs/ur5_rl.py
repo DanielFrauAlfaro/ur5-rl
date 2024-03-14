@@ -46,7 +46,7 @@ class UR5Env(gym.Env):
         self.max_action_or = self.max_action_or_original
 
         self.max_action_yaw = 2.5
-        self.max_action_g = 25       
+        self.max_action_g = 30       
 
         self._action_limits = [-np.ones(7), np.ones(7)]
 
@@ -58,8 +58,8 @@ class UR5Env(gym.Env):
         # self._action_limits[1] = np.append(self._action_limits[1],  1)
 
         # Frame height and width
-        self.frame_h = 160
-        self.frame_w = 160
+        self.frame_h = 120
+        self.frame_w = 120
 
         '''
         Box space in action space:
@@ -87,7 +87,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 280
+        self._step_limit = 60
         self.global_steps = 0
         self.steps = 0
 
@@ -100,7 +100,7 @@ class UR5Env(gym.Env):
 
         # Start seed
         self.np_random, __ = gym.utils.seeding.np_random()
-        np.random.seed(0)
+        # np.random.seed(0)
 
         # Client in Pybullet simulation
         self._client = 0
@@ -144,7 +144,7 @@ class UR5Env(gym.Env):
         self._dist_obj_wrist = [math.inf, math.inf, math.inf]
 
         # Reward mask
-        self.mask = np.array([-5.0, 
+        self.mask = np.array([-4.0, 
                               0.0, 0.0, 0.0,
                               0.0, 0.0, 0.0,
                               0.0, 0.0, 0.0,
@@ -169,7 +169,7 @@ class UR5Env(gym.Env):
                                                 dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
 
         # Collision reward
-        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
 
@@ -192,8 +192,7 @@ class UR5Env(gym.Env):
         obj_pos, __, __ = get_object_pos(object=self._object, client = self._client)
         wrist_pos, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
-        terminated = wrist_pos[-2] <= obj_pos[-2] - 0.125  \
-                     or obj_pos[-2] > 1.3
+        terminated = obj_pos[-2] > 1.32
                                                                            
         
         truncated = out_of_bounds(self._limits, self._ur5) \
@@ -276,7 +275,7 @@ class UR5Env(gym.Env):
         action[0:3] *= self.max_action
         action[3:-1]  *= self.max_action_or
         action[-2]  *= self.max_action_yaw
-        action[-1]   *= self.max_action_g
+        action[-1]  *= self.max_action_g
         
 
         # Computes the action

@@ -168,6 +168,8 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         image_tensor_3 = torch.as_tensor(observations["image"][:, 4:], device=self.device, dtype=torch.float32)
         q_tensor = torch.as_tensor(observations["ee_position"], device=self.device, dtype=torch.float32)
 
+        # print(q_tensor.shape)
+
         # Computes separate feature extractor
         image_features_1 = self.image_extractor_1(image_tensor_1)
         image_features_2 = self.image_extractor_2(image_tensor_2)
