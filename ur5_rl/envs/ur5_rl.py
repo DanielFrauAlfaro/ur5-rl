@@ -27,8 +27,8 @@ class UR5Env(gym.Env):
     def __init__(self, render_mode="DIRECT", show = False):    
 
         # --- Observation limit values ---
-        self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831, 0]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831, 100])]
-        self._qd_limits = [np.ones(7) * -20, np.ones(7) * 20]
+        self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831, 0]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831, 150])]
+        self._qd_limits = [np.ones(7) * -23, np.ones(7) * 23]
         self._qdd_limits = [np.ones(7) * -5000, np.ones(7) * 5000]
         self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi, 0], [1, 1, 1, pi, pi, pi, 100]]
 
@@ -149,7 +149,7 @@ class UR5Env(gym.Env):
                               0.0, 0.0, 0.0,
                               0.0, 0.0, 0.0,
                               0.0, 0.0,
-                              0.0, 0.0, 0.0])
+                              1.0, 1.0, 1.0])
 
 
     # Computes the whole reward
@@ -229,14 +229,14 @@ class UR5Env(gym.Env):
                                 frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, )
 
         # Stores the first frame (external camera)
-        normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / (np.max(self.frame[0][0]) - np.min(self.frame[0][0]))
-        normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / (np.max(self.frame[0][1]) - np.min(self.frame[0][1]))
+        normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / max(0.1,(np.max(self.frame[0][0]) - np.min(self.frame[0][0])))
+        normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / max(0.1,(np.max(self.frame[0][1]) - np.min(self.frame[0][1])))
 
-        normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
-        normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
+        normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / max(0.1,(np.max(self.frame[1][0]) - np.min(self.frame[1][0])))
+        normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / max(0.1,(np.max(self.frame[1][1]) - np.min(self.frame[1][1])))
 
-        normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / (np.max(self.frame[2][0]) - np.min(self.frame[2][0]))
-        normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / (np.max(self.frame[2][1]) - np.min(self.frame[2][1]))
+        normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / max(0.1,(np.max(self.frame[2][0]) - np.min(self.frame[2][0])))
+        normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / max(0.1,(np.max(self.frame[2][1]) - np.min(self.frame[2][1])))
 
         merged = cv.merge([normalized_image_0, normalized_image_1, normalized_image_0_, normalized_image_1_, normalized_image_0_2, normalized_image_1_2])
         merged = np.transpose(merged, (2,0,1))

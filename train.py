@@ -14,7 +14,7 @@ import torch
 
 
 env_id = "ur5_rl/Ur5Env-v0"
-n_training_envs = 8
+n_training_envs = 10
 n_eval_envs = 1
 
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     print("|| Compiling ...")
     
     # Training environments
-    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True}) #vec_env_cls = SubprocVecEnv
+    vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False}) #vec_env_cls = SubprocVecEnv
 
     # Evaluation environments
     # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     # Model declaration
     
     model = PPO("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs,
-                verbose=100, tensorboard_log="logs/", seed = 42, learning_rate = 0.0003, n_steps = 30, batch_size = 240)         # See logs: tensorboard --logdir logs/
+                verbose=100, tensorboard_log="logs/", seed = 42, learning_rate = 0.0003, n_steps = 30, batch_size = 300)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # model.buffer_size = 15000
     # model.learning_rate = 0.0001
     # model.train_freq = 3
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=200000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

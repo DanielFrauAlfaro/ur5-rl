@@ -660,12 +660,12 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
         #     if approx_list[1]:
         #         reward += np.tanh(r)*0.33
 
-        if approx_list[-1] or theta < 0.08:
-            reward += np.tanh(r)
+        # if approx_list[-1] or theta < 0.08:
+        #     reward += np.tanh(r)
 
-        if d < 0.08 and theta < 0.08:
-            print("AAA")
-            reward = r
+        # if d < 0.08 and theta < 0.08:
+        #     print("AAA")
+        #     reward = r
     
     else:
         reward = 4.5*obj_pos[-2]
@@ -735,7 +735,7 @@ def out_of_bounds(limits, robot):
     q = copy.deepcopy(robot.q)
     qd = copy.deepcopy(robot.qd)
 
-    q.append(robot.g)
+    q.append(50)
     qd.append(0.0)
 
 
