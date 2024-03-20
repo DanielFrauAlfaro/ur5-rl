@@ -226,14 +226,14 @@ class UR5Env(gym.Env):
                                 frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, )
 
         # Stores the first frame (external camera)
-        normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / (np.max(self.frame[0][0]) - np.min(self.frame[0][0]))
-        normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / (np.max(self.frame[0][1]) - np.min(self.frame[0][1]))
+        normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / max(0.01,(np.max(self.frame[0][0]) - np.min(self.frame[0][0])))
+        normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / max(0.01,(np.max(self.frame[0][1]) - np.min(self.frame[0][1])))
 
-        normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
-        normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
+        normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / max(0.01,(np.max(self.frame[1][0]) - np.min(self.frame[1][0])))
+        normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / max(0.01,(np.max(self.frame[1][1]) - np.min(self.frame[1][1])))
 
-        normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / (np.max(self.frame[2][0]) - np.min(self.frame[2][0]))
-        normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / (np.max(self.frame[2][1]) - np.min(self.frame[2][1]))
+        normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / max(0.01,(np.max(self.frame[2][0]) - np.min(self.frame[2][0])))
+        normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / max(0.01,(np.max(self.frame[2][1]) - np.min(self.frame[2][1])))
 
         merged = cv.merge([normalized_image_0, normalized_image_1, normalized_image_0_, normalized_image_1_, normalized_image_0_2, normalized_image_1_2])
         merged = np.transpose(merged, (2,0,1))
