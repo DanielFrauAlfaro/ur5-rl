@@ -534,7 +534,7 @@ if __name__ == "__main__":
         # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
         print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
-        print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
+        # print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
         # print_axis(client = client, pos = pos_obj, rotation_matrix = [axis, axis, axis])
         # print(z_axis_local)
         # print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
@@ -601,12 +601,18 @@ if __name__ == "__main__":
 
 
 
-        if d_p < d_p_:
-            print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec]))))
-        else:
-            # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj_)))
-            print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec_]))))
+        # if d_p < d_p_:
+        #     print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec]))))
+        # else:
+        #     # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj_)))
+        #     print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec_]))))
 
+
+        unit = 1 + 0.5*dqrobotics.E_*1*0
+        d = DQ_obj * DQ_w * dqrobotics.conj(DQ_obj)
+        d = dqrobotics.norm(unit - d)
+        print(dqrobotics.D(d) + dqrobotics.P(d))
+        
         print("--")
         
         # print(dqrobotics.conj(aux))

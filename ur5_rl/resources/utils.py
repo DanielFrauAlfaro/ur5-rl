@@ -47,9 +47,9 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
 
     # Adds noise to the camera coordinates (just the first one)
     cameras_coord_aux = copy.deepcopy(cameras_coord)
-    if True:
+    if first:
         cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
-        cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
+        # cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
     
     # For each camera ...
     for camera in cameras_coord_aux:

@@ -79,11 +79,11 @@ class UR5Env(gym.Env):
                                high= np.float32(np.array(self._ee_limits[1])), dtype=np.float32),
 
 
-            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(6, self.frame_w, self.frame_h), dtype=np.float16)
+            self._indices[-1]: gym.spaces.box.Box(low=0, high=255, shape=(2, self.frame_w, self.frame_h), dtype=np.float16)
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 40
+        self._step_limit = 280
         self.global_steps = 0
         self.steps = 0
 
@@ -109,9 +109,7 @@ class UR5Env(gym.Env):
         self.obj_pos = [0.2, 0.55, 0.9]
 
         # Image to be rendered
-        self.frame = [np.ones((self.frame_w, self.frame_h), dtype=np.int16), 
-                      np.ones((self.frame_w, self.frame_h), dtype=np.int16),
-                      np.ones((self.frame_w, self.frame_h), dtype=np.int16)]
+        self.frame = [np.ones((self.frame_w, self.frame_h), dtype=np.int16)]
 
 
         # Camera Parameters
@@ -125,8 +123,8 @@ class UR5Env(gym.Env):
         # Camera positions variables: [[Position], [Orientation]]
 
         # Coordinates of the cameras
-        self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],     # External Camera 1
-                              [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]],        # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
+        self.cameras_coord = [#[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],     # External Camera 1
+                              #[[0.7, 0.55, 1.05], [0.0, 0.0, -pi]],        # Robot camera: [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]]] 
                               [[0.048, 0.353, 1.1712], [-1.62160814, -0.78472898,  1.57433526]]]        
 
 
@@ -207,9 +205,9 @@ class UR5Env(gym.Env):
                     or col_r < 0.0 \
                     or self.steps >= self._step_limit 
             
-                    # or check_collision(client = self._client, objects = [self._table.id, self._ur5.id])
 
         return terminated, truncated
+
 
     # Getter for the observations
     def get_observation(self):
@@ -240,13 +238,13 @@ class UR5Env(gym.Env):
         normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / (np.max(self.frame[0][0]) - np.min(self.frame[0][0]))
         normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / (np.max(self.frame[0][1]) - np.min(self.frame[0][1]))
 
-        normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
-        normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
+        # normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
+        # normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
 
-        normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / (np.max(self.frame[2][0]) - np.min(self.frame[2][0]))
-        normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / (np.max(self.frame[2][1]) - np.min(self.frame[2][1]))
+        # normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / (np.max(self.frame[2][0]) - np.min(self.frame[2][0]))
+        # normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / (np.max(self.frame[2][1]) - np.min(self.frame[2][1]))
 
-        merged = cv.merge([normalized_image_0, normalized_image_1, normalized_image_0_, normalized_image_1_, normalized_image_0_2, normalized_image_1_2])
+        merged = cv.merge([normalized_image_0, normalized_image_1])#, normalized_image_0_, normalized_image_1_, normalized_image_0_2, normalized_image_1_2])
         merged = np.transpose(merged, (2,0,1))
         
         
@@ -352,7 +350,7 @@ class UR5Env(gym.Env):
     def reset(self, seed=None, options={}):
         '''
         Resets the entire simulation and re - samples positions:
-            - Re - samples camera positionining
+            - Re - samples camera positioning
         '''
         self.steps = 0
         self.g = 0
@@ -387,7 +385,7 @@ class UR5Env(gym.Env):
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = random.randint(0,9)
+        object_chosen = 0 #random.randint(0,9)
         
         self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
