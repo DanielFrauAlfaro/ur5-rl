@@ -83,7 +83,7 @@ class UR5Env(gym.Env):
         })
 
         # Time limit of the episode (in seconds)
-        self._step_limit = 280
+        self._step_limit = 40
         self.global_steps = 0
         self.steps = 0
 
@@ -143,7 +143,7 @@ class UR5Env(gym.Env):
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1,
-                              -0.1, -0.1, -0.1])
+                              -0.1, -0.1, -0.1])*-1
         
         self.g = 0
 
@@ -235,8 +235,8 @@ class UR5Env(gym.Env):
                                 frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, )
 
         # Stores the first frame (external camera)
-        normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / (np.max(self.frame[0][0]) - np.min(self.frame[0][0]))
-        normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / (np.max(self.frame[0][1]) - np.min(self.frame[0][1]))
+        normalized_image_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / max(1, (np.max(self.frame[0][0]) - np.min(self.frame[0][0])))
+        normalized_image_1 = (self.frame[0][1] - np.min(self.frame[0][1])) / max(1, (np.max(self.frame[0][1]) - np.min(self.frame[0][1])))
 
         # normalized_image_0_ = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
         # normalized_image_1_ = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
@@ -379,7 +379,7 @@ class UR5Env(gym.Env):
         
         # Random object position and orientation
         pos, orn = np.random.uniform([[0.05, 0.5, 0.85], [-pi, -pi/2, -3.1415]], 
-                                     [[0.275,  0.62, 0.85], [pi,  -pi/2,  3.1415]])
+                                     [[0.275, 0.62, 0.85], [pi,  -pi/2,  3.1415]])
 
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         
