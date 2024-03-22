@@ -131,7 +131,7 @@ class UR5Env(gym.Env):
 
 
 
-        self.std_cam = 0.01 # 0.05
+        self.std_cam = 0.0 # 0.05
         self.camera_params = set_cam(client=self._client, fov=self.fov, aspect=self.aspect, 
                                      near_val=self.near_plane, far_val=self.far_plane, 
                                      cameras_coord = self.cameras_coord, std = self.std_cam)
@@ -145,15 +145,15 @@ class UR5Env(gym.Env):
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1,
-                              -0.1, -0.1, -0.1])
+                              -0.1, -0.1, -0.1])*-1
         
         self.g = 0
 
 
-    def grasping(self):
+    def grasping(self, g = 5):
         
         self._ur5.apply_action_g(self.g)
-        self.g += 5
+        self.g += g
 
         return collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask) >= 6, self._ur5.g
 

@@ -126,9 +126,14 @@ print(random.randint(0,9))
 # # To load the display window 
 # plt.show() 
 
-aux = [0, 1, 2, 3, 4, 5, 6, 7]
-print(aux.pop())
-print(aux)
+# aux = [0, 1, 2, 3, 4, 5, 6, 7]
+# print(aux.pop())
+# print(aux)
+
+a = 0
+a += True
+a += True
+print(a)
   
 
 
