@@ -143,7 +143,7 @@ class UR5Env(gym.Env):
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1, -0.1,
                               -0.1, -0.1,
-                              -0.1, -0.1, -0.1])*-1
+                              -0.1, -0.1, -0.1])
         
         self.g = 0
 
@@ -385,7 +385,7 @@ class UR5Env(gym.Env):
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = 0 #random.randint(0,9)
+        object_chosen = random.randint(0,9)
         
         self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)

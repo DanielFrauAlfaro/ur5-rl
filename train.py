@@ -109,13 +109,13 @@ if __name__ == "__main__":
 
     # Model declaration
     
-    model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, # learning_starts = 5000,
-                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42, # learning_rate = 0.0003,
+    model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, learning_starts = 5000,
+                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42,  learning_rate = 0.0003,
                 train_freq=3)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
-    # model.set_parameters("./5.0_aux/rl_model_43500_steps.zip")
+    model.set_parameters("./8.0/best_model.zip")
 
     # model.set_env(vec_env)
     # model.learning_starts = 15000

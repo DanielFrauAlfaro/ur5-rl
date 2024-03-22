@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./my_models_eval/rl_model_52500_steps.zip")       # rl_31500_5.5 --> 8 / 10
+    model = SAC.load("./my_models_eval/rl_model_57000_steps.zip")       # rl_31500_5.5 --> 8 / 10
                                                                  # rl_30000_5.5 --> 8o9 / 10
                                                                  # rl_28500_5.5 --> 8o9 / 10
                                                                  # rl_12000_5.5 --> 7o8 / 10
@@ -79,11 +79,11 @@ if __name__ == "__main__":
 
         print(reward)
         print("--")
-        # r += reward
-        # img = vec_env.render()
+        r += reward
+        img = vec_env.render()
 
-        # cv.imshow("AA", img)
-        # cv.waitKey(1)
+        cv.imshow("AA", img)
+        cv.waitKey(1)
 
         if terminated or truncated:
 
