@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # model.buffer_size = 15000
     # model.learning_rate = 0.0001
     # model.train_freq = 3
-    model.learn(total_timesteps=60000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save("./my_models_eval/best_model.zip")
 
 

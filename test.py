@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./6.0/best_model.zip")       # rl_31500_5.5 --> 8 / 10
+    model = SAC.load("./6.0/rl_model_54000_steps.zip")       # rl_31500_5.5 --> 8 / 10
                                                                  # rl_30000_5.5 --> 8o9 / 10
                                                                  # rl_28500_5.5 --> 8o9 / 10
                                                                  # rl_12000_5.5 --> 7o8 / 10
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         
         
 
-        print(reward)
+        print(info)
         print("--")
         r += reward
         img = vec_env.render()

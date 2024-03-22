@@ -37,7 +37,6 @@ def grasp(env, list_actions, render):
 
         else:
             action = list_actions.pop()
-            print("Action: ", len(list_actions))
             obs, reward, terminated, truncated, info = vec_env.step(action)
 
         if render:
@@ -49,6 +48,20 @@ def grasp(env, list_actions, render):
 
     return is_touching
 
+def get_down(env, list_actions, render):
+    while True:
+        obs, reward, terminated, truncated, info = vec_env.step(np.array([0.0, 0.0, -0.4, 0.0, 0.0, 0.0]))
+        list_actions.append(-action)
+
+        if render:
+            img = vec_env.render()
+            cv.imshow("AA", img)
+            cv.waitKey(1)
+
+        if info["limit"]:
+            break
+
+    return list_actions
 
 
 if __name__ == "__main__":
@@ -58,7 +71,7 @@ if __name__ == "__main__":
 
     
     vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
-    obs, info = vec_env.reset()
+    # obs, info = vec_env.reset()
     
 
     results = {}
@@ -97,8 +110,10 @@ if __name__ == "__main__":
                     cv.waitKey(1)
 
                 if terminated or truncated:
+
+                    get_down(vec_env, list_actions, render)
                     success += grasp(vec_env, list_actions, render)
-                    obs, info = vec_env.reset()
+                    # obs, info = vec_env.reset()
                     break
 
 

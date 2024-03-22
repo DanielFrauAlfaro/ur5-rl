@@ -186,7 +186,11 @@ def get_object_pos(client, object):
     # endLinkZ = new_rot*endLinkZ;
 
     pos = list(pos)
-    pos[-1] += 0.215 # * x_axis_local
+
+    if "cracker" in object.name:
+        pos[-1] += 0.26
+    else:
+        pos[-1] += 0.215 # * x_axis_local
 
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
@@ -661,7 +665,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
         reward += np.tanh(r)
 
     if d < 0.08 and theta < 0.08:
-        print("AAA")
+        # print("AAA")
         reward = r
     
     
