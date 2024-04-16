@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="gazebo_gui" value="true"/>
+  <arg name="paused" value="true" />
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find test_inertias)/worlds/empty.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gazebo_gui)"/>
+    <arg name="verbose" value="1"/>
+  </include>
+  
+  <!-- Set the robot urdf on the parameter server -->
+  <arg name="urdf_path" default="$(find ur5eRobotiq3f_moveit_config)/../../../ROS_URDF_objects/002_master_chef_can/model.urdf"/>
+  <param name="object_description" textfile="$(arg urdf_path)" />-->
+
+  <!-- Spawn the robot in Gazebo -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param object_description -model robot -x 0 -y 0 -z 0 -unpause"       
+    respawn="false" output="screen" />
+ 
+ </launch>

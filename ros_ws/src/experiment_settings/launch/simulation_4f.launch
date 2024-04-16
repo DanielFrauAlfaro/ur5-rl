@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="gazebo_gui" value="false"/>
+  <arg name="paused" value="false" />
+  <arg name="world_name" value="$(find experiment_settings)/worlds/empty.world"/>
+  <arg name="gripper" default="4f"/>
+
+  <!--<env name="GAZEBO_MODEL_PATH" value="$(find experiment_settings)/../../../pybullet_URDF_objects"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" default="$(arg world_name)"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gazebo_gui)"/>
+  </include>-->
+  
+ <!--<node name="gazebo" pkg="gazebo_ros" type="gazebo" args="$(arg world_name) -verbose" respawn="false" >
+    <env name="GAZEBO_RESOURCE_PATH" value="$(find experiment_settings)/../../../ROS_URDF_objects/" />
+  </node>--> 
+  
+  <group if="$(eval arg('gripper') == '3f')">
+    <include file="$(find ur5eRobotiq3f_moveit_config)/launch/demo_gazebo.launch" >
+      <arg name="paused" value="$(arg paused)"/>
+      <arg name="gazebo_gui" value="$(arg gazebo_gui)"/>
+    </include>
+  </group>
+  <group if="$(eval arg('gripper') == '4f')">
+    <include file="$(find ur5eRobotiq4f_moveit_config)/launch/demo_gazebo.launch">
+      <arg name="paused" value="$(arg paused)"/>
+      <!-- <arg name="gazebo_gui" value="$(arg gazebo_gui)"/> -->
+    </include>
+  </group>
+
+  <!-- Calcula las posiciones y orientaciones aleatorias de los objetos -->
+  <arg name="num_objects" value="1" /> <!-- 28 --><!-- CAREFUL: objects could be chosen more than once -->
+  <arg name="objects_dir" value="/daniel/Desktop/evo_pipe/ycb/" />		<!-- Cambiar ruta -->
+  <arg name="set_seed" value="0" />
+  
+  <node name="objectGenerator" pkg="experiment_settings" type="object" output="screen">
+    <param name="num_objects" value="$(arg num_objects)" />
+    <param name="objects_dir" value="$(arg objects_dir)" />
+    <param name="set_seed" value="$(arg set_seed)" />
+  </node>
+  
+  
+  <!-- Nodo - Servicio para añadir / borrar objetos -->
+  <arg name="save_files_path" value="/daniel/Desktop/evo_pipe/saved_files/" />
+  
+  <node name="spawnObject" pkg="experiment_settings" type="load_delete_objects" output="screen">
+    <param name="save_files_path" value="$(arg save_files_path)" />    
+    <env name="GAZEBO_RESOURCE_PATH" value="$(find experiment_settings)/../../../ROS_URDF_objects/" />
+  </node>
+  
+  
+  <!-- Control de menu: toma fotos y llama a los nodos de spawn. -->
+  <!-- Mirar de aumentar el bucle de <2, para que el suscriptor pille los mensajes, alomejor están en otros nodos --> 
+  <node name="controlSpawnPicture" pkg="experiment_settings" type="object_gestion_capture" output="screen">
+    <param name="save_files_path" value="$(arg save_files_path)" />    
+  </node>
+  
+  <!-- Algoritmo geograsp. Se activa al confirmar el objeto para el experimento. Calcula puntos de agarre de las nubes de puntos y imagenes RGB.  -->
+  <!-- Si quieres ver las nubes, descomenta los visualizadores -->
+  <!-- Hay bucle <2 -->
+
+  <!-- 3F params: {{-0.036,-0.036},{0.036,0.036}} -->
+  <!-- 4F params: {{0.0032, 0.0032}, {0.0087, 0.0087},{0.0142,0.0142}}-->
+  <!-- 4F params (thumb extend): {{0.0118, 0.0118}, {0.016, 0.016}, {0.0193, 0.0193}}-->
+  <!-- 4F params (thumb extend pan): {{0.01, 0.014}, {0.0138, 0.0178}, {0.0178, 0.0225}}-->
+  <!-- Guarda puntuacione, puntos e imagenes en la ruta que diga aqui: IMPORTANTE-->
+  <arg name="geograspEvo_grip_tip_size" value="25" />
+  <!-- {0.062, 0.045}-->
+  <arg name="geograspEvo_set_apertures" value="{{-0.045, -0.045}, {0.0, 0.0}, {0.045, 0.045}}" /> <!-- "{{0.01, 0.014}, {0.0138, 0.0178}, {0.0178, 0.0225}}" -->
+  <arg name="geograspEvo_set_number_fingers" value="4" />
+  <arg name="geograspEvo_set_unique_mobility" value="0" />
+  <arg name="geograspEvo_set_grasps_track" value="5" />
+    
+  <node name="GeoGraspEvo" pkg="experiment_settings" type="geograsp_evo" output="screen">
+    <param name="save_files_path" value="$(arg save_files_path)" />    
+    <param name="geograspEvo_grip_tip_size" value="$(arg geograspEvo_grip_tip_size)" />
+    <param name="geograspEvo_set_apertures" value="$(arg geograspEvo_set_apertures)" />
+    <param name="geograspEvo_set_number_fingers" value="$(arg geograspEvo_set_number_fingers)" />
+    <param name="geograspEvo_set_unique_mobility" value="$(arg geograspEvo_set_unique_mobility)" />
+    <param name="geograspEvo_set_grasps_track" value="$(arg geograspEvo_set_grasps_track)" />           
+  </node>
+  
+  <!--<arg name="urdf_path" default="$(find ur5eRobotiq3f_moveit_config)/config/gazebo_ur5e_robot.urdf"/> -->
+  
+  <node name="moveitGrasp" pkg="experiment_settings" type="moveit_grasp_4f" output="screen">
+    <param name="save_files_path" value="$(arg save_files_path)" />
+    <!--<param name="urdf_path" value="$(arg urdf_path)" />    -->           
+  </node>
+  
+
+
+</launch>

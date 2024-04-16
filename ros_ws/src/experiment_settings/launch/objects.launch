@@ -1,0 +1,13 @@
+<launch>
+    <!-- Calcula las posiciones y orientaciones aleatorias de los objetos -->
+  <arg name="num_objects" value="28" /> <!-- CAREFUL: objects could be chosen more than once -->
+  <arg name="objects_dir" value="/daniel/Desktop/evo_pipe/ycb/" />		<!-- Cambiar ruta -->
+  <arg name="set_seed" value="0" />
+  
+  <node name="objectGenerator" pkg="experiment_settings" type="object" output="screen">
+    <param name="num_objects" value="$(arg num_objects)" />
+    <param name="objects_dir" value="$(arg objects_dir)" />
+    <param name="set_seed" value="$(arg set_seed)" />
+  </node>
+
+</launch>

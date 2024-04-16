@@ -1,0 +1,44 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from ur_msgs/msg/ToolDataMsg.msg
+// generated code does not contain a copyright notice
+
+
+module ur_msgs {
+  module msg {
+    module ToolDataMsg_Constants {
+      const int8 ANALOG_INPUT_RANGE_CURRENT = 0;
+      const int8 ANALOG_INPUT_RANGE_VOLTAGE = 1;
+      const uint8 TOOL_BOOTLOADER_MODE = 249;
+      const uint8 TOOL_RUNNING_MODE = 253;
+      const uint8 TOOL_IDLE_MODE = 255;
+    };
+    @verbatim (language="comment", text=
+      "This data structure contains the ToolData structure" "\n"
+      "used by the Universal Robots controller")
+    struct ToolDataMsg {
+      @verbatim (language="comment", text=
+        "one of ANALOG_INPUT_RANGE_*")
+      int8 analog_input_range2;
+
+      @verbatim (language="comment", text=
+        "one of ANALOG_INPUT_RANGE_*")
+      int8 analog_input_range3;
+
+      double analog_input2;
+
+      double analog_input3;
+
+      float tool_voltage_48v;
+
+      uint8 tool_output_voltage;
+
+      float tool_current;
+
+      float tool_temperature;
+
+      @verbatim (language="comment", text=
+        "one of TOOL_*")
+      uint8 tool_mode;
+    };
+  };
+};

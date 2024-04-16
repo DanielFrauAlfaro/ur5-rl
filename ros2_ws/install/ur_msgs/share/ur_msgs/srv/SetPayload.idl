@@ -1,0 +1,18 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from ur_msgs/srv/SetPayload.srv
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Vector3.idl"
+
+module ur_msgs {
+  module srv {
+    struct SetPayload_Request {
+      float mass;
+
+      geometry_msgs::msg::Vector3 center_of_gravity;
+    };
+    struct SetPayload_Response {
+      boolean success;
+    };
+  };
+};

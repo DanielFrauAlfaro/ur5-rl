@@ -1,0 +1,1 @@
+/usr/bin/cc  -Wall -Wextra  -rdynamic CMakeFiles/eepromtool.dir/eepromtool.c.o  -o /daniel/Desktop/ur5-rl/ros_ws/devel/lib/soem/eepromtool  /daniel/Desktop/ur5-rl/ros_ws/devel/lib/libsoem.a -lpthread -lrt 

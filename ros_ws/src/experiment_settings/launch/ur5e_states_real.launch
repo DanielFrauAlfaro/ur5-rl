@@ -1,0 +1,14 @@
+<launch>
+    <arg name="states_topic" default="/moveit/joint_states"/>
+    <arg name="remap" default="true"/>
+    <arg name="robot_ip" default="172.18.34.201"/>
+    <arg name="kinematics_config" default="/daniel/Desktop/evo_pipe/calibration.yaml"/>
+
+    <include file = "$(find ur_robot_driver)/launch/ur5e_bringup.launch">
+        <arg name="remap" value="$(arg remap)"/>
+        <arg name="states_topic" value="$(arg states_topic)"/>
+        <arg name="robot_ip" value="$(arg robot_ip)"/>
+        <arg name="kinematics_config" value="$(arg kinematics_config)"/>
+    </include>
+    
+</launch>

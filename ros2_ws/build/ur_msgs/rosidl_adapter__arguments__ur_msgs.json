@@ -1,0 +1,15 @@
+{
+  "package_name": "ur_msgs",
+  "non_idl_tuples": [
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:msg/Analog.msg",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:msg/Digital.msg",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:msg/IOStates.msg",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:msg/RobotStateRTMsg.msg",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:msg/MasterboardDataMsg.msg",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:msg/RobotModeDataMsg.msg",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:msg/ToolDataMsg.msg",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:srv/SetPayload.srv",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:srv/SetSpeedSliderFraction.srv",
+    "/daniel/Desktop/ur5-rl/ros2_ws/src/ur_msgs:srv/SetIO.srv"
+  ]
+}

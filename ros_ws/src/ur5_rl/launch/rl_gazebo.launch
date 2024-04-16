@@ -1,0 +1,36 @@
+<launch>
+
+  <!-- Launch Arguments -->
+  <arg name="shoulder_pan_pos" default="0.0"/>
+  <arg name="shoulder_lift_pos" default="-1.57"/>
+  <arg name="elbow_pos" default="-1.57"/>
+  <arg name="wrist_1_pos" default="-1.57"/>
+  <arg name="wrist_2_pos" default="1.57"/>
+  <arg name="wrist_3_pos" default="-0.785"/>
+
+  <arg name="joint_position" value="-J shoulder_pan_joint $(arg shoulder_pan_pos) -J shoulder_lift_joint $(arg shoulder_lift_pos) -J elbow_lift_joint $(arg elbow_pos) -J wrist_1_joint $(arg wrist_1_pos) -J wrist_2_joint $(arg wrist_2_pos) -J wrist_3_joint $(arg wrist_3_pos)"/>
+
+  <!-- Robot Description -->
+  <param name="robot_description" command="xacro  '$(find experiment_settings)/urdf/ur5e_sim.xacro'"/>
+
+  <!-- Controllers -->
+  <rosparam file="$(find ur5_rl)/config/ur5_controllers.yaml" command="load"/>
+  <rosparam file="$(find ur5_rl)/config/gripper_3f_controller.yaml" command="load"/>
+
+  <!-- Create Gazebo simulation -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <arg name="world_name" value="" -->
+  </include>
+
+  <!-- Joint state publisher and robot state publisher -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />
+
+  <!-- Spawn robot -->
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-urdf -model my_robot -param robot_description -x 0 -y 0 -z 0 -J shoulder_pan_joint $(arg shoulder_pan_pos) -J shoulder_lift_joint $(arg shoulder_lift_pos) -J elbow_lift_joint $(arg elbow_pos) -J wrist_1_joint $(arg wrist_1_pos) -J wrist_2_joint $(arg wrist_2_pos) -J wrist_3_joint $(arg wrist_3_pos)"/>
+
+  <!-- Include Controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="true"
+    output="screen" args="joint_state_controller ur5_controllers"/>
+
+</launch>

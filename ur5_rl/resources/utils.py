@@ -6,7 +6,7 @@ from scipy.spatial.transform import Rotation
 import cv2 as cv
 import time
 import copy
-import dqrobotics
+# import dqrobotics
 from dq_cosas import *
 import torch
 
@@ -131,10 +131,10 @@ def rotation_matrix_to_euler_xyz(R):
 
 
 def get_quaternion(q):
-    return q[-1] + dqrobotics.i_ * q[0] + dqrobotics.j_ * q[1] + dqrobotics.k_ * q[2]
+    return np.array([q[-1], q[0], q[1], q[2]])
 
 def get_dualQuaternion(q_r, q_t):
-    return q_r + 0.5*dqrobotics.E_*q_t*q_r
+    return np.concatenate((q_r, 0.5*q_t*q_r))
 
 
 
@@ -226,7 +226,7 @@ def get_object_pos(client, object):
 
      # --> blue (z)
     
-    return np.array(pos), DQ, DQ_# rotation_matrix# euler_angles # x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
+    return np.array(pos), euler_angles, euler_angles_, DQ, DQ_# rotation_matrix# euler_angles # x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
 
 
 # Getter for the wrist position
@@ -292,7 +292,7 @@ def get_wrist_pos(client, robot_id):
     # rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     # euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
 
-    return np.array(pos), DQ #rotation_matrix# euler_angles #x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
+    return np.array(pos), euler_angles, DQ #rotation_matrix# euler_angles #x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
 
 
 # Computes the reward according the approximation to the object
@@ -603,44 +603,44 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     
     # Obtains the object and wrist positions
-    obj_pos, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
-    wrist_pos, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)
+    obj_pos, __, __, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
+    wrist_pos, __, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)
 
     # Primary parts
-    p_w = dqrobotics.P(DQ_w)
-    p_obj = dqrobotics.P(DQ_obj)
-    p_obj_ = dqrobotics.P(DQ_obj_)
+    # p_w = dqrobotics.P(DQ_w)
+    # p_obj = dqrobotics.P(DQ_obj)
+    # p_obj_ = dqrobotics.P(DQ_obj_)
 
-    # Dual parts
-    d_w = dqrobotics.D(DQ_w)
-    d_obj = dqrobotics.D(DQ_obj)
-    d_obj_ = dqrobotics.D(DQ_obj_)
+    # # Dual parts
+    # d_w = dqrobotics.D(DQ_w)
+    # d_obj = dqrobotics.D(DQ_obj)
+    # d_obj_ = dqrobotics.D(DQ_obj_)
 
-    # Vectors
-    # --- Dual quaternion vectors ---
-    w_DQ_vec = dqrobotics.vec8(DQ_w)
-    obj_DQ_vec = dqrobotics.vec8(DQ_obj)
-    obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
+    # # Vectors
+    # # --- Dual quaternion vectors ---
+    # w_DQ_vec = dqrobotics.vec8(DQ_w)
+    # obj_DQ_vec = dqrobotics.vec8(DQ_obj)
+    # obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
 
-    # --- Primary parts vector ---
-    p_w_vec = dqrobotics.vec4(p_w)
-    p_obj_vec = dqrobotics.vec4(p_obj)
-    p_obj_vec_ = dqrobotics.vec4(p_obj_)
+    # # --- Primary parts vector ---
+    # p_w_vec = dqrobotics.vec4(p_w)
+    # p_obj_vec = dqrobotics.vec4(p_obj)
+    # p_obj_vec_ = dqrobotics.vec4(p_obj_)
 
-    # --- Dual parts vector ---
-    d_w_vec = dqrobotics.vec4(d_w)
-    d_obj_vec = dqrobotics.vec4(d_obj)
-    d_obj_vec_ = dqrobotics.vec4(d_obj_)
+    # # --- Dual parts vector ---
+    # d_w_vec = dqrobotics.vec4(d_w)
+    # d_obj_vec = dqrobotics.vec4(d_obj)
+    # d_obj_vec_ = dqrobotics.vec4(d_obj_)
 
     # Angular distance using quaternion
-    d_p = math.acos(2*np.dot(p_w_vec, p_obj_vec) ** 2 - 1)
-    d_p_ = math.acos(2*np.dot(p_w_vec, p_obj_vec_) ** 2 - 1)
+    d_p = math.acos(2*np.dot(DQ_w[0:4], DQ_obj[0:4]) ** 2 - 1)
+    d_p_ = math.acos(2*np.dot(DQ_w[0:4], DQ_obj_[0:4]) ** 2 - 1)
 
 
     if d_p < d_p_:
-        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w])))
     else:
-        r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
+        r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w])))
 
 
     r = r.item()
@@ -775,6 +775,7 @@ def get_frames(client, camera_params, frame_h, frame_w, frame):
 
         # Processed depth image
         depth_buffer = np.reshape(camera_info[3], (frame_h, frame_w))
+        
         depth_image = (depth_buffer - np.min(depth_buffer)) / (np.max(depth_buffer) - np.min(depth_buffer))  # Normalize to [0, 1]
         depth_frame = (depth_image * 255).astype(np.uint8)
 
@@ -785,7 +786,7 @@ def get_frames(client, camera_params, frame_h, frame_w, frame):
 
         # Computes images for the first one (external)
         # break
-
+    
     return frame
 
 # Get information from the environment

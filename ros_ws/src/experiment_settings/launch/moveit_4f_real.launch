@@ -1,0 +1,18 @@
+<launch>
+    <arg name="states_topic" default="/ur5e/joint_states"/>
+    <arg name="remap" default="true"/>
+    <arg name="HAND" default="left"/>
+
+    <include file = "$(find experiment_settings)/launch/moveit_4f.launch">
+        <arg name="remap" value="$(arg remap)"/>
+        <arg name="states_topic" value="$(arg states_topic)"/>
+    </include>
+
+    <include file = "$(find allegro_hand)/launch/allegro_hand.launch">
+        <arg name="HAND" value="$(arg HAND)"/>
+    </include>
+
+    <node name="my_joint_states" pkg="experiment_settings" type="joint_states" output="screen"/>
+    <node name="allegro_moveit_bridge" pkg="experiment_settings" type="moveit_allegro_bridge" output="screen"/>
+
+</launch>

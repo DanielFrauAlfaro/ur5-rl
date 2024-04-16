@@ -1,0 +1,8 @@
+prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
+
+Name: joint_limits_interface
+Description: Description of joint_limits_interface
+Version: 0.19.6
+Cflags: -I/daniel/Desktop/ur5-rl/ros_ws/src/ros_control/joint_limits_interface/include
+Libs: -L${prefix}/lib 
+Requires: hardware_interface roscpp urdf

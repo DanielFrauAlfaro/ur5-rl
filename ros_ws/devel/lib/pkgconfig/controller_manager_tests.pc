@@ -1,0 +1,8 @@
+prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
+
+Name: controller_manager_tests
+Description: Description of controller_manager_tests
+Version: 0.19.6
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

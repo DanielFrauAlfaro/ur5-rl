@@ -1,0 +1,8 @@
+prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
+
+Name: rqt_controller_manager
+Description: Description of rqt_controller_manager
+Version: 0.19.6
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/daniel/Desktop/ur5-rl/ros_ws/install
+
+Name: epfl_allegro_launchers
+Description: Description of epfl_allegro_launchers
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,247 @@
+{
+    "rl_model_18000_steps.zip": {
+        "idx": "18000",
+        "mean_reward": 24.241847391241834,
+        "distance_error": 0.0873849660779833,
+        "orientation_error": 2.7535615543749596,
+        "dq_error": 0.39916921788718746
+    },
+    "rl_model_22500_steps.zip": {
+        "idx": "22500",
+        "mean_reward": -3.3887686576129368,
+        "distance_error": 0.07896326812176209,
+        "orientation_error": 2.1249788424724807,
+        "dq_error": 0.43835125211913334
+    },
+    "rl_model_60000_steps.zip": {
+        "idx": "60000",
+        "mean_reward": 16.934400366991436,
+        "distance_error": 0.10094237226305662,
+        "orientation_error": 2.1943406405063146,
+        "dq_error": 0.37575119272158175
+    },
+    "rl_model_37500_steps.zip": {
+        "idx": "37500",
+        "mean_reward": 30.488774222998604,
+        "distance_error": 0.10039408555089416,
+        "orientation_error": 3.0415472226282994,
+        "dq_error": 0.40529647082740494
+    },
+    "rl_model_54000_steps.zip": {
+        "idx": "54000",
+        "mean_reward": 59.68264379094067,
+        "distance_error": 0.09703747857185056,
+        "orientation_error": 1.0258498503487563,
+        "dq_error": 0.29317464382312564
+    },
+    "rl_model_51000_steps.zip": {
+        "idx": "51000",
+        "mean_reward": 70.22783678720876,
+        "distance_error": 0.07041125078463968,
+        "orientation_error": 0.8475281149618171,
+        "dq_error": 0.2597319210311485
+    },
+    "rl_model_15000_steps.zip": {
+        "idx": "15000",
+        "mean_reward": 19.811583010302577,
+        "distance_error": 0.08052224997091903,
+        "orientation_error": 2.994828094051571,
+        "dq_error": 0.4403906957985767
+    },
+    "rl_model_57000_steps.zip": {
+        "idx": "57000",
+        "mean_reward": 72.84081657576866,
+        "distance_error": 0.09108539544886643,
+        "orientation_error": 0.36665178292330275,
+        "dq_error": 0.24840553991086955
+    },
+    "rl_model_42000_steps.zip": {
+        "idx": "42000",
+        "mean_reward": 65.62160112370154,
+        "distance_error": 0.09347905823731303,
+        "orientation_error": 0.7091355436112929,
+        "dq_error": 0.303793673147455
+    },
+    "rl_model_13500_steps.zip": {
+        "idx": "13500",
+        "mean_reward": 22.890394403391333,
+        "distance_error": 0.0867205665015522,
+        "orientation_error": 3.4899418293971562,
+        "dq_error": 0.44633575563689887
+    },
+    "rl_model_10500_steps.zip": {
+        "idx": "10500",
+        "mean_reward": 18.800092573797134,
+        "distance_error": 0.09881147635118062,
+        "orientation_error": 2.3260240518297155,
+        "dq_error": 0.45895946914292374
+    },
+    "rl_model_25500_steps.zip": {
+        "idx": "25500",
+        "mean_reward": -37.654038399143374,
+        "distance_error": 0.15484499545680142,
+        "orientation_error": 1.7306685593666569,
+        "dq_error": 0.5634331982101797
+    },
+    "rl_model_28500_steps.zip": {
+        "idx": "28500",
+        "mean_reward": 16.34288563173527,
+        "distance_error": 0.09062472752982051,
+        "orientation_error": 2.666693139390037,
+        "dq_error": 0.42427297362839134
+    },
+    "rl_model_49500_steps.zip": {
+        "idx": "49500",
+        "mean_reward": 68.96373213449309,
+        "distance_error": 0.07479533077353913,
+        "orientation_error": 2.1141300260792333,
+        "dq_error": 0.24615234119888968
+    },
+    "rl_model_33000_steps.zip": {
+        "idx": "33000",
+        "mean_reward": 5.935530988076095,
+        "distance_error": 0.06296896718144737,
+        "orientation_error": 2.922286441618332,
+        "dq_error": 0.3586319594554322
+    },
+    "rl_model_45000_steps.zip": {
+        "idx": "45000",
+        "mean_reward": 62.86132305515888,
+        "distance_error": 0.07809414933641863,
+        "orientation_error": 0.42631405158731345,
+        "dq_error": 0.2579651711431996
+    },
+    "rl_model_31500_steps.zip": {
+        "idx": "31500",
+        "mean_reward": 5.511226480604771,
+        "distance_error": 0.0936917309189641,
+        "orientation_error": 2.3580845231409464,
+        "dq_error": 0.42887656580453826
+    },
+    "rl_model_30000_steps.zip": {
+        "idx": "30000",
+        "mean_reward": 6.698204095779043,
+        "distance_error": 0.0721245951197667,
+        "orientation_error": 3.1243545799784824,
+        "dq_error": 0.476576493232738
+    },
+    "rl_model_9000_steps.zip": {
+        "idx": "9000",
+        "mean_reward": 24.07870906528609,
+        "distance_error": 0.11750631300720986,
+        "orientation_error": 2.2648608657977496,
+        "dq_error": 0.5067270447630249
+    },
+    "rl_model_39000_steps.zip": {
+        "idx": "39000",
+        "mean_reward": 50.18535875442396,
+        "distance_error": 0.047621724346776514,
+        "orientation_error": 2.843907718077474,
+        "dq_error": 0.26910581962264457
+    },
+    "rl_model_46500_steps.zip": {
+        "idx": "46500",
+        "mean_reward": 81.13974937607777,
+        "distance_error": 0.05587291445481772,
+        "orientation_error": 0.5045721424195686,
+        "dq_error": 0.20339339711564658
+    },
+    "rl_model_12000_steps.zip": {
+        "idx": "12000",
+        "mean_reward": 12.527915754995444,
+        "distance_error": 0.09999838175387861,
+        "orientation_error": 2.808800690105762,
+        "dq_error": 0.43252555605646104
+    },
+    "rl_model_55500_steps.zip": {
+        "idx": "55500",
+        "mean_reward": 25.04396984317537,
+        "distance_error": 0.07815388636284096,
+        "orientation_error": 0.671351393961593,
+        "dq_error": 0.30715862219059736
+    },
+    "rl_model_19500_steps.zip": {
+        "idx": "19500",
+        "mean_reward": -0.30411910517639046,
+        "distance_error": 0.09982049141009039,
+        "orientation_error": 3.4710220797160916,
+        "dq_error": 0.49041993493992575
+    },
+    "rl_model_52500_steps.zip": {
+        "idx": "52500",
+        "mean_reward": 67.85284080174924,
+        "distance_error": 0.04571362578741174,
+        "orientation_error": 1.9312980080769773,
+        "dq_error": 0.24298282050591946
+    },
+    "rl_model_40500_steps.zip": {
+        "idx": "40500",
+        "mean_reward": 44.35912085943709,
+        "distance_error": 0.05621333300186093,
+        "orientation_error": 0.4350380215766333,
+        "dq_error": 0.21609578658614623
+    },
+    "rl_model_27000_steps.zip": {
+        "idx": "27000",
+        "mean_reward": -22.97334104556969,
+        "distance_error": 0.10617232983480358,
+        "orientation_error": 3.0507798875806706,
+        "dq_error": 0.45568968353506234
+    },
+    "rl_model_48000_steps.zip": {
+        "idx": "48000",
+        "mean_reward": 60.392159773677825,
+        "distance_error": 0.09189791190957611,
+        "orientation_error": 0.4881897465694006,
+        "dq_error": 0.26237658400419756
+    },
+    "rl_model_36000_steps.zip": {
+        "idx": "36000",
+        "mean_reward": -2.2937811693307095,
+        "distance_error": 0.06708209500587374,
+        "orientation_error": 2.2385321004316765,
+        "dq_error": 0.3810234417968875
+    },
+    "rl_model_58500_steps.zip": {
+        "idx": "58500",
+        "mean_reward": 52.633468586636276,
+        "distance_error": 0.07777846244475813,
+        "orientation_error": 2.9054635639322735,
+        "dq_error": 0.2936158284568232
+    },
+    "rl_model_43500_steps.zip": {
+        "idx": "43500",
+        "mean_reward": 62.15709313971256,
+        "distance_error": 0.0669422219749412,
+        "orientation_error": 0.6813502901655818,
+        "dq_error": 0.20857957766185214
+    },
+    "rl_model_24000_steps.zip": {
+        "idx": "24000",
+        "mean_reward": 4.710061560901407,
+        "distance_error": 0.10283031425905527,
+        "orientation_error": 2.4084471928378433,
+        "dq_error": 0.4234243744722936
+    },
+    "rl_model_21000_steps.zip": {
+        "idx": "21000",
+        "mean_reward": 24.188656830031046,
+        "distance_error": 0.12408774577777901,
+        "orientation_error": 2.716292446773271,
+        "dq_error": 0.5218315739572923
+    },
+    "rl_model_34500_steps.zip": {
+        "idx": "34500",
+        "mean_reward": 11.575769909661236,
+        "distance_error": 0.08141672526657343,
+        "orientation_error": 4.195332732866286,
+        "dq_error": 0.38916218606121383
+    },
+    "rl_model_16500_steps.zip": {
+        "idx": "16500",
+        "mean_reward": 28.546797382291835,
+        "distance_error": 0.08576798491665333,
+        "orientation_error": 3.4246346893867092,
+        "dq_error": 0.4488765156935365
+    }
+}

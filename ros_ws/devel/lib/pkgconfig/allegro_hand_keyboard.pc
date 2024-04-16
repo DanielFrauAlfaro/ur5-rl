@@ -1,0 +1,8 @@
+prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
+
+Name: allegro_hand_keyboard
+Description: Description of allegro_hand_keyboard
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp sensor_msgs std_msgs

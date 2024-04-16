@@ -1,0 +1,33 @@
+<?xml version="0.0" ?>
+<robot name="model.urdf">
+  <link name="baseLink">
+    <!--<contact>
+      <friction_anchor/>
+      <lateral_friction value="0.3"/>
+      <rolling_friction value="0.0"/>
+      <contact_cfm value="0.0"/>
+      <contact_erp value="1.0"/>
+    </contact>-->
+    <inertial>
+       <!--<origin rpy="0 0 0" xyz="0 0 0"/>
+       <mass value="0.1"/>
+       <inertia ixx="0.000004" ixy="0" ixz="0" iyy="0.000005" iyz="0" izz="0.000001"/>-->
+       <origin rpy="0 0 0" xyz="0.000135 0.004525 -0.025140"/>
+       <mass value="1.131"/>
+       <inertia ixx="0.00000456608" ixy="-0.00000000344" ixz="-0.00000000215" iyy="0.00000423420" iyz="-0.00000024506" izz="0.00000078260"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="model://ROS_URDF_objects/021_bleach_cleanser/textured.dae" scale="1 1 1"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1. 1. 1. 1."/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="model://ROS_URDF_objects/021_bleach_cleanser/textured.obj" scale="1 1 1"/>
+      </geometry>
+    </collision>
+  </link>
+</robot>

@@ -14,6 +14,7 @@ import pybullet as p
 import time
 import json
 import os
+import re
 
 def grasp(env, list_actions, render):
     grasped = False
@@ -66,23 +67,31 @@ def get_down(env, list_actions, render):
 
 if __name__ == "__main__":
 
-    path = "./6.0/"
+    path = "./DQ_6.0/"
     dir_list = os.listdir(path)
 
+    pattern = r'\d+'
+    numbers_list = []
+
+    dir_list.remove("best_model.zip")
+    numbers_list = [re.findall(pattern, n)[0] for n in dir_list]
+    # dir_list = ["rl_model_57000_steps.zip"]
     
     vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     # obs, info = vec_env.reset()
     
 
     results = {}
-    num_tests = 10
+    num_tests = 5
     render = False
 
     
     for idx, model_name in enumerate(dir_list):
         
         r = 0
-        success = 0
+        error_pos = 0
+        error_or = 0
+        error_dq = 0
         print(path + model_name)
         # Loading model
         model = SAC.load(path + model_name)      
@@ -92,6 +101,7 @@ if __name__ == "__main__":
         
 
         for n in range(num_tests):
+            print(f"   Test {n}")
             
             obs, info = vec_env.reset()
             list_actions = []
@@ -111,27 +121,33 @@ if __name__ == "__main__":
 
                 if terminated or truncated:
 
-                    get_down(vec_env, list_actions, render)
-                    success += grasp(vec_env, list_actions, render)
+                    # get_down(vec_env, list_actions, render)
+                    # success += grasp(vec_env, list_actions, render)
                     # obs, info = vec_env.reset()
+                    dq_error, d_error, or_error = vec_env.unwrapped.get_error()
+                    error_pos += d_error
+                    error_or += or_error
+                    error_dq += dq_error
                     break
 
 
 
         results[model_name] = {
-            "idx": idx,
+            "idx": numbers_list[idx],
             "mean_reward" : r / num_tests,
-            "success_rate": success / num_tests
+            "distance_error": error_pos / num_tests,
+            "orientation_error": error_or / num_tests,
+            "dq_error": error_dq / num_tests
         }
 
         print(f"   -- Mean Reward: {r / num_tests}")
-        print(f"   -- Success Rate: {success / num_tests}\n")
+        print(f"   -- Mean Error: {error_pos / num_tests}\n")
 
 
     # Serializing json
     json_object = json.dumps(results, indent=4)
     
     # Writing to sample.json
-    with open("test_results.json", "w") as outfile:
+    with open("test_results_withError.json", "w") as outfile:
         outfile.write(json_object)
     

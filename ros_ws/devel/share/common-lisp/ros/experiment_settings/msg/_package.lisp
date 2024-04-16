@@ -1,0 +1,27 @@
+(cl:defpackage experiment_settings-msg
+  (:use )
+  (:export
+   "<GRASP>"
+   "GRASP"
+   "<GRASPEVOCONTACTS>"
+   "GRASPEVOCONTACTS"
+   "<GRASPEVOPOSE>"
+   "GRASPEVOPOSE"
+   "<IKACTION>"
+   "IKACTION"
+   "<IKACTIONFEEDBACK>"
+   "IKACTIONFEEDBACK"
+   "<IKACTIONGOAL>"
+   "IKACTIONGOAL"
+   "<IKACTIONRESULT>"
+   "IKACTIONRESULT"
+   "<IKFEEDBACK>"
+   "IKFEEDBACK"
+   "<IKGOAL>"
+   "IKGOAL"
+   "<IKRESULT>"
+   "IKRESULT"
+   "<OBJECT>"
+   "OBJECT"
+  ))
+

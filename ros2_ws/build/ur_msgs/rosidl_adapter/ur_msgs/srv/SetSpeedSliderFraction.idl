@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from ur_msgs/srv/SetSpeedSliderFraction.srv
+// generated code does not contain a copyright notice
+
+
+module ur_msgs {
+  module srv {
+    @verbatim (language="comment", text=
+      "Set the speed slider on the teach pendant to the specified value." "\n"
+      "" "\n"
+      "Values for 'speed_slider_fraction' must be from; values outside this" "\n"
+      "valid range will result in an error being returned to the caller.")
+    struct SetSpeedSliderFraction_Request {
+      double speed_slider_fraction;
+    };
+    struct SetSpeedSliderFraction_Response {
+      boolean success;
+    };
+  };
+};

@@ -1,0 +1,8 @@
+prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
+
+Name: hardware_interface
+Description: Description of hardware_interface
+Version: 0.19.6
+Cflags: -I/daniel/Desktop/ur5-rl/ros_ws/src/ros_control/hardware_interface/include
+Libs: -L${prefix}/lib 
+Requires: roscpp

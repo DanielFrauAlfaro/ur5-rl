@@ -1,0 +1,2 @@
+set(realsense2_camera_MESSAGE_FILES "/daniel/Desktop/ur5-rl/ros_ws/src/realsense-ros/realsense2_camera/msg/IMUInfo.msg;/daniel/Desktop/ur5-rl/ros_ws/src/realsense-ros/realsense2_camera/msg/Extrinsics.msg;/daniel/Desktop/ur5-rl/ros_ws/src/realsense-ros/realsense2_camera/msg/Metadata.msg")
+set(realsense2_camera_SERVICE_FILES "/daniel/Desktop/ur5-rl/ros_ws/src/realsense-ros/realsense2_camera/srv/DeviceInfo.srv")

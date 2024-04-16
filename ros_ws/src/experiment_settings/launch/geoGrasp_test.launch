@@ -1,0 +1,18 @@
+<launch>
+    <arg name="save_files_path" value="/daniel/Desktop/evo_pipe/saved_files/" />
+    <arg name="geograspEvo_grip_tip_size" value="25" />
+    <arg name="geograspEvo_set_apertures" value="{{-0.036,-0.036},{0.036,0.036}}" /> <!-- {mas cercano a 0, min}(dedo negativo), {mas cercano a 0, max} (dedo positivo)-->
+    <arg name="geograspEvo_set_number_fingers" value="3" />
+    <arg name="geograspEvo_set_unique_mobility" value="0" />
+    <arg name="geograspEvo_set_grasps_track" value="1" />
+
+    <node name="GeoGraspEvo" pkg="experiment_settings" type="geograsp_evo" output="screen">
+        <param name="save_files_path" value="$(arg save_files_path)" />    
+        <param name="geograspEvo_grip_tip_size" value="$(arg geograspEvo_grip_tip_size)" />
+        <param name="geograspEvo_set_apertures" value="$(arg geograspEvo_set_apertures)" />
+        <param name="geograspEvo_set_number_fingers" value="$(arg geograspEvo_set_number_fingers)" />
+        <param name="geograspEvo_set_unique_mobility" value="$(arg geograspEvo_set_unique_mobility)" />
+        <param name="geograspEvo_set_grasps_track" value="$(arg geograspEvo_set_grasps_track)" />           
+    </node>
+
+</launch>

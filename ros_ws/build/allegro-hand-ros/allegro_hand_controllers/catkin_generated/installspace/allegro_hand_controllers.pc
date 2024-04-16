@@ -1,0 +1,8 @@
+prefix=/daniel/Desktop/ur5-rl/ros_ws/install
+
+Name: allegro_hand_controllers
+Description: Description of allegro_hand_controllers
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: allegro_hand_driver bhand libpcan roscpp sensor_msgs

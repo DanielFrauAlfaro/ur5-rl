@@ -1,0 +1,7 @@
+set(allegro_hand_SETUP_PY_SETUP_MODULE "setuptools")
+set(allegro_hand_SETUP_PY_VERSION "0.0.0")
+set(allegro_hand_SETUP_PY_SCRIPTS "")
+set(allegro_hand_SETUP_PY_PACKAGES "allegro_hand")
+set(allegro_hand_SETUP_PY_PACKAGE_DIRS "src/allegro_hand")
+set(allegro_hand_SETUP_PY_MODULES "")
+set(allegro_hand_SETUP_PY_MODULE_DIRS "")

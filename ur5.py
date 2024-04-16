@@ -12,7 +12,7 @@ import os
 import pyb_utils
 import time
 from scipy.spatial.transform import Rotation
-import dqrobotics
+# import dqrobotics
 import math
 from dq_cosas import *
 import torch
@@ -86,9 +86,6 @@ def set_joints(ur5_id, j):
 
     # p.setJointMotorControl2(bodyUniqueId=ur5_id, jointIndex=10, controlMode=p.POSITION_CONTROL, targetPosition=j[9])
 
-
-
-
 # Read GUI elements
 def read_gui(gui_joints):
     j1 = p.readUserDebugParameter(gui_joints[0])
@@ -155,10 +152,6 @@ def compute_ik(robot_id, action, joints, gripper_joints_id, q):
                                     targetPositions=action,
                                     physicsClientId= client)
     
-
-    
-    
-
 # Spawn environment
 def spawn_environment(id):
     p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -299,18 +292,19 @@ def print_axis(client, pos, rotation_matrix):
     p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.3, physicsClientId = client)  # Y-axis (green)
     p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.3, physicsClientId = client)  # Z-axis (blue)
 
-
 def rotation_matrix_to_euler_xyz(R):
     theta_y = np.arcsin(-R[0, 2])
     theta_x = np.arctan2(R[1, 2], R[2, 2])
     theta_z = np.arctan2(R[0, 1], R[0, 0])
     return np.array([theta_x, theta_y, theta_z])
 
+
+
 def get_quaternion(q):
-    return q[-1] + dqrobotics.i_ * q[0] + dqrobotics.j_ * q[1] + dqrobotics.k_ * q[2]
+    return np.array([q[-1], q[0], q[1], q[2]])
 
 def get_dualQuaternion(q_r, q_t):
-    return q_r + 0.5*dqrobotics.E_*q_t*q_r
+    return np.concatenate((q_r, 0.5*q_t*q_r))
 
 # Main
 if __name__ == "__main__":
@@ -560,35 +554,35 @@ if __name__ == "__main__":
         DQ_obj = get_dualQuaternion(q_r=orn_objQ, q_t=pos_objQ)
 
 
-        orn_obj = p.getQuaternionFromEuler(euler_angles_obj_)
-        orn_objQ = get_quaternion(orn_obj)
-        DQ_obj_ = get_dualQuaternion(q_r=orn_objQ, q_t=pos_objQ)
+        orn_obj_ = p.getQuaternionFromEuler(euler_angles_obj_)
+        orn_objQ_ = get_quaternion(orn_obj_)
+        DQ_obj_ = get_dualQuaternion(q_r=orn_objQ_, q_t=pos_objQ)
 
 
         # diff = dqrobotics.P(DQ_w) * dqrobotics.conj(dqrobotics.P(DQ_obj))
-        w_DQ_vec = dqrobotics.vec8(DQ_w)
-        obj_DQ_vec = dqrobotics.vec8(DQ_obj)
-        obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
+        # w_DQ_vec = dqrobotics.vec8(DQ_w)
+        # obj_DQ_vec = dqrobotics.vec8(DQ_obj)
+        # obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
 
-        p_w = dqrobotics.P(DQ_w)
-        p_obj = dqrobotics.P(DQ_obj)
-        p_obj_ = dqrobotics.P(DQ_obj_)
+        # p_w = dqrobotics.P(DQ_w)
+        # p_obj = dqrobotics.P(DQ_obj)
+        # p_obj_ = dqrobotics.P(DQ_obj_)
 
-        d_w = dqrobotics.D(DQ_w)
-        d_obj = dqrobotics.D(DQ_obj)
-        d_obj_ = dqrobotics.D(DQ_obj_)
+        # d_w = dqrobotics.D(DQ_w)
+        # d_obj = dqrobotics.D(DQ_obj)
+        # d_obj_ = dqrobotics.D(DQ_obj_)
 
-        # Vectors
-        p_w_vec = dqrobotics.vec4(p_w)
-        p_obj_vec = dqrobotics.vec4(p_obj)
-        p_obj_vec_ = dqrobotics.vec4(p_obj_)
+        # # Vectors
+        # p_w_vec = dqrobotics.vec4(p_w)
+        # p_obj_vec = dqrobotics.vec4(p_obj)
+        # p_obj_vec_ = dqrobotics.vec4(p_obj_)
 
-        d_w_vec = dqrobotics.vec4(d_w)
-        d_obj_vec = dqrobotics.vec4(d_obj)
-        d_obj_vec_ = dqrobotics.vec4(d_obj_)
+        # d_w_vec = dqrobotics.vec4(d_w)
+        # d_obj_vec = dqrobotics.vec4(d_obj)
+        # d_obj_vec_ = dqrobotics.vec4(d_obj_)
 
-        d_p = math.acos(2*np.dot(p_w_vec, p_obj_vec) ** 2 - 1)
-        d_p_ = math.acos(2*np.dot(p_w_vec, p_obj_vec_) ** 2 - 1)
+        d_p = math.acos(2*np.dot(orn_wQ, orn_objQ) ** 2 - 1)
+        d_p_ = math.acos(2*np.dot(orn_wQ, orn_objQ_) ** 2 - 1)
 
         
         # print(np.linalg.norm(d_w_vec - d_obj_vec))
@@ -597,15 +591,12 @@ if __name__ == "__main__":
         # print(d_p_)
 
         # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj)))
-        
-
-
 
         if d_p < d_p_:
-            print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec]))))
+            print(dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w]))))
         else:
             # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj_)))
-            print(dq_distance(torch.tensor(np.array([w_DQ_vec])), torch.tensor(np.array([obj_DQ_vec_]))))
+            print(dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w]))))
 
         print("--")
         

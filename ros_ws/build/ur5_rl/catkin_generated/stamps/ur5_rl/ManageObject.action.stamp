@@ -1,0 +1,8 @@
+#goal definition
+int32 order
+---
+#result definition
+int32 res
+---
+#feedback
+int32  feed

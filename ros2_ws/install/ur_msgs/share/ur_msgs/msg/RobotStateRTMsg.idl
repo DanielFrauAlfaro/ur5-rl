@@ -1,0 +1,56 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from ur_msgs/msg/RobotStateRTMsg.msg
+// generated code does not contain a copyright notice
+
+
+module ur_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "Data structure for the realtime communications interface (aka Matlab interface)" "\n"
+      "used by the Universal Robots controller" "\n"
+      "" "\n"
+      "This data structure is send at 125 Hz on TCP port 30003" "\n"
+      "" "\n"
+      "Dokumentation can be found on the Universal Robots Support Wiki" "\n"
+      "(http://wiki03.lynero.net/Technical/RealTimeClientInterface?rev=9)")
+    struct RobotStateRTMsg {
+      double time;
+
+      sequence<double> q_target;
+
+      sequence<double> qd_target;
+
+      sequence<double> qdd_target;
+
+      sequence<double> i_target;
+
+      sequence<double> m_target;
+
+      sequence<double> q_actual;
+
+      sequence<double> qd_actual;
+
+      sequence<double> i_actual;
+
+      sequence<double> tool_acc_values;
+
+      sequence<double> tcp_force;
+
+      sequence<double> tool_vector;
+
+      sequence<double> tcp_speed;
+
+      double digital_input_bits;
+
+      sequence<double> motor_temperatures;
+
+      double controller_timer;
+
+      double test_value;
+
+      double robot_mode;
+
+      sequence<double> joint_modes;
+    };
+  };
+};

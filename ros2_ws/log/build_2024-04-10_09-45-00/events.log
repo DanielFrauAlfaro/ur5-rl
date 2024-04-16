@@ -1,0 +1,646 @@
+[0.000000] (-) TimerEvent: {}
+[0.000298] (ur_description) JobQueued: {'identifier': 'ur_description', 'dependencies': OrderedDict()}
+[0.000406] (ur_msgs) JobQueued: {'identifier': 'ur_msgs', 'dependencies': OrderedDict()}
+[0.000421] (ur_simulation_gazebo) JobQueued: {'identifier': 'ur_simulation_gazebo', 'dependencies': OrderedDict([('ur_description', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_description')])}
+[0.000438] (ur_description) JobStarted: {'identifier': 'ur_description'}
+[0.031257] (ur_msgs) JobStarted: {'identifier': 'ur_msgs'}
+[0.057877] (ur_description) JobProgress: {'identifier': 'ur_description', 'progress': 'cmake'}
+[0.058023] (ur_description) Command: {'cmd': ['/usr/bin/cmake', '/daniel/Desktop/ur5-rl/ros2_ws/src/Universal_Robots_ROS2_Description', '-DCMAKE_INSTALL_PREFIX=/daniel/Desktop/ur5-rl/ros2_ws/install/ur_description'], 'cwd': '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description', 'env': OrderedDict([('HOSTNAME', 'Daniel-Ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/daniel'), ('OLDPWD', '/daniel/Desktop/ur5-rl/ros2_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble')]), 'shell': False}
+[0.060116] (ur_msgs) JobProgress: {'identifier': 'ur_msgs', 'progress': 'cmake'}
+[0.060463] (ur_msgs) JobProgress: {'identifier': 'ur_msgs', 'progress': 'build'}
+[0.061051] (ur_msgs) Command: {'cmd': ['/usr/bin/cmake', '--build', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs', '--', '-j12', '-l12'], 'cwd': '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs', 'env': OrderedDict([('HOSTNAME', 'Daniel-Ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/daniel'), ('OLDPWD', '/daniel/Desktop/ur5-rl/ros2_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble')]), 'shell': False}
+[0.096157] (ur_description) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.096784] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_generator_c\x1b[0m\n'}
+[0.099737] (-) TimerEvent: {}
+[0.101295] (ur_msgs) StdoutLine: {'line': b'[  0%] Built target ur_msgs__cpp\n'}
+[0.109167] (ur_msgs) StdoutLine: {'line': b'[  1%] Built target ament_cmake_python_copy_ur_msgs\n'}
+[0.109373] (ur_msgs) StdoutLine: {'line': b'[ 12%] Built target ur_msgs__rosidl_generator_c\n'}
+[0.109813] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_cpp\x1b[0m\n'}
+[0.110072] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_introspection_cpp\x1b[0m\n'}
+[0.110695] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_fastrtps_cpp\x1b[0m\n'}
+[0.117597] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_introspection_c\x1b[0m\n'}
+[0.117881] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_c\x1b[0m\n'}
+[0.118439] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_fastrtps_c\x1b[0m\n'}
+[0.126525] (ur_msgs) StdoutLine: {'line': b'[ 24%] Built target ur_msgs__rosidl_typesupport_cpp\n'}
+[0.127420] (ur_msgs) StdoutLine: {'line': b'[ 36%] Built target ur_msgs__rosidl_typesupport_introspection_cpp\n'}
+[0.128465] (ur_msgs) StdoutLine: {'line': b'[ 47%] Built target ur_msgs__rosidl_typesupport_c\n'}
+[0.128976] (ur_msgs) StdoutLine: {'line': b'[ 59%] Built target ur_msgs__rosidl_typesupport_introspection_c\n'}
+[0.130116] (ur_description) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.130806] (ur_msgs) StdoutLine: {'line': b'[ 70%] Built target ur_msgs__rosidl_typesupport_fastrtps_cpp\n'}
+[0.134727] (ur_description) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.135046] (ur_msgs) StdoutLine: {'line': b'[ 82%] Built target ur_msgs__rosidl_typesupport_fastrtps_c\n'}
+[0.149828] (ur_msgs) StdoutLine: {'line': b'[ 82%] Built target ur_msgs\n'}
+[0.165411] (ur_msgs) StdoutLine: {'line': b'[ 83%] Built target ur_msgs__py\n'}
+[0.174320] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_generator_py\x1b[0m\n'}
+[0.179764] (ur_description) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.183398] (ur_description) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.183539] (ur_description) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.183774] (ur_description) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.185458] (ur_description) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.191455] (ur_msgs) StdoutLine: {'line': b'[ 94%] Built target ur_msgs__rosidl_generator_py\n'}
+[0.199071] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_fastrtps_c__pyext\x1b[0m\n'}
+[0.199254] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_introspection_c__pyext\x1b[0m\n'}
+[0.199384] (ur_msgs) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ur_msgs__rosidl_typesupport_c__pyext\x1b[0m\n'}
+[0.199815] (-) TimerEvent: {}
+[0.210115] (ur_msgs) StdoutLine: {'line': b'[ 96%] Built target ur_msgs__rosidl_typesupport_fastrtps_c__pyext\n'}
+[0.210562] (ur_msgs) StdoutLine: {'line': b'[ 98%] Built target ur_msgs__rosidl_typesupport_introspection_c__pyext\n'}
+[0.211138] (ur_msgs) StdoutLine: {'line': b'[100%] Built target ur_msgs__rosidl_typesupport_c__pyext\n'}
+[0.230498] (ur_msgs) StdoutLine: {'line': b'running egg_info\n'}
+[0.230899] (ur_msgs) StdoutLine: {'line': b'writing ur_msgs.egg-info/PKG-INFO\n'}
+[0.231011] (ur_msgs) StdoutLine: {'line': b'writing dependency_links to ur_msgs.egg-info/dependency_links.txt\n'}
+[0.231112] (ur_msgs) StdoutLine: {'line': b'writing top-level names to ur_msgs.egg-info/top_level.txt\n'}
+[0.232227] (ur_msgs) StdoutLine: {'line': b"reading manifest file 'ur_msgs.egg-info/SOURCES.txt'\n"}
+[0.232524] (ur_msgs) StdoutLine: {'line': b"writing manifest file 'ur_msgs.egg-info/SOURCES.txt'\n"}
+[0.236149] (ur_description) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.239962] (ur_description) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.240125] (ur_description) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.240382] (ur_description) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.243337] (ur_description) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.8 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.247274] (ur_msgs) StdoutLine: {'line': b'[100%] Built target ament_cmake_python_build_ur_msgs_egg\n'}
+[0.256000] (ur_msgs) CommandEnded: {'returncode': 0}
+[0.299897] (-) TimerEvent: {}
+[0.329953] (ur_description) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.393167] (ur_description) StdoutLine: {'line': b'-- Found ament_cmake_pytest: 1.3.8 (/opt/ros/humble/share/ament_cmake_pytest/cmake)\n'}
+[0.399976] (-) TimerEvent: {}
+[0.417217] (ur_msgs) JobProgress: {'identifier': 'ur_msgs', 'progress': 'install'}
+[0.424425] (ur_msgs) Command: {'cmd': ['/usr/bin/cmake', '--install', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs'], 'cwd': '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs', 'env': OrderedDict([('HOSTNAME', 'Daniel-Ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/daniel'), ('OLDPWD', '/daniel/Desktop/ur5-rl/ros2_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble')]), 'shell': False}
+[0.429782] (ur_msgs) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[0.429980] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ament_index/resource_index/rosidl_interfaces/ur_msgs\n'}
+[0.430117] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs\n'}
+[0.430217] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv\n'}
+[0.430291] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/set_payload.h\n'}
+[0.430325] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/set_speed_slider_fraction.h\n'}
+[0.430358] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/set_io.h\n'}
+[0.430389] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail\n'}
+[0.430421] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__functions.h\n'}
+[0.430472] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__functions.c\n'}
+[0.430506] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__functions.c\n'}
+[0.430538] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__struct.h\n'}
+[0.430571] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__type_support.h\n'}
+[0.430604] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__functions.c\n'}
+[0.430636] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__struct.h\n'}
+[0.430669] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__type_support.h\n'}
+[0.430699] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__functions.h\n'}
+[0.430799] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__struct.h\n'}
+[0.430828] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__type_support.h\n'}
+[0.430859] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__functions.h\n'}
+[0.430890] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg\n'}
+[0.430921] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/tool_data_msg.h\n'}
+[0.430954] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/digital.h\n'}
+[0.430986] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/analog.h\n'}
+[0.431017] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/robot_state_rt_msg.h\n'}
+[0.431049] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/rosidl_generator_c__visibility_control.h\n'}
+[0.431080] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/masterboard_data_msg.h\n'}
+[0.431112] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/io_states.h\n'}
+[0.431191] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail\n'}
+[0.431224] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__struct.h\n'}
+[0.431260] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__functions.c\n'}
+[0.431334] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__struct.h\n'}
+[0.431362] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__functions.h\n'}
+[0.431409] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__struct.h\n'}
+[0.431437] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__type_support.h\n'}
+[0.431465] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__type_support.h\n'}
+[0.431495] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__type_support.h\n'}
+[0.431526] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__functions.h\n'}
+[0.431557] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__functions.c\n'}
+[0.431588] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__functions.c\n'}
+[0.431619] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__type_support.h\n'}
+[0.431669] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__functions.h\n'}
+[0.431702] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__struct.h\n'}
+[0.431780] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__type_support.h\n'}
+[0.431811] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__struct.h\n'}
+[0.431845] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__functions.h\n'}
+[0.431881] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__functions.c\n'}
+[0.431913] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__type_support.h\n'}
+[0.431946] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__struct.h\n'}
+[0.431978] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__functions.c\n'}
+[0.432010] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__functions.h\n'}
+[0.432109] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__type_support.h\n'}
+[0.432167] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__struct.h\n'}
+[0.432199] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__functions.c\n'}
+[0.432231] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__functions.c\n'}
+[0.432298] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__functions.h\n'}
+[0.432354] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__functions.h\n'}
+[0.432386] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/robot_mode_data_msg.h\n'}
+[0.432418] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/library_path.sh\n'}
+[0.432451] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/library_path.dsv\n'}
+[0.432482] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_generator_c.so\n'}
+[0.432513] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs\n'}
+[0.432544] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv\n'}
+[0.432575] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail\n'}
+[0.432607] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__rosidl_typesupport_fastrtps_c.h\n'}
+[0.432638] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__rosidl_typesupport_fastrtps_c.h\n'}
+[0.432669] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__rosidl_typesupport_fastrtps_c.h\n'}
+[0.432701] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg\n'}
+[0.432731] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[0.432762] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail\n'}
+[0.432793] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__rosidl_typesupport_fastrtps_c.h\n'}
+[0.432824] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__rosidl_typesupport_fastrtps_c.h\n'}
+[0.432855] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__rosidl_typesupport_fastrtps_c.h\n'}
+[0.432908] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__rosidl_typesupport_fastrtps_c.h\n'}
+[0.433033] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__rosidl_typesupport_fastrtps_c.h\n'}
+[0.433068] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__rosidl_typesupport_fastrtps_c.h\n'}
+[0.433129] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__rosidl_typesupport_fastrtps_c.h\n'}
+[0.433205] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_typesupport_fastrtps_c.so\n'}
+[0.433239] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs\n'}
+[0.433271] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv\n'}
+[0.433302] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/set_payload.hpp\n'}
+[0.433334] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/set_speed_slider_fraction.hpp\n'}
+[0.433365] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/set_io.hpp\n'}
+[0.433396] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail\n'}
+[0.433426] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__traits.hpp\n'}
+[0.433458] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__builder.hpp\n'}
+[0.433532] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__traits.hpp\n'}
+[0.433559] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__traits.hpp\n'}
+[0.433587] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__struct.hpp\n'}
+[0.433632] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__builder.hpp\n'}
+[0.433661] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__builder.hpp\n'}
+[0.433689] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__struct.hpp\n'}
+[0.433721] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__struct.hpp\n'}
+[0.433751] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg\n'}
+[0.433783] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/analog.hpp\n'}
+[0.433814] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/digital.hpp\n'}
+[0.433845] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/io_states.hpp\n'}
+[0.433877] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/masterboard_data_msg.hpp\n'}
+[0.433908] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/robot_mode_data_msg.hpp\n'}
+[0.433940] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/tool_data_msg.hpp\n'}
+[0.433991] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail\n'}
+[0.434075] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__builder.hpp\n'}
+[0.434107] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__struct.hpp\n'}
+[0.434139] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__struct.hpp\n'}
+[0.434170] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__builder.hpp\n'}
+[0.434234] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__traits.hpp\n'}
+[0.434287] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__traits.hpp\n'}
+[0.434315] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__builder.hpp\n'}
+[0.434343] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__traits.hpp\n'}
+[0.434370] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__traits.hpp\n'}
+[0.434397] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__builder.hpp\n'}
+[0.434423] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__struct.hpp\n'}
+[0.434471] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__struct.hpp\n'}
+[0.434498] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__struct.hpp\n'}
+[0.434525] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__builder.hpp\n'}
+[0.434585] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__struct.hpp\n'}
+[0.434616] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__traits.hpp\n'}
+[0.434648] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__builder.hpp\n'}
+[0.434686] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__traits.hpp\n'}
+[0.434718] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__traits.hpp\n'}
+[0.434781] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__struct.hpp\n'}
+[0.434809] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__builder.hpp\n'}
+[0.434840] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/robot_state_rt_msg.hpp\n'}
+[0.434873] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs\n'}
+[0.434905] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv\n'}
+[0.434936] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail\n'}
+[0.434989] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435016] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/dds_fastrtps\n'}
+[0.435062] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435093] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435124] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg\n'}
+[0.435155] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail\n'}
+[0.435187] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435218] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435274] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/dds_fastrtps\n'}
+[0.435368] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435431] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435479] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435543] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435575] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[0.435607] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[0.435638] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_typesupport_fastrtps_cpp.so\n'}
+[0.435669] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs\n'}
+[0.435700] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv\n'}
+[0.435731] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail\n'}
+[0.435761] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__type_support.c\n'}
+[0.435792] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__rosidl_typesupport_introspection_c.h\n'}
+[0.435823] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__rosidl_typesupport_introspection_c.h\n'}
+[0.435854] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__type_support.c\n'}
+[0.435918] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__rosidl_typesupport_introspection_c.h\n'}
+[0.435946] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__type_support.c\n'}
+[0.435973] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg\n'}
+[0.436000] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[0.436035] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail\n'}
+[0.436062] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__rosidl_typesupport_introspection_c.h\n'}
+[0.436090] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__type_support.c\n'}
+[0.436117] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__type_support.c\n'}
+[0.436144] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__rosidl_typesupport_introspection_c.h\n'}
+[0.436171] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__rosidl_typesupport_introspection_c.h\n'}
+[0.436198] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__type_support.c\n'}
+[0.436225] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__type_support.c\n'}
+[0.436251] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__type_support.c\n'}
+[0.436278] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__rosidl_typesupport_introspection_c.h\n'}
+[0.436305] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__type_support.c\n'}
+[0.436332] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__rosidl_typesupport_introspection_c.h\n'}
+[0.436363] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__rosidl_typesupport_introspection_c.h\n'}
+[0.436390] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__rosidl_typesupport_introspection_c.h\n'}
+[0.436417] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__type_support.c\n'}
+[0.436443] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_typesupport_introspection_c.so\n'}
+[0.436470] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_typesupport_c.so\n'}
+[0.436498] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs\n'}
+[0.436524] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv\n'}
+[0.436555] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail\n'}
+[0.436581] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__type_support.cpp\n'}
+[0.436608] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_payload__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.436635] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__type_support.cpp\n'}
+[0.436662] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_io__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.436689] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__type_support.cpp\n'}
+[0.436715] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/srv/detail/set_speed_slider_fraction__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.436742] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg\n'}
+[0.436769] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail\n'}
+[0.436796] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.436823] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__type_support.cpp\n'}
+[0.436850] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.436876] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__type_support.cpp\n'}
+[0.436911] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/digital__type_support.cpp\n'}
+[0.436939] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__type_support.cpp\n'}
+[0.436966] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.436993] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__type_support.cpp\n'}
+[0.437020] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_state_rt_msg__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.437049] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/tool_data_msg__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.437076] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/io_states__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.437102] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/robot_mode_data_msg__rosidl_typesupport_introspection_cpp.hpp\n'}
+[0.437129] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/analog__type_support.cpp\n'}
+[0.437156] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/include/ur_msgs/ur_msgs/msg/detail/masterboard_data_msg__type_support.cpp\n'}
+[0.437191] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_typesupport_introspection_cpp.so\n'}
+[0.437218] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_typesupport_cpp.so\n'}
+[0.437247] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/pythonpath.sh\n'}
+[0.437277] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/pythonpath.dsv\n'}
+[0.437303] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs-2.0.0-py3.10.egg-info\n'}
+[0.437330] (ur_msgs) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs-2.0.0-py3.10.egg-info/dependency_links.txt\n'}
+[0.437356] (ur_msgs) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs-2.0.0-py3.10.egg-info/top_level.txt\n'}
+[0.437385] (ur_msgs) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs-2.0.0-py3.10.egg-info/SOURCES.txt\n'}
+[0.437411] (ur_msgs) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs-2.0.0-py3.10.egg-info/PKG-INFO\n'}
+[0.437437] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs\n'}
+[0.437464] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/_ur_msgs_s.ep.rosidl_typesupport_c.c\n'}
+[0.437490] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv\n'}
+[0.437517] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv/__init__.py\n'}
+[0.437544] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv/_set_payload.py\n'}
+[0.437570] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv/_set_io.py\n'}
+[0.437597] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv/_set_speed_slider_fraction_s.c\n'}
+[0.437624] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv/_set_io_s.c\n'}
+[0.437651] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv/_set_speed_slider_fraction.py\n'}
+[0.437677] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv/_set_payload_s.c\n'}
+[0.437703] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/_ur_msgs_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[0.437730] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/__init__.py\n'}
+[0.437764] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/_ur_msgs_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[0.437791] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/libur_msgs__rosidl_generator_py.so\n'}
+[0.437822] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/ur_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[0.437849] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/ur_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[0.437875] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg\n'}
+[0.437902] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/__init__.py\n'}
+[0.437928] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_tool_data_msg_s.c\n'}
+[0.437954] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_analog.py\n'}
+[0.437984] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_masterboard_data_msg_s.c\n'}
+[0.438011] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_robot_mode_data_msg.py\n'}
+[0.438037] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_io_states.py\n'}
+[0.438063] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_digital.py\n'}
+[0.438090] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_tool_data_msg.py\n'}
+[0.438117] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_analog_s.c\n'}
+[0.438143] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_robot_state_rt_msg_s.c\n'}
+[0.438169] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_robot_mode_data_msg_s.c\n'}
+[0.438195] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_digital_s.c\n'}
+[0.438221] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_robot_state_rt_msg.py\n'}
+[0.438249] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_masterboard_data_msg.py\n'}
+[0.438275] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg/_io_states_s.c\n'}
+[0.438301] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/ur_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[0.452933] (ur_msgs) StdoutLine: {'line': b"Listing '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs'...\n"}
+[0.452998] (ur_msgs) StdoutLine: {'line': b"Listing '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/msg'...\n"}
+[0.453039] (ur_msgs) StdoutLine: {'line': b"Listing '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/srv'...\n"}
+[0.455127] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/ur_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[0.455387] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/ur_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[0.455611] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages/ur_msgs/ur_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[0.455829] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib/libur_msgs__rosidl_generator_py.so\n'}
+[0.455946] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/Analog.idl\n'}
+[0.456052] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/Digital.idl\n'}
+[0.456151] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/IOStates.idl\n'}
+[0.456247] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/RobotStateRTMsg.idl\n'}
+[0.456282] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/MasterboardDataMsg.idl\n'}
+[0.456314] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/RobotModeDataMsg.idl\n'}
+[0.456375] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/ToolDataMsg.idl\n'}
+[0.456408] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetPayload.idl\n'}
+[0.456439] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetSpeedSliderFraction.idl\n'}
+[0.456472] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetIO.idl\n'}
+[0.456505] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/Analog.msg\n'}
+[0.456537] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/Digital.msg\n'}
+[0.456602] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/IOStates.msg\n'}
+[0.456635] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/RobotStateRTMsg.msg\n'}
+[0.456666] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/MasterboardDataMsg.msg\n'}
+[0.456698] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/RobotModeDataMsg.msg\n'}
+[0.456731] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/msg/ToolDataMsg.msg\n'}
+[0.456764] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetPayload.srv\n'}
+[0.456796] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetPayload_Request.msg\n'}
+[0.456827] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetPayload_Response.msg\n'}
+[0.456859] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetSpeedSliderFraction.srv\n'}
+[0.456917] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetSpeedSliderFraction_Request.msg\n'}
+[0.457003] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetSpeedSliderFraction_Response.msg\n'}
+[0.457068] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetIO.srv\n'}
+[0.457128] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetIO_Request.msg\n'}
+[0.457159] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/srv/SetIO_Response.msg\n'}
+[0.457191] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ament_index/resource_index/package_run_dependencies/ur_msgs\n'}
+[0.457223] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ament_index/resource_index/parent_prefix_path/ur_msgs\n'}
+[0.457271] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/ament_prefix_path.sh\n'}
+[0.457299] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/ament_prefix_path.dsv\n'}
+[0.457326] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/path.sh\n'}
+[0.457353] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/environment/path.dsv\n'}
+[0.457382] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/local_setup.bash\n'}
+[0.457413] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/local_setup.sh\n'}
+[0.457472] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/local_setup.zsh\n'}
+[0.457501] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/local_setup.dsv\n'}
+[0.457530] (ur_msgs) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/package.dsv\n'}
+[0.457561] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ament_index/resource_index/packages/ur_msgs\n'}
+[0.457628] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_generator_cExport.cmake\n'}
+[0.457655] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_generator_cExport-noconfig.cmake\n'}
+[0.457686] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[0.457717] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[0.457778] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_generator_cppExport.cmake\n'}
+[0.457810] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[0.457842] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[0.457874] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_introspection_cExport.cmake\n'}
+[0.457930] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[0.457964] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_cExport.cmake\n'}
+[0.458018] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[0.458049] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[0.458080] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[0.458134] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_cppExport.cmake\n'}
+[0.458206] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgs__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[0.458252] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_generator_pyExport.cmake\n'}
+[0.458287] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/export_ur_msgs__rosidl_generator_pyExport-noconfig.cmake\n'}
+[0.458318] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/rosidl_cmake-extras.cmake\n'}
+[0.458348] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[0.458378] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[0.458430] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[0.458499] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[0.458528] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[0.458555] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[0.458583] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgsConfig.cmake\n'}
+[0.458610] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/cmake/ur_msgsConfig-version.cmake\n'}
+[0.458638] (ur_msgs) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/share/ur_msgs/package.xml\n'}
+[0.459743] (ur_msgs) CommandEnded: {'returncode': 0}
+[0.500054] (-) TimerEvent: {}
+[0.600242] (-) TimerEvent: {}
+[0.687936] (ur_msgs) JobEnded: {'identifier': 'ur_msgs', 'rc': 0}
+[0.700308] (-) TimerEvent: {}
+[0.716966] (ur_description) StdoutLine: {'line': b'-- Configuring done\n'}
+[0.719081] (ur_description) StdoutLine: {'line': b'-- Generating done\n'}
+[0.719657] (ur_description) StdoutLine: {'line': b'-- Build files have been written to: /daniel/Desktop/ur5-rl/ros2_ws/build/ur_description\n'}
+[0.722939] (ur_description) CommandEnded: {'returncode': 0}
+[0.723214] (ur_description) JobProgress: {'identifier': 'ur_description', 'progress': 'build'}
+[0.723443] (ur_description) Command: {'cmd': ['/usr/bin/cmake', '--build', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description', '--', '-j12', '-l12'], 'cwd': '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description', 'env': OrderedDict([('HOSTNAME', 'Daniel-Ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/daniel'), ('OLDPWD', '/daniel/Desktop/ur5-rl/ros2_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble')]), 'shell': False}
+[0.750000] (ur_description) CommandEnded: {'returncode': 0}
+[0.765184] (ur_description) JobProgress: {'identifier': 'ur_description', 'progress': 'install'}
+[0.765359] (ur_description) Command: {'cmd': ['/usr/bin/cmake', '--install', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description'], 'cwd': '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description', 'env': OrderedDict([('HOSTNAME', 'Daniel-Ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/daniel'), ('OLDPWD', '/daniel/Desktop/ur5-rl/ros2_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_description'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble')]), 'shell': False}
+[0.770111] (ur_description) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[0.770197] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config\n'}
+[0.770261] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3e\n'}
+[0.770323] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3e/physical_parameters.yaml\n'}
+[0.770411] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3e/joint_limits.yaml\n'}
+[0.770490] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3e/default_kinematics.yaml\n'}
+[0.770572] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3e/visual_parameters.yaml\n'}
+[0.770652] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/initial_positions.yaml\n'}
+[0.770727] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur20\n'}
+[0.770782] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur20/physical_parameters.yaml\n'}
+[0.770861] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur20/joint_limits.yaml\n'}
+[0.770939] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur20/default_kinematics.yaml\n'}
+[0.771016] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur20/visual_parameters.yaml\n'}
+[0.771090] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5e\n'}
+[0.771142] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5e/physical_parameters.yaml\n'}
+[0.771223] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5e/joint_limits.yaml\n'}
+[0.771308] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5e/default_kinematics.yaml\n'}
+[0.771382] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5e/visual_parameters.yaml\n'}
+[0.771462] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur16e\n'}
+[0.771518] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur16e/physical_parameters.yaml\n'}
+[0.771595] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur16e/joint_limits.yaml\n'}
+[0.771672] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur16e/default_kinematics.yaml\n'}
+[0.771751] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur16e/visual_parameters.yaml\n'}
+[0.771828] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10e\n'}
+[0.771881] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10e/physical_parameters.yaml\n'}
+[0.771959] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10e/joint_limits.yaml\n'}
+[0.772037] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10e/default_kinematics.yaml\n'}
+[0.772113] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10e/visual_parameters.yaml\n'}
+[0.772188] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10\n'}
+[0.772240] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10/physical_parameters.yaml\n'}
+[0.772321] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10/joint_limits.yaml\n'}
+[0.772398] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10/default_kinematics.yaml\n'}
+[0.772474] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur10/visual_parameters.yaml\n'}
+[0.772553] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3\n'}
+[0.772605] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3/physical_parameters.yaml\n'}
+[0.772686] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3/joint_limits.yaml\n'}
+[0.772762] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3/default_kinematics.yaml\n'}
+[0.772840] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur3/visual_parameters.yaml\n'}
+[0.772913] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5\n'}
+[0.772967] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5/physical_parameters.yaml\n'}
+[0.773046] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5/joint_limits.yaml\n'}
+[0.773127] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5/default_kinematics.yaml\n'}
+[0.773349] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur5/visual_parameters.yaml\n'}
+[0.773426] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur30\n'}
+[0.773481] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur30/physical_parameters.yaml\n'}
+[0.773562] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur30/joint_limits.yaml\n'}
+[0.773638] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur30/default_kinematics.yaml\n'}
+[0.773714] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/config/ur30/visual_parameters.yaml\n'}
+[0.773792] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/launch\n'}
+[0.773845] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/launch/view_ur.launch.py\n'}
+[0.773927] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes\n'}
+[0.773976] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e\n'}
+[0.774025] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual\n'}
+[0.774077] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual/shoulder.dae\n'}
+[0.776260] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual/upperarm.dae\n'}
+[0.779925] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual/wrist2.dae\n'}
+[0.781455] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual/forearm.dae\n'}
+[0.782819] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual/wrist1.dae\n'}
+[0.784228] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual/wrist3.dae\n'}
+[0.784392] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/visual/base.dae\n'}
+[0.784692] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision\n'}
+[0.784751] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision/upperarm.stl\n'}
+[0.784923] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision/wrist3.stl\n'}
+[0.785007] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision/base.stl\n'}
+[0.785110] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision/wrist1.stl\n'}
+[0.785248] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision/forearm.stl\n'}
+[0.785385] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision/shoulder.stl\n'}
+[0.785544] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3e/collision/wrist2.stl\n'}
+[0.785681] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20\n'}
+[0.785735] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual\n'}
+[0.785789] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/shoulder.dae\n'}
+[0.786067] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/upperarm.dae\n'}
+[0.786792] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/wrist2.dae\n'}
+[0.787116] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/forearm.dae\n'}
+[0.788011] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/wrist1.dae\n'}
+[0.788465] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/wrist3.dae\n'}
+[0.788941] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/base.dae\n'}
+[0.789424] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/visual/UR20_DIFF_8bit_2K.png\n'}
+[0.790954] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision\n'}
+[0.791028] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision/upperarm.stl\n'}
+[0.791229] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision/wrist3.stl\n'}
+[0.791332] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision/base.stl\n'}
+[0.791430] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision/wrist1.stl\n'}
+[0.791541] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision/forearm.stl\n'}
+[0.791734] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision/shoulder.stl\n'}
+[0.791845] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/collision/wrist2.stl\n'}
+[0.791950] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur20/LICENSE.txt\n'}
+[0.792038] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e\n'}
+[0.792090] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual\n'}
+[0.792143] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual/shoulder.dae\n'}
+[0.793902] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual/upperarm.dae\n'}
+[0.797026] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual/wrist2.dae\n'}
+[0.798555] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual/forearm.dae\n'}
+[0.799720] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual/wrist1.dae\n'}
+[0.800362] (-) TimerEvent: {}
+[0.801115] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual/wrist3.dae\n'}
+[0.801257] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/visual/base.dae\n'}
+[0.801734] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision\n'}
+[0.801794] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision/upperarm.stl\n'}
+[0.801976] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision/wrist3.stl\n'}
+[0.802061] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision/base.stl\n'}
+[0.802165] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision/wrist1.stl\n'}
+[0.802307] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision/forearm.stl\n'}
+[0.802439] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision/shoulder.stl\n'}
+[0.802588] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5e/collision/wrist2.stl\n'}
+[0.802732] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur16e\n'}
+[0.802783] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur16e/visual\n'}
+[0.802836] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur16e/visual/upperarm.dae\n'}
+[0.806044] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur16e/visual/forearm.dae\n'}
+[0.807384] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur16e/collision\n'}
+[0.807441] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur16e/collision/upperarm.stl\n'}
+[0.807643] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur16e/collision/forearm.stl\n'}
+[0.807809] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e\n'}
+[0.807862] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual\n'}
+[0.807914] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual/shoulder.dae\n'}
+[0.810200] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual/upperarm.dae\n'}
+[0.813247] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual/wrist2.dae\n'}
+[0.814662] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual/forearm.dae\n'}
+[0.816183] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual/wrist1.dae\n'}
+[0.817440] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual/wrist3.dae\n'}
+[0.817587] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/visual/base.dae\n'}
+[0.818018] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision\n'}
+[0.818077] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision/upperarm.stl\n'}
+[0.818242] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision/wrist3.stl\n'}
+[0.818325] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision/base.stl\n'}
+[0.818422] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision/wrist1.stl\n'}
+[0.818562] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision/forearm.stl\n'}
+[0.818702] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision/shoulder.stl\n'}
+[0.818856] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10e/collision/wrist2.stl\n'}
+[0.819016] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10\n'}
+[0.819066] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual\n'}
+[0.819119] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual/shoulder.dae\n'}
+[0.820269] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual/upperarm.dae\n'}
+[0.822129] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual/wrist2.dae\n'}
+[0.824382] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual/forearm.dae\n'}
+[0.826404] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual/wrist1.dae\n'}
+[0.827830] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual/wrist3.dae\n'}
+[0.828023] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/visual/base.dae\n'}
+[0.828238] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision\n'}
+[0.828295] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision/upperarm.stl\n'}
+[0.828429] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision/wrist3.stl\n'}
+[0.828526] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision/base.stl\n'}
+[0.828622] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision/wrist1.stl\n'}
+[0.828740] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision/forearm.stl\n'}
+[0.828870] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision/shoulder.stl\n'}
+[0.829002] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur10/collision/wrist2.stl\n'}
+[0.829119] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3\n'}
+[0.829170] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual\n'}
+[0.829223] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual/shoulder.dae\n'}
+[0.830938] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual/upperarm.dae\n'}
+[0.833086] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual/wrist2.dae\n'}
+[0.833901] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual/forearm.dae\n'}
+[0.834839] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual/wrist1.dae\n'}
+[0.835641] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual/wrist3.dae\n'}
+[0.835766] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/visual/base.dae\n'}
+[0.836406] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision\n'}
+[0.836465] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision/upperarm.stl\n'}
+[0.837015] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision/wrist3.stl\n'}
+[0.837120] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision/base.stl\n'}
+[0.837569] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision/wrist1.stl\n'}
+[0.837811] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision/forearm.stl\n'}
+[0.838115] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision/shoulder.stl\n'}
+[0.838615] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur3/collision/wrist2.stl\n'}
+[0.838862] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5\n'}
+[0.838913] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual\n'}
+[0.838967] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual/shoulder.dae\n'}
+[0.840007] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual/upperarm.dae\n'}
+[0.841993] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual/wrist2.dae\n'}
+[0.842963] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual/forearm.dae\n'}
+[0.844418] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual/wrist1.dae\n'}
+[0.845396] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual/wrist3.dae\n'}
+[0.845598] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/visual/base.dae\n'}
+[0.845823] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision\n'}
+[0.845882] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision/upperarm.stl\n'}
+[0.846015] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision/wrist3.stl\n'}
+[0.846112] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision/base.stl\n'}
+[0.846198] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision/wrist1.stl\n'}
+[0.846310] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision/forearm.stl\n'}
+[0.846437] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision/shoulder.stl\n'}
+[0.846546] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur5/collision/wrist2.stl\n'}
+[0.846654] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30\n'}
+[0.846706] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/visual\n'}
+[0.846758] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/visual/UR30_DIFF_8bit_2K.png\n'}
+[0.848344] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/visual/upperarm.dae\n'}
+[0.849117] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/visual/forearm.dae\n'}
+[0.849990] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/collision\n'}
+[0.850050] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/collision/upperarm.stl\n'}
+[0.850262] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/collision/forearm.stl\n'}
+[0.850510] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/meshes/ur30/LICENSE.txt\n'}
+[0.850603] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/rviz\n'}
+[0.850654] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/rviz/view_robot.rviz\n'}
+[0.850735] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf\n'}
+[0.850788] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/ros2_control_mock_hardware.xacro\n'}
+[0.850870] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/ur_mocked.urdf.xacro\n'}
+[0.850950] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/ur.urdf.xacro\n'}
+[0.851025] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/ur_macro.xacro\n'}
+[0.851112] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/inc\n'}
+[0.851164] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/inc/ur_sensors.xacro\n'}
+[0.851242] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/inc/ur_common.xacro\n'}
+[0.851370] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/inc/ur_joint_control.xacro\n'}
+[0.851452] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/urdf/inc/ur_transmissions.xacro\n'}
+[0.851527] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/test\n'}
+[0.851580] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/test/test_view_ur_launch.py\n'}
+[0.851657] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/test/test_ur_urdf_xacro.py\n'}
+[0.851853] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ament_index/resource_index/package_run_dependencies/ur_description\n'}
+[0.851990] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ament_index/resource_index/parent_prefix_path/ur_description\n'}
+[0.852134] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/environment/ament_prefix_path.sh\n'}
+[0.852242] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/environment/ament_prefix_path.dsv\n'}
+[0.852349] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/environment/path.sh\n'}
+[0.852453] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/environment/path.dsv\n'}
+[0.852546] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/local_setup.bash\n'}
+[0.852639] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/local_setup.sh\n'}
+[0.852735] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/local_setup.zsh\n'}
+[0.852832] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/local_setup.dsv\n'}
+[0.852924] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/package.dsv\n'}
+[0.853052] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ament_index/resource_index/packages/ur_description\n'}
+[0.853170] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/cmake/ur_descriptionConfig.cmake\n'}
+[0.853250] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/cmake/ur_descriptionConfig-version.cmake\n'}
+[0.853349] (ur_description) StdoutLine: {'line': b'-- Installing: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_description/share/ur_description/package.xml\n'}
+[0.854950] (ur_description) CommandEnded: {'returncode': 0}
+[0.900485] (-) TimerEvent: {}
+[0.922238] (ur_description) JobEnded: {'identifier': 'ur_description', 'rc': 0}
+[0.922719] (ur_simulation_gazebo) JobStarted: {'identifier': 'ur_simulation_gazebo'}
+[0.953077] (ur_simulation_gazebo) JobProgress: {'identifier': 'ur_simulation_gazebo', 'progress': 'cmake'}
+[0.953312] (ur_simulation_gazebo) JobProgress: {'identifier': 'ur_simulation_gazebo', 'progress': 'build'}
+[0.953420] (ur_simulation_gazebo) Command: {'cmd': ['/usr/bin/cmake', '--build', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_simulation_gazebo', '--', '-j12', '-l12'], 'cwd': '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_simulation_gazebo', 'env': OrderedDict([('HOSTNAME', 'Daniel-Ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/daniel'), ('OLDPWD', '/daniel/Desktop/ur5-rl/ros2_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_description:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_simulation_gazebo'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_description:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble')]), 'shell': False}
+[0.978955] (ur_simulation_gazebo) CommandEnded: {'returncode': 0}
+[0.993710] (ur_simulation_gazebo) JobProgress: {'identifier': 'ur_simulation_gazebo', 'progress': 'install'}
+[0.993812] (ur_simulation_gazebo) Command: {'cmd': ['/usr/bin/cmake', '--install', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_simulation_gazebo'], 'cwd': '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_simulation_gazebo', 'env': OrderedDict([('HOSTNAME', 'Daniel-Ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/daniel'), ('OLDPWD', '/daniel/Desktop/ur5-rl/ros2_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_description:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_simulation_gazebo'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/daniel/Desktop/ur5-rl/ros2_ws/install/ur_description:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo:/daniel/Desktop/ur5-rl/ros2_ws/install/ur_msgs:/opt/ros/humble')]), 'shell': False}
+[0.998882] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[0.999049] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/config\n'}
+[0.999143] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/config/ur_controllers.yaml\n'}
+[0.999251] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/launch\n'}
+[0.999355] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/launch/ur_sim_moveit.launch.py\n'}
+[0.999432] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/launch/ur_sim_control.launch.py\n'}
+[0.999465] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/urdf\n'}
+[0.999515] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/urdf/ur_gazebo.urdf.xacro\n'}
+[0.999543] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/urdf/ur_gazebo.ros2_control.xacro\n'}
+[0.999570] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ament_index/resource_index/package_run_dependencies/ur_simulation_gazebo\n'}
+[0.999603] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ament_index/resource_index/parent_prefix_path/ur_simulation_gazebo\n'}
+[0.999631] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/environment/ament_prefix_path.sh\n'}
+[0.999658] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/environment/ament_prefix_path.dsv\n'}
+[0.999690] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/environment/path.sh\n'}
+[0.999717] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/environment/path.dsv\n'}
+[0.999743] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/local_setup.bash\n'}
+[0.999770] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/local_setup.sh\n'}
+[0.999797] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/local_setup.zsh\n'}
+[0.999823] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/local_setup.dsv\n'}
+[0.999850] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/package.dsv\n'}
+[0.999876] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ament_index/resource_index/packages/ur_simulation_gazebo\n'}
+[0.999908] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/cmake/ur_simulation_gazeboConfig.cmake\n'}
+[0.999936] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/cmake/ur_simulation_gazeboConfig-version.cmake\n'}
+[0.999964] (ur_simulation_gazebo) StdoutLine: {'line': b'-- Up-to-date: /daniel/Desktop/ur5-rl/ros2_ws/install/ur_simulation_gazebo/share/ur_simulation_gazebo/package.xml\n'}
+[1.000488] (ur_simulation_gazebo) CommandEnded: {'returncode': 0}
+[1.000658] (-) TimerEvent: {}
+[1.065815] (ur_simulation_gazebo) JobEnded: {'identifier': 'ur_simulation_gazebo', 'rc': 0}
+[1.066215] (-) EventReactorShutdown: {}
