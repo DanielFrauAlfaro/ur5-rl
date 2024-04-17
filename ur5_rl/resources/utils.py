@@ -134,7 +134,7 @@ def get_quaternion(q):
     return np.array([q[-1], q[0], q[1], q[2]])
 
 def get_dualQuaternion(q_r, q_t):
-    return np.concatenate((q_r, 0.5*q_t*q_r))
+    return np.concatenate((q_r, 0.5*q_mul(torch.tensor(q_t).unsqueeze(dim=0), torch.tensor(q_r).unsqueeze(dim=0)).squeeze(dim=0).numpy()))
 
 
 
