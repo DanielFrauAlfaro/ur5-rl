@@ -305,7 +305,7 @@ def get_quaternion(q):
     return np.array([q[-1], q[0], q[1], q[2]])
 
 def get_dualQuaternion(q_r, q_t):
-    return np.concatenate((q_r, 0.5*q_mul(torch.tensor([q_t]), torch.tensor([q_r])).numpy()[0]))
+    return np.concatenate((q_r, 0.5*q_mul(torch.tensor(q_t).unsqueeze(dim=0), torch.tensor(q_r).unsqueeze(dim=0)).squeeze(dim=0).numpy()))
 
 
 # Main
@@ -595,10 +595,10 @@ if __name__ == "__main__":
         # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj)))
 
         if d_p < d_p_:
-            print(dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w]))))
+            print(dq_distance(torch.tensor(DQ_obj).unsqueeze(dim=0), torch.tensor(DQ_w).unsqueeze(dim=0)))
         else:
             # print("Euclidean: ", np.linalg.norm(np.array(pos_w) - np.array(pos_obj_)))
-            print(dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w]))))
+            print(dq_distance(torch.tensor(DQ_obj_).unsqueeze(dim=0), torch.tensor(DQ_w).unsqueeze(dim=0)))
 
         print("--")
         

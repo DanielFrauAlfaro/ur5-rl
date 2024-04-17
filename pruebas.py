@@ -1,6 +1,11 @@
 import numpy as np
+import torch
 
-a = np.array([1,2,3,4])
-b = np.array([1,2,3,4])
 
-print(a*b*0.5 + b)
+a = [1 ,2, 3, 4, 5]
+a_ = torch.tensor(a).unsqueeze(dim=0)
+
+print(a_)
+
+a_ = a_.squeeze(dim=0)
+print(a_.numpy())
