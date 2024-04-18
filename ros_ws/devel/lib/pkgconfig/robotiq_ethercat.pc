@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
-
-Name: robotiq_ethercat
-Description: Description of robotiq_ethercat
-Version: 1.0.0
-Cflags: -I/daniel/Desktop/ur5-rl/ros_ws/src/robotiq/robotiq_ethercat/include
-Libs: -L${prefix}/lib -lrobotiq_ethercat
-Requires: soem roscpp

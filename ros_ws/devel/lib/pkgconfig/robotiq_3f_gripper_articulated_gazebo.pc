@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
-
-Name: robotiq_3f_gripper_articulated_gazebo
-Description: Description of robotiq_3f_gripper_articulated_gazebo
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

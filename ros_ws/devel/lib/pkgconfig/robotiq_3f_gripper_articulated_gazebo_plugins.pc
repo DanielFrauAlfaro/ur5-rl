@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
-
-Name: robotiq_3f_gripper_articulated_gazebo_plugins
-Description: Description of robotiq_3f_gripper_articulated_gazebo_plugins
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: gazebo_plugins gazebo_ros robotiq_3f_gripper_articulated_msgs roscpp geometry_msgs actionlib control_msgs std_msgs trajectory_msgs tf sensor_msgs

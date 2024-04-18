@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
-
-Name: opencv_tests
-Description: Description of opencv_tests
-Version: 1.16.2
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

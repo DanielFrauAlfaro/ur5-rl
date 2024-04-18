@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
-
-Name: allegro_hand_parameters
-Description: Description of allegro_hand_parameters
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

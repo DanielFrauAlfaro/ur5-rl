@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/devel
-
-Name: experiment_settings
-Description: Description of experiment_settings
-Version: 1.0.0
-Cflags: -I/daniel/Desktop/ur5-rl/ros_ws/devel/include -I/usr/include/eigen3
-Libs: -L${prefix}/lib 
-Requires: geograspevo message_runtime moveit_ros_planning_interface pcl_conversions pcl_ros roscpp sensor_msgs std_msgs moveit_msgs xmlrpcpp actionlib_msgs
