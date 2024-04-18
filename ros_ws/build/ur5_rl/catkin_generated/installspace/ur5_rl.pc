@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/install
-
-Name: ur5_rl
-Description: Description of ur5_rl
-Version: 0.0.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: actionlib_msgs

@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/install
-
-Name: urdfs_test
-Description: Description of urdfs_test
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

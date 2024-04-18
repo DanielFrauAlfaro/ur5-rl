@@ -1,7 +1,0 @@
-set(canbus_interface_SETUP_PY_SETUP_MODULE "setuptools")
-set(canbus_interface_SETUP_PY_VERSION "0.0.0")
-set(canbus_interface_SETUP_PY_SCRIPTS "")
-set(canbus_interface_SETUP_PY_PACKAGES "canbus_interface")
-set(canbus_interface_SETUP_PY_PACKAGE_DIRS "src/canbus_interface")
-set(canbus_interface_SETUP_PY_MODULES "")
-set(canbus_interface_SETUP_PY_MODULE_DIRS "")

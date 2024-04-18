@@ -1,8 +1,0 @@
-prefix=/daniel/Desktop/ur5-rl/ros_ws/install
-
-Name: allegro_hand_driver
-Description: Description of allegro_hand_driver
-Version: 1.0.1
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib -lallegro_hand_driver
-Requires: libpcan roscpp std_msgs
