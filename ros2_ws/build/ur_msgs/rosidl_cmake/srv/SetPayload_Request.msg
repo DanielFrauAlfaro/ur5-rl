@@ -1,2 +1,0 @@
-float32 mass
-geometry_msgs/Vector3 center_of_gravity
