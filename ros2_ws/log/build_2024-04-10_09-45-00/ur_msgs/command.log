@@ -1,4 +1,0 @@
-Invoking command in '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs -- -j12 -l12
-Invoked command in '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs -- -j12 -l12
-Invoking command in '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs
-Invoked command in '/daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /daniel/Desktop/ur5-rl/ros2_ws/build/ur_msgs
