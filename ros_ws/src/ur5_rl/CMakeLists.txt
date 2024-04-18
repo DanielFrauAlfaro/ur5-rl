@@ -7,7 +7,7 @@ project(ur5_rl)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED genmsg actionlib_msgs actionlib)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -59,6 +59,8 @@ find_package(catkin REQUIRED COMPONENTS actionlib_msgs)
 
 ## Generate actions in the 'action' folder
  add_action_files(
+   DIRECTORY 
+   action
    FILES
    ManageObject.action
 )

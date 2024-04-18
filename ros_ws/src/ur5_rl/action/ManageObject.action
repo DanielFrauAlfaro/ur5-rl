@@ -2,7 +2,7 @@
 int32 input
 ---
 #result definition
-int32 res
+bool res
 ---
 #feedback
 int32  feed

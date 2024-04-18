@@ -76,7 +76,7 @@ def image_cb(data):
             
             
             images["robot"][1] = cv2.resize(images["robot"][1], (frame_h, frame_w))
-            images["robot"][1] = (images["robot"][1] - np.min(images["robot"][1])) / (np.max(images["robot"][1]) - np.min(images["robot"][1]))
+            images["robot"][1] = (images["robot"][1] - np.min(images["robot"][1])) / float(max(1.0, (np.max(images["robot"][1]) - np.min(images["robot"][1]))))
             images["robot"][1] = (images["robot"][1] * 255).astype(np.uint8)
             
             images["robot"][1] = (images["robot"][1] - np.min(images["robot"][1])) / float(max(1.0, (np.max(images["robot"][1]) - np.min(images["robot"][1]))))  
@@ -87,7 +87,7 @@ def image_cb(data):
             
             # Resize grayscale image to 160x160
             images["frontal"][1] = cv2.resize(images["frontal"][1], (frame_h, frame_w))
-            images["frontal"][1] = (images["frontal"][1] - np.min(images["frontal"][1])) / (np.max(images["frontal"][1]) - np.min(images["frontal"][1]))
+            images["frontal"][1] = (images["frontal"][1] - np.min(images["frontal"][1])) / float(max(1.0,(np.max(images["frontal"][1]) - np.min(images["frontal"][1]))))
             images["frontal"][1] = (images["frontal"][1] * 255).astype(np.uint8)
             
             images["frontal"][1] = (images["frontal"][1] - np.min(images["frontal"][1])) / float(max(1.0, (np.max(images["frontal"][1]) - np.min(images["frontal"][1])))) 
@@ -97,7 +97,7 @@ def image_cb(data):
 
             # Resize grayscale image to 160x160
             images["side"][1] = cv2.resize(images["side"][1], (frame_h, frame_w))
-            images["side"][1] = (images["side"][1] - np.min(images["side"][1])) / (np.max(images["side"][1]) - np.min(images["side"][1]))
+            images["side"][1] = (images["side"][1] - np.min(images["side"][1])) / float(max(1.0,(np.max(images["side"][1]) - np.min(images["side"][1]))))
             images["side"][1] = (images["side"][1] * 255).astype(np.uint8)
             
             images["side"][1] = (images["side"][1] - np.min(images["side"][1])) / float(max(1.0, (np.max(images["side"][1]) - np.min(images["side"][1]))))
