@@ -102,14 +102,7 @@ def image_cb(data):
             
             images["side"][1] = (images["side"][1] - np.min(images["side"][1])) / float(max(1.0, (np.max(images["side"][1]) - np.min(images["side"][1]))))
         
-    
-        
 
-def move_to_home(pubs):
-    global home_pos
-
-    time.sleep(3)
-    
 
 def rl_controller(pubs, model_path):
     global x
