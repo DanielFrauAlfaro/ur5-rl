@@ -3,12 +3,14 @@
 import rospy
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float32MultiArray, Float64MultiArray
+from ur5_rl.msg import ManageObjectAction, ManageObjectGoal
 from spatialmath import SE3
 import roboticstoolbox as rtb
 from math import pi
 import numpy as np
 import copy
 import time
+import actionlib
 
 
 
@@ -28,6 +30,7 @@ q = [0.0, -1.5708, -1.5708, -1.5708, 1.5708, 0.0]
 ee_init = np.array([0.1332997, 0.49, 0.48, 3.14, 0.0, 0.0])
 ee = copy.deepcopy(ee_init)
 starting_flag = False
+
 
 def get_q_from_msg(msg, list_of_joints):
     return [msg.position[msg.name.index(joint)] for joint in list_of_joints if joint in msg.name]
@@ -62,7 +65,7 @@ def DK_module(q, list_of_joints):
 
 
 # Module that implemets the robot's inverse kinematics
-def IK_module(ee, q_prev):
+def IK_module(ee, q_prev, list_of_joints):
     global ur5
 
     x = ee[0]                                 
@@ -80,48 +83,78 @@ def IK_module(ee, q_prev):
     T = T * T_
 
     # Computes inverse kinematics
-    return ur5.ik_LM(T,q0 = q_prev).q
+    q_prev = get_q_from_msg(msg = q_prev, list_of_joints=list_of_joints)
 
+    q = ur5.ik_LM(T,q0 = q_prev)
+    return q[0]
+
+
+def spawn_object(spawn_client, spawned = True):
+
+    if spawned:
+        goal = ManageObjectGoal()
+        goal.spawn = False
+
+        spawn_client.send_goal(goal)
+        spawn_client.wait_for_server(rospy.Duration.from_sec(5.0))
+
+    goal = ManageObjectGoal()
+    goal.spawn = True
+
+    spawn_client.send_goal(goal)
+    spawn_client.wait_for_server(rospy.Duration.from_sec(5.0))
+
+    spawned = True
+
+def move_to_home(pubs):
+    global q_init
+
+    joint_msg = Float64MultiArray()
+    joint_msg.data = q_init
+    pubs["IK"].publish(joint_msg)
+
+    # print("SE MANDE EL MENSAJE DE HOME\n\n")
+
+    time.sleep(2)
 
 # Kinematics Module
-def K_module(pubs, list_of_joints):
+def K_module(pubs, spawn_client,  list_of_joints):
     global q, ee
 
-    q_prev = get_q_from_msg(q, list_of_joints)
+    q_prev = q
     ee_msg = Float32MultiArray()
     joint_msg = Float64MultiArray()
     
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(100)
     t = 0
     t_limit = 40
+
+    spawn_object(spawn_client=spawn_client, spawned=False)
+
     while not rospy.is_shutdown():
         
         # Direct Kinematics Module
         ee_msg.data = DK_module(q, list_of_joints)
+        
         pubs["DK"].publish(ee_msg)
         
-
+        print(ee)
         # Inverse Kinematics Module
-
-        # joint_msg.data = IK_module(ee, q_prev)
-        # pubs["IK"].publish(joint_msg)
+        joint_msg.data = IK_module(ee, q_prev, list_of_joints)
+        pubs["IK"].publish(joint_msg)
 
         q_prev = q
         t += 1
-        if t >= 40:
+
+        if t >= t_limit:
             t = 0
             move_to_home(pubs)
+            # spawn_object(spawn_client=spawn_client)
+            time.sleep(3)
 
         rate.sleep()    
 
 
-def move_to_home(pubs):
-    global ee_init, q_init
-
-    joint_msg = Float64MultiArray()
-    joint_msg.data = q_init
-    for i in range(1): 
-        pubs["IK"].publish(joint_msg)
 
 
 if __name__ == "__main__":
@@ -144,6 +177,11 @@ if __name__ == "__main__":
         rospy.Subscriber("/joint_states", JointState, state_cb)
         rospy.Subscriber(controller_to_k_topic, Float32MultiArray, ee_cb)
         
+        # -- Clients --
+        spawn_client = actionlib.SimpleActionClient('/manage_object', ManageObjectAction)
+        # print("ESPERANDO AL SERVIDOR\n\n\n")
+        spawn_client.wait_for_server()
+
         time.sleep(4)
         # Wait until there is data being sent
         while not starting_flag: pass
@@ -152,7 +190,7 @@ if __name__ == "__main__":
 
 
         # Kinematics module
-        K_module(pubs, list_of_joints)
+        K_module(pubs = pubs, spawn_client = spawn_client, list_of_joints = list_of_joints)
 
     except rospy.ROSInterruptException:
         pass

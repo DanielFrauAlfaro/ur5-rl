@@ -72,15 +72,13 @@
   <!-- camera body, with origin at bottom screw mount -->
   
   <link name="camera_link">
-    <visual>
+    <!-- <visual>
       <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.0149 -0.0175 0"/>
       <geometry>
-        <!-- <box size="${d435_cam_width} ${d435_cam_height} ${d435_cam_depth}"/> -->
         <mesh filename="package://experiment_settings/meshes/d435_sim.dae"/>
-        <!--<mesh filename="package://realsense2_description/meshes/d435/d435.dae" />-->
       </geometry>
       <material name="camera_aluminum"/>
-    </visual>
+    </visual> -->
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.0175 0"/>
       <geometry>
@@ -96,15 +94,13 @@
   </link>
 
   <link name="camera_link_frontal">
-    <visual>
+    <!-- <visual>
       <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.0149 -0.0175 0"/>
       <geometry>
-        <!-- <box size="${d435_cam_width} ${d435_cam_height} ${d435_cam_depth}"/> -->
         <mesh filename="package://experiment_settings/meshes/d435_sim.dae"/>
-        <!--<mesh filename="package://realsense2_description/meshes/d435/d435.dae" />-->
       </geometry>
       <material name="camera_aluminum"/>
-    </visual>
+    </visual> -->
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.0175 0"/>
       <geometry>
@@ -119,15 +115,13 @@
     </inertial>
   </link>
   <link name="camera_link_side">
-    <visual>
+    <!-- <visual>
       <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.0149 -0.0175 0"/>
       <geometry>
-        <!-- <box size="${d435_cam_width} ${d435_cam_height} ${d435_cam_depth}"/> -->
         <mesh filename="package://experiment_settings/meshes/d435_sim.dae"/>
-        <!--<mesh filename="package://realsense2_description/meshes/d435/d435.dae" />-->
       </geometry>
       <material name="camera_aluminum"/>
-    </visual>
+    </visual> -->
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.0175 0"/>
       <geometry>
@@ -821,6 +815,14 @@
         </inertial>
   </link>
   <link name="table">
+    <contact>
+      <friction_anchor/>
+      <lateral_friction value="1"/>
+      <spinning_friction value="0.1"/>
+      <rolling_friction value="0.1"/>
+      <contact_cfm value="0.5"/>
+      <contact_erp value="1.0"/>
+    </contact>
     <visual>
       <geometry>
         <mesh filename="package://experiment_settings/stl/mesa_lab.stl" scale="0.001 0.001 0.001"/>
@@ -903,7 +905,7 @@
   </joint>
   <link name="camera_bottom_screw_frame"/>
   <joint name="camera_link_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0.0175 0.0125"/>
+    <origin rpy="0 0.4 0" xyz="0 0.0175 0.0125"/>
     <!-- <origin rpy="0.0 -0.0 0.0" xyz="-0.0 -0.0 -0.0"/> -->
     <parent link="camera_bottom_screw_frame"/>
     <child link="camera_link"/>
@@ -923,7 +925,7 @@
   <joint name="camera_front_world" type="fixed">
     <parent link="world"/>
     <child link="camera_link_frontal"/>
-    <origin xyz="0.05 0.95 1.05" rpy="0.0 0.0 -1.57"/>
+    <origin xyz="0.05 0.95 1.05" rpy="0.0 0.3 -1.57"/>
   </joint>
   <joint name="camera_side_world" type="fixed">
     <parent link="world"/>

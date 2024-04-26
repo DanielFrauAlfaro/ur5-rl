@@ -1,5 +1,5 @@
 #goal definition
-int32 input
+bool spawn
 ---
 #result definition
 bool res
