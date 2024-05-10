@@ -165,42 +165,42 @@ class UR5Env(gym.Env):
         wrist_pos, euler_w, DQ_w = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
         # Primary parts
-        p_w = dqrobotics.P(DQ_w)
-        p_obj = dqrobotics.P(DQ_obj)
-        p_obj_ = dqrobotics.P(DQ_obj_)
+        # p_w = dqrobotics.P(DQ_w)
+        # p_obj = dqrobotics.P(DQ_obj)
+        # p_obj_ = dqrobotics.P(DQ_obj_)
 
-        # Dual parts
-        d_w = dqrobotics.D(DQ_w)
-        d_obj = dqrobotics.D(DQ_obj)
-        d_obj_ = dqrobotics.D(DQ_obj_)
+        # # Dual parts
+        # d_w = dqrobotics.D(DQ_w)
+        # d_obj = dqrobotics.D(DQ_obj)
+        # d_obj_ = dqrobotics.D(DQ_obj_)
 
-        # Vectors
-        # --- Dual quaternion vectors ---
-        w_DQ_vec = dqrobotics.vec8(DQ_w)
-        obj_DQ_vec = dqrobotics.vec8(DQ_obj)
-        obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
+        # # Vectors
+        # # --- Dual quaternion vectors ---
+        # w_DQ_vec = dqrobotics.vec8(DQ_w)
+        # obj_DQ_vec = dqrobotics.vec8(DQ_obj)
+        # obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
 
-        # --- Primary parts vector ---
-        p_w_vec = dqrobotics.vec4(p_w)
-        p_obj_vec = dqrobotics.vec4(p_obj)
-        p_obj_vec_ = dqrobotics.vec4(p_obj_)
+        # # --- Primary parts vector ---
+        # p_w_vec = dqrobotics.vec4(p_w)
+        # p_obj_vec = dqrobotics.vec4(p_obj)
+        # p_obj_vec_ = dqrobotics.vec4(p_obj_)
 
-        # --- Dual parts vector ---
-        d_w_vec = dqrobotics.vec4(d_w)
-        d_obj_vec = dqrobotics.vec4(d_obj)
-        d_obj_vec_ = dqrobotics.vec4(d_obj_)
+        # # --- Dual parts vector ---
+        # d_w_vec = dqrobotics.vec4(d_w)
+        # d_obj_vec = dqrobotics.vec4(d_obj)
+        # d_obj_vec_ = dqrobotics.vec4(d_obj_)
 
         # Angular distance using quaternion
-        d_p = math.acos(2*np.dot(p_w_vec, p_obj_vec) ** 2 - 1)
-        d_p_ = math.acos(2*np.dot(p_w_vec, p_obj_vec_) ** 2 - 1)
-
+        d_p = math.acos(2*np.dot(DQ_w[0:4], DQ_obj[0:4]) ** 2 - 1)
+        d_p_ = math.acos(2*np.dot(DQ_w[0:4], DQ_obj_[0:4]) ** 2 - 1)
 
         if d_p < d_p_:
-            r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec])), torch.tensor(np.array([w_DQ_vec])))
+            r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w])))
             d_or = np.linalg.norm(np.array(euler_w) - np.array(euler))
         else:
-            r, d, theta = dq_distance(torch.tensor(np.array([obj_DQ_vec_])), torch.tensor(np.array([w_DQ_vec])))
+            r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w])))
             d_or = np.linalg.norm(np.array(euler_w) - np.array(euler_))
+
 
         return 1/r.item(), np.linalg.norm(np.array(obj_pos) - np.array(wrist_pos)), d_or
 
@@ -436,7 +436,7 @@ class UR5Env(gym.Env):
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = random.randint(0,9)
+        object_chosen = random.randint(10,13) # 0,9
         
         self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
@@ -485,7 +485,7 @@ class UR5Env(gym.Env):
 
     # Render function
     def render(self):
-        return self.frame[0][0]
+        return self.frame[1][0]
         cv.imshow("Station", self.frame[1][0])
         cv.waitKey(1)
 
