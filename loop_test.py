@@ -67,22 +67,22 @@ def get_down(env, list_actions, render):
 
 if __name__ == "__main__":
 
-    path = "./DQ_6.0/"
+    path = "./6.0/"
     dir_list = os.listdir(path)
 
     pattern = r'\d+'
     numbers_list = []
 
-    dir_list.remove("best_model.zip")
-    numbers_list = [re.findall(pattern, n)[0] for n in dir_list]
-    # dir_list = ["rl_model_57000_steps.zip"]
+    # dir_list.remove("best_model.zip")
+    # numbers_list = [re.findall(pattern, n)[0] for n in dir_list]
+    dir_list = ["pito.zip"]
     
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
     # obs, info = vec_env.reset()
     
 
     results = {}
-    num_tests = 5
+    num_tests = 50
     render = False
 
     
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         error_pos = 0
         error_or = 0
         error_dq = 0
-        print(path + model_name)
+
         # Loading model
         model = SAC.load(path + model_name)      
         model.policy.eval()
@@ -121,9 +121,9 @@ if __name__ == "__main__":
 
                 if terminated or truncated:
 
-                    # get_down(vec_env, list_actions, render)
-                    # success += grasp(vec_env, list_actions, render)
-                    # obs, info = vec_env.reset()
+                    get_down(vec_env, list_actions, render)
+                    success = grasp(vec_env, list_actions, render)
+                    obs, info = vec_env.reset()
                     dq_error, d_error, or_error = vec_env.unwrapped.get_error()
                     error_pos += d_error
                     error_or += or_error
@@ -144,10 +144,10 @@ if __name__ == "__main__":
         print(f"   -- Mean Error: {error_pos / num_tests}\n")
 
 
-    # Serializing json
-    json_object = json.dumps(results, indent=4)
+    # # Serializing json
+    # json_object = json.dumps(results, indent=4)
     
-    # Writing to sample.json
-    with open("test_results_withError.json", "w") as outfile:
-        outfile.write(json_object)
+    # # Writing to sample.json
+    # with open("test_results_withError.json", "w") as outfile:
+    #     outfile.write(json_object)
     
