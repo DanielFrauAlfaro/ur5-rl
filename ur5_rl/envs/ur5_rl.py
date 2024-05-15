@@ -141,9 +141,9 @@ class UR5Env(gym.Env):
 
         # Reward mask
         self.mask = np.array([-0.5, 
-                              2, 2, 4,
-                              2, 2, 4,
-                              2, 2, 4,
+                              0.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0,
                               0, 0,
                               4, 3, 3])
         
@@ -436,7 +436,7 @@ class UR5Env(gym.Env):
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = random.randint(10,13) # 0,9
+        object_chosen = random.randint(0,13) # 0,9
         
         self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
         self._ur5 = UR5(self._client)
