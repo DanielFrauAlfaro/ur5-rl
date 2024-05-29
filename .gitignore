@@ -7,7 +7,7 @@ pruebas.py
 
 ./Dockerfile
 /ros_ws
-/ur5_rl/__pycache__
-/ur5_rl/resources/__pycache__
+/ur5-rl/ur5_rl/__pycache__
+/ur5-rl/ur5_rl/resources/__pycache__
 /video
 *.json
