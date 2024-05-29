@@ -9,21 +9,10 @@ Acknowledgements:
 - Functions related to dual quaternions: re-implementations based on pip package "dual_quaternions"
 """
 
-
-
-
-
-###################### IMPORTANTE #####################################################
-###################### IMPORTANTE #####################################################
-###################### IMPORTANTE #####################################################
-#### CODIGO SACADO DE                                                       ###########
-#### https://gist.github.com/Flunzmas/d9485d9fee6244b544e7e75bdc0c352c ################
-#######################################################################################
-
-
-
-
-
+###################### IMPORTANT #####################################################
+#### Code taken from                                                       ###########
+#### https://gist.github.com/Flunzmas/d9485d9fee6244b544e7e75bdc0c352c ###############
+######################################################################################
 
 # ======== QUATERNIONS =======================================================================
 
@@ -178,13 +167,9 @@ def dq_to_screw(dq):
     d = torch.zeros(*dq.shape[:-1], device=dq.device)
 
     l[with_rot] = dq_r[with_rot, 1:].float() / torch.sin(theta[with_rot] / 2).float()
-    # Se usa la ecuación para pasar de screw coordinates a dual quaternion coordinates del paper donde salen las coordenadas de Plucker pero
-    #   despejando la "l"
 
     d[with_rot] = (dq_t[with_rot] * l[with_rot]).sum(dim=-1)  # batched dot product
     d[with_rot] = torch.norm(dq_t[with_rot])
-    # Se hace el producto interno con el cuaternio de desplazamiento y el vector director de la recta para comprobar como de parecidos son,
-    #    sería algo similar a la distancia del coseno, por no decir que es eso directamente pero sin la funcion coseno
 
     t_l_cross = torch.cross(dq_t[with_rot].float(), l[with_rot].float(), dim=-1)
     m[with_rot] = 0.5 * (t_l_cross.float() + torch.cross(l[with_rot].float(), t_l_cross.float() / torch.tan(theta[with_rot].float() / 2), dim=-1).float()).float()
@@ -219,8 +204,6 @@ def dq_rotate_vector(q_rot, vector):
     rotated_quat = q_mul(q_conjugate(q_rot), q_mul(vector, q_rot))
 
     # Extract the rotated vector from the resulting quaternion
-    # rotated_vector = rotated_quat[..., 1:]                        # ---> no importa si hacerlo con esto o sin
-
     return rotated_quat
 
 
@@ -228,10 +211,9 @@ def dq_rotate_vector(q_rot, vector):
 # === LOSSES =================================================================================
 
 
-# these parameters can be tuned!
-LAMBDA_ROT = 1 / math.pi  # 1.3 # divide by maxmimum possible rotation angle (pi)
-# for LAMBDA_TRANS, assume that translation coeffs. are normalized in 3D eucl. space
-LAMBDA_TRANS = 3.5 / 1# 1.7 # 1.2 # (2 * math.sqrt(3))  # divide by maximum possible translation (2 * unit cube diagonal)
+# Scale parameters
+LAMBDA_ROT = 1 / math.pi  # Rotation
+LAMBDA_TRANS = 3.5 / 1    # Traslation 
 
 def dq_distance(dq_pred, dq_real):
     '''
@@ -241,23 +223,32 @@ def dq_distance(dq_pred, dq_real):
     => "Distance" between two dual quaternions: weighted sum of screw motion axis magnitude and rotation angle.
     '''
 
-    # dq_pred, dq_real = dq_normalize(dq_pred), dq_normalize(dq_real)
+    # Inverse of predicted
     dq_pred_inv = dq_quaternion_conjugate(dq_pred)  # inverse is quat. conj. because it's normalized
+    
+    # Quaternion difference
     dq_diff = dq_mul(dq_pred_inv, dq_real)
     
-
+    # Extract real and imaginary part of the difference
     dq_diff_rot = dq_diff[..., :4]  # Rotation part
     dq_diff_trans = dq_diff[..., 4:]  # Translation part
 
     # Rotate the translation part using the rotation quaternion
     dq_diff_trans_rotated = dq_rotate_vector(dq_diff_rot, dq_diff_trans)
+
+    # Obtain the norm
     d = torch.linalg.norm(dq_diff_trans_rotated, dim=-1)
 
+    # Reassign the rotated quaternion
     dq_diff[:,4:] = dq_diff_trans_rotated[:,:]
 
-    # _, _, theta, _ = dq_to_screw(dq_diff)
+    # Split the dual quaternion to obtain both parts
     dq_r, dq_d = torch.split(dq_diff, [4, 4], dim=-1)
+
+    # Obtain theta
     theta = q_angle(dq_r).squeeze(-1)
 
+    # Distance
     distances = 1/((LAMBDA_ROT * torch.abs(theta))  + (LAMBDA_TRANS * torch.abs(d)))
+    
     return torch.mean(distances), torch.abs(d) * LAMBDA_TRANS, torch.abs(theta) * LAMBDA_ROT
