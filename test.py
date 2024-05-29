@@ -1,129 +1,135 @@
 import ur5_rl
 import gymnasium as gym
-from stable_baselines3 import SAC, TD3
-from stable_baselines3.common.vec_env import VecNormalize, VecEnv, SubprocVecEnv
-from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.noise import NormalActionNoise
-from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback, BaseCallback
-from networks_SB import CustomCombinedExtractor
+from stable_baselines3 import SAC
 import numpy as np
 import cv2 as cv
-import os
-import pybullet as p
-import time
 
 
-# Define GUI elements
-def user_interface():
-
-    x_gui = p.addUserDebugParameter('X', -1, 1, 0.0)
-    y_gui = p.addUserDebugParameter('Y', -1, 1, 0.0)
-    z_gui = p.addUserDebugParameter('Z', -1, 1, 0.0)
-    roll_gui = p.addUserDebugParameter('Roll', -1, 1, 0)
-    pitch_gui = p.addUserDebugParameter('Pitch', -1, 1, 0)
-    yaw_gui = p.addUserDebugParameter('Yaw', -1, 1, 0)
-    gripper_gui = p.addUserDebugParameter('Gripper', -1, 1, 0)
-
-    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
-
-# Read GUI elements
-def read_gui(gui_joints):
-    j1 = p.readUserDebugParameter(gui_joints[0])
-    j2 = p.readUserDebugParameter(gui_joints[1])
-    j3 = p.readUserDebugParameter(gui_joints[2])
-    j4 = p.readUserDebugParameter(gui_joints[3])
-    j5 = p.readUserDebugParameter(gui_joints[4])
-    j6 = p.readUserDebugParameter(gui_joints[5])
-    # g =  p.readUserDebugParameter(gui_joints[6])
-
-    return np.array([j1, j2, j3, j4, j5, j6])
-
-COMPLETE = False
-
-if __name__ == "__main__":
+# Function for image rendering
+def image_render(env, render):
     
-
-    # Test
-    print("|| Loading model for testing ...")
-    model = SAC.load("./6.0/pito.zip")       # rl_31500_5.5 --> 8 / 10
-                                                                 # rl_30000_5.5 --> 8o9 / 10
-                                                                 # rl_28500_5.5 --> 8o9 / 10
-                                                                 # rl_12000_5.5 --> 7o8 / 10
-                                                                 # rl_33000_5.2 --> 7o8 / 10
-
-    model.policy.eval()
-    print("|| Testing ...") # sugar, cracker
-    
-    
-
-    r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
-    obs, info = vec_env.reset()
-    
-    gui_joints = user_interface()
-
-    list_actions = []
-    
-
-    t = time.time()
-    while True:
-        # obs["ee_position"] = np.append(obs["ee_position"], 0)
-        action, _states = model.predict(obs, deterministic = True)
-        # action = read_gui(gui_joints)
-
-        list_actions.append(-action)
-        obs, reward, terminated, truncated, info = vec_env.step(action)
-        
-        
-
-        # print(info)
-        # print("--")
-        r += reward
+    if render:
         img = vec_env.render()
+        cv.imshow("Environment", img)
+        cv.waitKey(1)
 
-        # cv.imshow("AA", img)
-        # cv.waitKey(1)
 
-        if terminated or truncated:
+# Function to grasp the object
+def grasp(env, list_actions, render):
+    # Starts the grasping process
+    grasped = False
+    is_touching = False
+    cnt = 0
 
-            if COMPLETE:
+    # While the list of actions has actions ...
+    while len(list_actions) > 1:
 
-                grasped = False
-                is_touching = False
+        # ... if the gripper is not touching the object ...
+        if not grasped:
+
+            # ... advance simulation with no action (zero vector)
+            __, __, __, __, __ = vec_env.step(np.zeros(6))
+
+            # Check if it is in contact with the object
+            is_touching, g = vec_env.unwrapped.grasping()
+
+            # Increase or reset the counter
+            if is_touching:
+                cnt += 1
+            else:
                 cnt = 0
 
-                while len(list_actions) > 1:
-                    if not grasped:
-                        obs, reward, terminated, truncated, info = vec_env.step(np.zeros(6))
-                        is_touching, g = vec_env.unwrapped.grasping()
+            # It is grasping if is touching during 4 steps
+            grasped = cnt == 4
 
-                        grasped = cnt == 4
+            # Gripper limit
+            if g >= 100:
+                break
 
-                        if is_touching:
-                            cnt += 1
-                        else:
-                            cnt = 0
+         # If it is grasping the object ...
+        else:
+            # Applies the action in reverse order
+            action = list_actions.pop()
+            __, __, __, __, __ = vec_env.step(action)
 
-                        if g >= 100:
-                            break
-
-                    else:
-                        action = list_actions.pop()
-                        print("Action: ", len(list_actions))
-                        obs, reward, terminated, truncated, info = vec_env.step(action)
-
-                    img = vec_env.render()
-
-                    # cv.imshow("AA", img)
-                    # cv.waitKey(1)
+        image_render(env=env, render=render)
 
 
-            print("Tiempo: ", time.time() - t)
-            t = time.time()
-            print(r, "\n--")
-            r = 0
-            list_actions = []
+# Function to move the robot downwards
+def get_down(env, list_actions, render):
+    # Endless loop
+    while True:
+        # Apply an action to move the robot downwards
+        obs, reward, terminated, truncated, info = vec_env.step(np.array([0.0, 0.0, -0.4, 0.0, 0.0, 0.0]))
 
+        # Save inverse action
+        list_actions.append(-action)
+
+        # Image render
+        image_render(env=env, render=render)
+        
+        # Check for limits
+        if info["limit"]:
+            break
+
+    return list_actions
+
+
+# --- Main ---
+if __name__ == "__main__":
+
+    path = "./models/"
+    model_name = "best_model.zip"
+
+    # Environment
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")    
+
+    # --- Config ---
+    render = False
+    r = 0
+    list_actions = []
+
+
+    # Loading model
+    model = SAC.load(path + model_name)      
+    model.policy.eval()
+    print(f"Loading model: " + model_name)
+
+
+    # Reset environment
+    obs, info = vec_env.reset()
+    
+    
+    # Endless loop
+    while True:
+
+        # Generate action
+        action, _states = model.predict(obs, deterministic = True)
+
+        # Apply action (a) to the environment and recieve:
+        #   state (s), reward (r), end flags (terminated and truncated)
+        obs, reward, terminated, truncated, info = vec_env.step(action)
+        
+        # Save inverse action
+        list_actions.append(-action)
+
+        # Accumulate reward
+        r += reward
+        
+        # Image render
+        image_render(env=vec_env, render=render)
+
+        # Episode end
+        if terminated or truncated:
+            
+            # Take the robot vertically downwards
+            get_down(vec_env, list_actions, render)
+
+            # Perform a simple grasp
+            grasp(vec_env, list_actions, render)
+
+            # Reset environment
             obs, info = vec_env.reset()
-
+            
+            break
+    
