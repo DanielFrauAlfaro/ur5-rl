@@ -8,3 +8,4 @@ pruebas.py
 ./Dockerfile
 /ros_ws
 /ur5_rl/__pycache__
+/ur5_rl/resources/__pycache__
