@@ -15,3 +15,4 @@ __pycache__
 *.json
 ur5_rl.egg-info
 /papers/
+*.pdf
