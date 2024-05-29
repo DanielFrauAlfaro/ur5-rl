@@ -1,44 +1,19 @@
-import os
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import numpy as np
-import cv2 as cv
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
-
-# Uniform noise layer --> DEPRECATED // NOT USED
-# se deja para tener info en un futuro
-'''
-Applies noise to an input between two parameters:
-    - low: lowest possible noise
-    - high: highest possible noise
-'''
-class UniformNoiseLayer(nn.Module):
-    def __init__(self, low = -0.1, high = 0.1):
-        super(UniformNoiseLayer, self).__init__()
-
-        # --- Parameters ---
-        self.low = low
-        self.high = high
-    
-    # Forward method
-    def forward(self, x):
-        # Applies random noise and clips it between both values
-        return x + torch.rand_like(x) * (self.high - self.low) + self.low
-
 
 
 # Resiudual block
 '''
 Resiudal block that performs the residual layer operation:
-    - in_channels: input channels of the block
-    - out_channels: output channels that the block produces
-    - kernel_size: sampling of the image: != 1 to reduce image dimensionality
-    - kernel_max: max pooling kernel
-    - end_layer: flag that indicates wether the block is the last one of feature extractor
-    - residual: flag to activate residual connections
-    - device: feature extractor device
+    Parameters:
+        - in_channels: input channels of the block
+        - out_channels: output channels that the block produces
+        - kernel_size: sampling of the image: != 1 to reduce image dimensionality
+        - kernel_max: max pooling kernel
+        - end_layer: flag that indicates wether the block is the last one of feature extractor
+        - residual: flag to activate residual connections
+        - device: feature extractor device
 '''
 class ResidualBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size = 3, kernel_max = 2, end_layer = False, residual = False, device = "cpu"):
@@ -111,12 +86,22 @@ class ResidualBlock(nn.Module):
 
 # Custom feature extractor class
 '''
-Feature extractor for the environment
+Feature extractor for the environment:
     - Convolutions for the images
     - MLP for the vectors
+
+    Parameters:
+        - observation_space (dict): dictionary of observations that represents the observations of the environment
+        - residual (bool): activate the residual connections
+        - channels (list): evolution of the channels throughout the network
+        - kernel (int): kernel for convolutional layers
+        - m_kernel (int): kernel for pooling layers
+        - n_layers (int): number of ResidualBlocks used
+        - out_vector_features (int): desired size of output vector features
+        - features_dim (int): desired size of output image features
 '''
 class CustomCombinedExtractor(BaseFeaturesExtractor):
-    def __init__(self, observation_space, residual = True, channels = [2, 16, 32, 32, 32], kernel = 3, m_kernel = 2, n_layers = 4, h_size=200, w_size=200, out_vector_features = 16, features_dim = 128):
+    def __init__(self, observation_space, residual = True, channels = [2, 16, 32, 32, 32], kernel = 3, m_kernel = 2, n_layers = 4, out_vector_features = 16, features_dim = 128):
         super(CustomCombinedExtractor, self).__init__(observation_space, features_dim)
         
         # Parameters
@@ -145,7 +130,6 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
             nn.Tanh())
         torch.nn.init.xavier_uniform_(self.vector_extractor[1].weight)
         
-
         # Obtains the output dimensions of the flatten convoutioanl extractor layers
         with torch.no_grad():
             n_flatten = self.image_extractor_1(
@@ -185,11 +169,11 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
 
     # Build convolutional feature extractor with:
     '''
-    - in_channels
-    - out_channels: the input of the next layer
-    - kernel_size for the convolutional
+    - in_channels: the input of the actual layer // output of the previous one
+    - out_channels: the output of the actual layer // the input of the next layer
+    - kernel_size: size of the convolutional kernel
     - device
-    - residual flag
+    - residual: residual flag
     - m_kernel: kernel size for max pooling
     - endl_l: end layer flag
     '''
