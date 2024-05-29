@@ -6,4 +6,4 @@ my_models_eval
 pruebas.py
 
 ./Dockerfile
-./ros_ws/build/
+/ros_ws
