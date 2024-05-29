@@ -67,22 +67,22 @@ def get_down(env, list_actions, render):
 
 if __name__ == "__main__":
 
-    path = "./6.0/"
+    path = "./5.0_aux_D/"
     dir_list = os.listdir(path)
 
     pattern = r'\d+'
     numbers_list = []
 
     # dir_list.remove("best_model.zip")
-    # numbers_list = [re.findall(pattern, n)[0] for n in dir_list]
-    dir_list = ["pito.zip"]
+    numbers_list = [re.findall(pattern, n)[0] for n in dir_list]
+    # dir_list = ["pito.zip"]
     
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
     # obs, info = vec_env.reset()
     
 
     results = {}
-    num_tests = 50
+    num_tests = 25
     render = False
 
     

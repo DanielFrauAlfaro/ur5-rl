@@ -1,8 +1,10 @@
 import json
 import matplotlib.pyplot as plt
 
+plt.rcParams['font.size'] = 25
+
 # Read JSON data from file
-with open('test_results_withError.json', 'r') as file:
+with open('test_results_withError_2.json', 'r') as file:
     json_data = json.load(file)
 
 # Sort data by index
@@ -24,8 +26,8 @@ dq_error = [item[1]['dq_error'] for item in sorted_data]
 # Plot mean_reward values vs sorted keys as a line plot with background grid
 plt.figure(figsize=(10, 6))
 plt.plot(sorted_keys, mean_rewards, marker='o')  # Use marker='o' for data points
-plt.xlabel('Steps')
-plt.ylabel('Mean Reward')
+plt.xlabel('Steps', fontsize=25)
+plt.ylabel('Mean Reward', fontsize=25)
 plt.xticks(rotation=90)  # Rotate x-axis labels for better visibility
 plt.title('')
 plt.grid(True)  # Add background grid
@@ -54,10 +56,9 @@ plt.show()
 
 plt.figure(figsize=(10, 6))
 plt.plot(sorted_keys, dq_error, marker='o')  # Use marker='o' for data points
-plt.xlabel('Steps')
-plt.ylabel('DQ error')
+plt.xlabel('Steps', fontsize=25)
+plt.ylabel('DQ error', fontsize=25)
 plt.xticks(rotation=90)  # Rotate x-axis labels for better visibility
-plt.title('Dual ')
 plt.grid(True)  # Add background grid
 plt.tight_layout()
 plt.show()

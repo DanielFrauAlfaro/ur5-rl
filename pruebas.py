@@ -1,11 +1,18 @@
 import numpy as np
 import torch
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from geometry_msgs.msg import Quaternion, Pose, Point
 
 
-a = [1 ,2, 3, 4, 5]
-a_ = torch.tensor(a).unsqueeze(dim=0)
+pos, orn = np.random.uniform([[0.05, 0.5, 0.85], [-np.pi, -np.pi/2, -3.1415]], 
+                             [[0.275,  0.62, 0.85], [np.pi,  -np.pi/2,  3.1415]])
 
-print(a_)
+quat_tf = quaternion_from_euler(orn[0], orn[1], orn[2])
 
-a_ = a_.squeeze(dim=0)
-print(a_.numpy())
+q_msg = Quaternion(quat_tf[0], quat_tf[1], quat_tf[2], quat_tf[3])
+
+point = Point(pos[0], pos[1], pos[2])
+pose = Pose()
+pose.position = point
+pose.orientation = q_msg
+print(pose)

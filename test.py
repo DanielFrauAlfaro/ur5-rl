@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     # Test
     print("|| Loading model for testing ...")
-    model = SAC.load("./DQ_6.0/rl_model_54000_steps.zip")       # rl_31500_5.5 --> 8 / 10
+    model = SAC.load("./6.0/pito.zip")       # rl_31500_5.5 --> 8 / 10
                                                                  # rl_30000_5.5 --> 8o9 / 10
                                                                  # rl_28500_5.5 --> 8o9 / 10
                                                                  # rl_12000_5.5 --> 7o8 / 10
@@ -54,11 +54,11 @@ if __name__ == "__main__":
 
     model.policy.eval()
     print("|| Testing ...") # sugar, cracker
-
+    
     
 
     r = 0
-    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "DIRECT")
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
     obs, info = vec_env.reset()
     
     gui_joints = user_interface()
@@ -77,8 +77,8 @@ if __name__ == "__main__":
         
         
 
-        print(info)
-        print("--")
+        # print(info)
+        # print("--")
         r += reward
         img = vec_env.render()
 
@@ -115,13 +115,13 @@ if __name__ == "__main__":
 
                     img = vec_env.render()
 
-                    cv.imshow("AA", img)
-                    cv.waitKey(1)
+                    # cv.imshow("AA", img)
+                    # cv.waitKey(1)
 
 
             print("Tiempo: ", time.time() - t)
             t = time.time()
-            print(r, "--")
+            print(r, "\n--")
             r = 0
             list_actions = []
 

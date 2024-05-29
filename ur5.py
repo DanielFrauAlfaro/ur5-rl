@@ -484,7 +484,7 @@ if __name__ == "__main__":
         # wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
         # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
-        print_axis(client = client, pos = pos_w, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+        # print_axis(client = client, pos = pos_w, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
         # print_axis(client = client, pos = pos_w, rotation_matrix = [axis, axis, axis])
 
         # print(z_axis_local)
@@ -529,8 +529,8 @@ if __name__ == "__main__":
         # wrist_or = z_axis_local / np.linalg.norm(z_axis_local)
         # wrist_or_y = y_axis_local / np.linalg.norm(x_axis_local)
 
-        print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
-        print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
+        # print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+        # print_axis(client = client, pos = pos_obj, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
         # print_axis(client = client, pos = pos_obj, rotation_matrix = [axis, axis, axis])
         # print(z_axis_local)
         # print(min(np.linalg.norm(wrist_or - obj_or), np.linalg.norm(wrist_or - (-obj_or))))
