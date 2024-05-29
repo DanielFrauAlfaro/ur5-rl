@@ -2,33 +2,32 @@ import numpy as np
 import math
 import pybullet as p
 import pyb_utils
-from scipy.spatial.transform import Rotation
 import cv2 as cv
-import time
 import copy
-# import dqrobotics
 from dq import *
 import torch
+
 
 # Adds noise to an array
 def add_noise(array, std = 0.5):
     '''
        Adds normal noise to an array               
+        Input;                                    
+           - array (np.array): array to add noise to.         
+           - std (float): standard deviation to the noise  
                                                    
-           - array: array to add noise to.         
-           - std: Standard deviation to the noise  
-                                                   
-       Returns:                                    
+       Output:                                    
            - Noised array (np.array)               
     '''
 
     return np.random.normal(loc=0, scale=std, size=np.array(array).shape)
 
+
 # Sets the camera with the class parameters and the desiresd coordiantes
-def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, first = True):
+def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0):
     '''
-       Obtains the intrinsic and extrinsic parameters of cameras       
-                                                                       
+        Obtains the intrinsic and extrinsic parameters of cameras       
+        Input:                                                  
            - client: Pybullet client (int)                             
            - fov: field of view (int)                                  
            - aspect: aspect of the cameras (int)                       
@@ -38,7 +37,7 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
        the camera (list of list / arrays) (XYZ - RPY)                  
            - std: standard deviation for the noise                     
                                                                        
-       Returns:                                                        
+       Output:                                                        
            - A list of two matrix: intrinsic and extrinsic parameters  
     '''    
 
@@ -47,17 +46,21 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
 
     # Adds noise to the camera coordinates (just the first one)
     cameras_coord_aux = copy.deepcopy(cameras_coord)
-    if True:
-        cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
-        cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
+
+    # Add noise
+    cameras_coord_aux[0][0] += add_noise(cameras_coord_aux[0][0], std = std)
+    cameras_coord_aux[1][0] += add_noise(cameras_coord_aux[0][0], std = std)
     
+
     # For each camera ...
     for camera in cameras_coord_aux:
-        # Obtain rotations
+
+        # Obtain rotation matrices
         rot_x = np.array([[1, 0, 0], [0, math.cos(camera[1][0]), -math.sin(camera[1][0])], [0, math.sin(camera[1][0]), math.cos(camera[1][0])]])
         rot_y = np.array([[math.cos(camera[1][1]),0, math.sin(camera[1][1])], [0, 1, 0], [-math.sin(camera[1][1]),0,math.cos(camera[1][1])]])
         rot_z = np.array([[math.cos(camera[1][2]), -math.sin(camera[1][2]), 0], [math.sin(camera[1][2]), math.cos(camera[1][2]), 0], [0, 0, 1]])
         
+        # Global rotation
         rot_mat = np.matmul(np.matmul(rot_x, rot_y), rot_z)
         camera_vec = np.matmul(rot_mat, [1, 0, 0])
         up_vec = np.matmul(rot_mat, np.array([0, 0, 1]))
@@ -75,7 +78,7 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
         # Set a the [3][3] value of the matrix to 1 (is at)
         proj_matrix_3x3[-1][-1] = 1
 
-        # Saves parameters
+        # Save parameters
         camera_params.append([view_matrix, proj_matrix, proj_matrix_3x3])
 
     return camera_params
@@ -83,30 +86,32 @@ def set_cam(client, fov, aspect, near_val, far_val, cameras_coord, std = 0, firs
 
 # Shows axis on the world
 def print_axis(client, pos, rotation_matrix):
-    axis_length = 0.1
-    x_axis, y_axis, z_axis = [axis_length, 0, 0], [0, axis_length, 0], [0, 0, axis_length]
+    '''
+    Prints axis in the Pybullet simulation:
+    Input: 
+        - client (int): simulation client
+        - pos (np.array, 1x3): position of the axis
+        - rotation_matrix (np.array, 3x3): direction of the axis. Each column represents an axis
 
-    # Get the directions of the axes in the object's local coordinate system
-    # y_axis_local = [0,0,1]
-    # z_axis_local = rotation_matrix[:, 2]
-    # x_axis_local = np.cross(z_axis_local, y_axis_local)
+    Output:
+        - //
+    '''
 
-    # y_aux = y_axis_local
-    # y_axis_local = z_axis_local
-    # z_axis_local = y_aux
+    # Length
+    axis_length = 0.5
 
+    # Extract axis
     x_axis_local = rotation_matrix[0]
     y_axis_local = rotation_matrix[1]
     z_axis_local = rotation_matrix[2]
 
-    
+    # Obtain the end-point
+    line_start = pos
+    line_end_x = [pos[0] + axis_length * x_axis_local[0], pos[1] + axis_length * x_axis_local[1], pos[2] + axis_length * x_axis_local[2]]
+    line_end_y = [pos[0] + axis_length * y_axis_local[0], pos[1] + axis_length * y_axis_local[1], pos[2] + axis_length * y_axis_local[2]]
+    line_end_z = [pos[0] + axis_length * z_axis_local[0], pos[1] + axis_length * z_axis_local[1], pos[2] + axis_length * z_axis_local[2]]
 
     # Draw lines representing the axes of the object
-    line_start = pos
-    line_end_x = [pos[0] + 0.5 * x_axis_local[0], pos[1] + 0.5 * x_axis_local[1], pos[2] + 0.5 * x_axis_local[2]]
-    line_end_y = [pos[0] + 0.5 * y_axis_local[0], pos[1] + 0.5 * y_axis_local[1], pos[2] + 0.5 * y_axis_local[2]]
-    line_end_z = [pos[0] + 0.5 * z_axis_local[0], pos[1] + 0.5 * z_axis_local[1], pos[2] + 0.5 * z_axis_local[2]]
-
     p.addUserDebugLine(line_start, line_end_x, [1, 0, 0], lifeTime=0.3, physicsClientId = client)  # X-axis (red)
     p.addUserDebugLine(line_start, line_end_y, [0, 1, 0], lifeTime=0.3, physicsClientId = client)  # Y-axis (green)
     p.addUserDebugLine(line_start, line_end_z, [0, 0, 1], lifeTime=0.3, physicsClientId = client)  # Z-axis (blue)
@@ -116,11 +121,11 @@ def print_axis(client, pos, rotation_matrix):
 def rotation_matrix_to_euler_xyz(R):
     '''
     Obtains the Euler angles from a 3x3 rotation matrix
+    Input:
+        - R (np.array, 3x3): 3x3 rotation matrix
 
-        - R: 3x3 rotation matrix (lists // numpy matrix)
-
-    Returns:
-        - Array of Euler angles (numpy array)
+    Output:
+        - (np.array) Array of Euler angles
     '''
 
     theta_y = np.arcsin(-R[0, 2])
@@ -129,170 +134,164 @@ def rotation_matrix_to_euler_xyz(R):
 
     return np.array([theta_x, theta_y, theta_z])
 
-
+# Get quaternion from a Pybullet orientation
 def get_quaternion(q):
+    '''
+    Get the quaternion from a Pybullet quaternion as a np.array
+    Input:
+        - q (tuple/list/np.array): quaternion from Pybullet [x,y,z,w] 
+
+    Output:
+        - (np.array): quaternion [w,x,y,z] 
+    '''
+
     return np.array([q[-1], q[0], q[1], q[2]])
 
-def get_dualQuaternion(q_r, q_t):
-    return np.concatenate((q_r, 0.5*q_mul(torch.tensor(q_t).unsqueeze(dim=0), torch.tensor(q_r).unsqueeze(dim=0)).squeeze(dim=0).numpy()))
 
+# Get dual quaternion
+def get_dualQuaternion(q_r, q_t):
+    '''
+    Get dual quaternion from a rotation quaternion and a position quaternion
+    Input:
+        - q_r (np.array): rotation unit quaternion [w,x,y,z]
+        - q_t (np.array): traslation unit quaternion [w,x,y,z]
+
+    Output:
+        - (np.array): dual quaternion representing rotation and traslation [wr,xr,yr,zr,wt,xt,yt,zt]
+    '''
+
+    return np.concatenate((q_r, 0.5*q_mul(torch.tensor(q_t).unsqueeze(dim=0), torch.tensor(q_r).unsqueeze(dim=0)).squeeze(dim=0).numpy()))
 
 
 # Getter for the object position
 def get_object_pos(client, object):
     '''
-       Obtains the position and orientantion of a given object class   
-                                                                       
-           - client: Pybullet client (int)                             
-           - object: class that represents an object (must have        
-        "id" attribute) (object)                                       
+        Obtains the position and orientantion of a given object class   
+        Input:                                                               
+           - client (int): Pybullet client                          
+           - object (class Object): class that represents an object (must have        
+        "id" attribute)                                        
                                              
-       Returns:                                                        
-           - Two arrays, the position (XYZ) and orientation (RPY)
+        Output:                                                        
+           - np.array(pos) (np.array): position of the object in cartesian 
+           - euler_angles (np.array): euler angles of the original reference system
+           - euler_angles_ (np.array): euler angles of the auxiliar reference system
+           - DQ (np.array): dual quaternion of the original reference system
+           - DQ_ (np.array): dual quaternion of the auxiliar reference system
     '''
 
     # Get the position and orientation of the object
     pos, orn = p.getBasePositionAndOrientation(object.id, physicsClientId=client)
+    pos = list(pos)
+
     # Convert quaternion to rotation matrix
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
     
+    # Normalise rotation axis
     x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
     y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
     z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
 
-    # y_axis_local[0] = math.cos(math.pi / 2.0) * z_axis_local[0] - math.sin(math.pi / 2.0) * z_axis_local[1]
-    # y_axis_local[1] = math.sin(math.pi / 2.0) * z_axis_local[0] + math.cos(math.pi / 2.0) * z_axis_local[1]
-    # y_axis_local[2] = z_axis_local[2]
-
-    # x_axis_local = np.cross(z_axis_local, y_axis_local)
-    # x_axis_local /= np.linalg.norm(x_axis_local)
-
-
-    # roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(0)
-    # my_rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
-
-    # new_matrix = rotation_matrix.transpose()*my_rotation_matrix*rotation_matrix
-    # y_axis_local = np.matmul(new_matrix, z_axis_local)
-    # y_axis_local /= np.linalg.norm(y_axis_local)
-
-    # x_axis_local = new_matrix[:,0] / np.linalg.norm(new_matrix[:,0])
-    # y_axis_local = new_matrix[:,1] / np.linalg.norm(new_matrix[:,1])
-    # z_axis_local = new_matrix[:,2] / np.linalg.norm(new_matrix[:,2])
-
-
-    # auto new_rot = matAux.transpose()*rotpos90x*rotneg45z*matAux;
-    # endLinkX = new_rot*endLinkX;
-    # endLinkY = new_rot*endLinkY;
-    # endLinkZ = new_rot*endLinkZ;
-
-    pos = list(pos)
-
+    # Correct cracker_box position
     if "cracker" in object.name:
         pos[-1] += 0.26
     else:
-        pos[-1] += 0.215 # * x_axis_local
+        pos[-1] += 0.215
 
+    # Correct axis
     x_axis_local = np.array([0, 0, -1])
     y_axis_local = np.cross(z_axis_local, x_axis_local)
-
+    
+    # Correct boxes axis
     if "box" in object.name:
         z_axis_local, y_axis_local = -y_axis_local, z_axis_local
 
     z_axis_local_ = -1*z_axis_local
     y_axis_local_ = np.cross(z_axis_local_, x_axis_local)
 
-    
 
-
+    # Create new rotation matrices and euler angles for both reference systems
     rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     rotation_matrix_ = np.vstack((x_axis_local, y_axis_local_, z_axis_local_)).T
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
     euler_angles_ = rotation_matrix_to_euler_xyz(rotation_matrix_)
     
-    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])
+    # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local])      # --> blue (z)
     # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local_, z_axis_local_])
 
-    pos = list(pos)
+
+    # --- DQ ---
+    # Position quaternion
     pos.append(0.0)
     pos_Q = get_quaternion(pos)
+
+    # Rotation quaternion in both reference systems
     orn = p.getQuaternionFromEuler(euler_angles)
     orn_Q = get_quaternion(orn)
     DQ = get_dualQuaternion(q_r=orn_Q, q_t=pos_Q)
-
 
     orn_ = p.getQuaternionFromEuler(euler_angles_)
     orn_Q_ = get_quaternion(orn_)
     DQ_ = get_dualQuaternion(q_r=orn_Q_, q_t=pos_Q)
 
-     # --> blue (z)
-    
-    return np.array(pos), euler_angles, euler_angles_, DQ, DQ_# rotation_matrix# euler_angles # x_axis_local  + y_axis_local + z_axis_local# z_axis_local#np.array(p.getEulerFromQuaternion(orn, physicsClientId = client))
+    return np.array(pos), euler_angles, euler_angles_, DQ, DQ_
 
 
 # Getter for the wrist position
 def get_wrist_pos(client, robot_id):
     '''
-       Obtains the position and orientantion of a given joint in the robot object class   
-                                                                       
-           - client: Pybullet client (int)                             
-           - robot_id: id of the toot in the simulation (int)   
+        Obtains the position and orientantion of a given joint in the robot object class   
+        Input:                                                  
+           - client (int): Pybullet client                             
+           - robot_id (int): ID of the robot in the simulation  
                                              
-       Returns:                                                        
-           - Two arrays, the position (XYZ) and orientation (RPY)
+        Output:                                                        
+           - np.array(pos) (np.array): cartesian position of the wrist 
+           - euler_angles (np.array): euler angles
+           - DQ (np.array): dual quaternion representation of the wrist
     '''
-    # -------- Wrist Position -------- --> Name:  tool0_ee_link Joint Index: 12 Link Index: b'ee_link'
-    # Get the position and orientation of the ee_link
+
+    # Get the position and orientation of the ee_link. Name:  tool0_ee_link Joint Index: 12 Link Index: b'ee_link'
     link_state = p.getLinkState(robot_id, 11, computeLinkVelocity=1, computeForwardKinematics=1, physicsClientId = client)
     pos, orn = link_state[0], link_state[1]
-    # pos[-1] += 0.01
+    pos = list(pos)
 
-    # ----- Extra code for changing axis ------
+    # Get rotation matrix
     rotation_matrix = np.array(p.getMatrixFromQuaternion(orn, physicsClientId = client)).reshape((3, 3))
 
+    # Normalise axis
     x_axis_local = rotation_matrix[:,0] / np.linalg.norm(rotation_matrix[:,0])
     y_axis_local = rotation_matrix[:,1] / np.linalg.norm(rotation_matrix[:,1])
     z_axis_local = rotation_matrix[:,2] / np.linalg.norm(rotation_matrix[:,2])
 
+    # Transform axis
     x_axis_local = x_axis_local + y_axis_local
     x_axis_local /= np.linalg.norm(x_axis_local)
     y_axis_local = np.cross(z_axis_local, x_axis_local)
 
     x_axis_local, z_axis_local = z_axis_local, -x_axis_local
     
+
     # print_axis(client = client, pos = pos, rotation_matrix = [x_axis_local, y_axis_local, z_axis_local]) # --> blue (z)
     
+    # Create new matrix and euler angles
     rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
     euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
 
-    pos = list(pos)
+
+    # --- DQ ---
+    # Position quaternion
     pos.append(0.0)
     pos_Q = get_quaternion(pos)
 
+    # Rotation quaternion
     orn = p.getQuaternionFromEuler(euler_angles)
     orn_Q = get_quaternion(orn)
 
+    # Dual quaternion
     DQ = get_dualQuaternion(q_r=orn_Q, q_t=pos_Q)
     
-    # my_rotation = rotation_matrix
-    # # Euler angles in radians (replace with your actual values)
-    # roll, pitch, yaw = np.radians(0), np.radians(0), np.radians(45)
-
-    # # Create a rotation matrix from Euler angles
-    # rotation_matrix = Rotation.from_euler('xyz', [roll, pitch, yaw], degrees=False).as_matrix()
-
-    # # Rotate the vector using the rotation matrix
-    # x_axis_local = np.dot(rotation_matrix, x_axis_local)
-    # y_axis_local = np.dot(rotation_matrix, y_axis_local)
-    # x_axis_local *= -1
-
-    # y_axis_local, z_axis_local = z_axis_local, y_axis_local
-    # y_axis_local, x_axis_local = x_axis_local, y_axis_local
-    # y_axis_local = np.cross(z_axis_local, x_axis_local)
-
-    # rotation_matrix = np.vstack((x_axis_local, y_axis_local, z_axis_local)).T
-    # euler_angles = rotation_matrix_to_euler_xyz(rotation_matrix)
-
-    return np.array(pos), euler_angles, DQ #rotation_matrix# euler_angles #x_axis_local  + y_axis_local + z_axis_local# z_axis_local, y_axis_local# np.array(p.getEulerFromQuaternion(orn, physicsClientId=client))
+    return np.array(pos), euler_angles, DQ 
 
 
 # Computes the reward according the approximation to the object
@@ -358,128 +357,95 @@ def approx_reward_EUC(client, object, dist_obj_wrist, robot_id):
 
     return reward, dist_obj_wrist
 
-# Computes the reward according the approximation to the object
+
+# Computes the reward according the approximation to the object in DQ
 def approx_reward(client, object, dist_obj_wrist, robot_id):
     '''
-       Computes the reward due to approximation to the object  
-                                                                       
-           - client: Pybullet client (int)                             
-           - object: class that represents an object (must have        
-        "id" attribute) (object)
-           - dist_obj_wrist: previous distance between the wrist and the object (float)
-           - robot_id: id of the robot in the simulation (int)                          
+        Computes the reward due to approximation to the object using DQ 
+        Input:                                                
+           - client (int): Pybullet client                             
+           - object (class Object): class that represents an object (must have        
+        "id" attribute) 
+           - dist_obj_wrist (float): previous distance between the wrist and the object
+           - robot_id (id): ID of the robot in the simulation                          
                                              
-       Returns:                                                        
-           - The new reward for approximation (int, -1 ó 1)
-           - The new distance between the object and the wrist
+        Output:                                                        
+           - reward (float): reward associated with the distance
+           - dist_obj_wrist (float): new distance 
     '''
 
-    
     # Obtains the object and wrist positions
     obj_pos, __, __, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
     wrist_pos, __, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)
-
-    # Primary parts
-    # p_w = dqrobotics.P(DQ_w)
-    # p_obj = dqrobotics.P(DQ_obj)
-    # p_obj_ = dqrobotics.P(DQ_obj_)
-
-    # # Dual parts
-    # d_w = dqrobotics.D(DQ_w)
-    # d_obj = dqrobotics.D(DQ_obj)
-    # d_obj_ = dqrobotics.D(DQ_obj_)
-
-    # # Vectors
-    # # --- Dual quaternion vectors ---
-    # w_DQ_vec = dqrobotics.vec8(DQ_w)
-    # obj_DQ_vec = dqrobotics.vec8(DQ_obj)
-    # obj_DQ_vec_ = dqrobotics.vec8(DQ_obj_)
-
-    # # --- Primary parts vector ---
-    # p_w_vec = dqrobotics.vec4(p_w)
-    # p_obj_vec = dqrobotics.vec4(p_obj)
-    # p_obj_vec_ = dqrobotics.vec4(p_obj_)
-
-    # # --- Dual parts vector ---
-    # d_w_vec = dqrobotics.vec4(d_w)
-    # d_obj_vec = dqrobotics.vec4(d_obj)
-    # d_obj_vec_ = dqrobotics.vec4(d_obj_)
 
     # Angular distance using quaternion
     d_p = math.acos(2*np.dot(DQ_w[0:4], DQ_obj[0:4]) ** 2 - 1)
     d_p_ = math.acos(2*np.dot(DQ_w[0:4], DQ_obj_[0:4]) ** 2 - 1)
 
-
+    # Checks which reference system is closer and computes the reward
     if d_p < d_p_:
         r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w])))
     else:
         r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w])))
 
-
+    # Extract items and list them
     r = r.item()
     d = d.item()
     theta = theta.item()
-
     distance = [r, d, theta]
 
+    # Checks if the robot has gotten closer to the object in all dimensions (global, position, orientation)
     approx_list = [i < j for i,j in zip(distance, dist_obj_wrist)]
     not_approx = False in approx_list[1:]
 
+    # Compute the reward
     reward = np.tanh(-r)*3 if not_approx else np.tanh(r)*3
     
-    # if not approx_list[0]:
-    #     if approx_list[-1] or theta < 0.09:
-    #         reward += np.tanh(r)
-
-    #     if approx_list[1]:
-    #         reward += np.tanh(r)*0.33
-
+    # Bonus for orientation approximation
     if approx_list[-1] or theta < 0.08:
         reward += np.tanh(r)
 
+    # Bouns for getting close
     if d < 0.08 and theta < 0.08:
-        # print("AAA")
         reward = r
     
-    
-    # Updates distance
+    # Update distance
     dist_obj_wrist = distance
 
     return reward, dist_obj_wrist
 
 
-
 # Check the collision between TWO objects IDs
 def check_collision(client, objects):
     '''
-       Computes the collisions between a list of two objects   
-                                                                       
-           - client: Pybullet client (int)                             
-           - objects: id of the objects in the simulation (int)                                  
+        Computes the collisions between a list of two objects   
+        Input:                                                    
+           - client (int): Pybullet client                           
+           - objects (tuple/list/np.array): ID of the objects in the simulation                                
                                              
-       Returns:                                                        
-           - A boolean indicating wether they are collisioning or not (boolean)
+        Output:                                                        
+           - (bool): flag indicating wether they are collisioning or not (boolean)
     '''
 
     # Collision detector object for both objects
     col_detector = pyb_utils.CollisionDetector(client, [(objects[0], objects[1])])
 
-    # Detects collision with a certain margin (0.0)
+    # Detects collision with a certain margin
     return col_detector.in_collision(margin = 0.0005)
     
 
 # Computes the reward associated with collision reward
 def collision_reward(client, collisions_to_check, mask = np.array([0,0])):
     '''
-       Computes the complete reward related to the object collision   
-                                                                       
+        Computes the complete reward related to the object collision   
+        Input:                                                       
            - client: Pybullet client (int)                             
-           - collisions_to_check: list of list with the ids of the object
-        to check collisions (list of lists of int)
-           - mask: mask of rewards associated with each collision (np.array)                        
+           - collisions_to_check (list): list of lists with the IDs of the object
+        to check collisions
+           - mask (np.array): mask of rewards associated with each collision                         
                                              
-       Returns:                                                        
-           - Complete collisionn reward (int / float)
+        Output:                                                        
+           - (float): Complete collisionn reward
     '''
 
     # Obtains the collisions as integers
@@ -492,14 +458,14 @@ def collision_reward(client, collisions_to_check, mask = np.array([0,0])):
 # Check if the robot is out of bounds
 def out_of_bounds(limits, robot):
     '''
-       Checks if the robot is out of bounds articularlly
-                                                                       
-           - limits: list of list of limits. Must have in index 0 and 1
+        Checks if the robot is out of bounds articularlly
+        Input:                                                            
+           - limits (list): list of list of limits. Must have in index 0 and 1
         the position and velocities upper and lower bounds for each joint                             
-           - object: robot class object (object)                                       
+           - object (class UR5e): robot class object                                       
                                              
-       Returns:                                                        
-           -If the robot is out of bounds (bool)
+        Output:                                                        
+           - (bool): If the robot is out of bounds returns "True", other way returns "False"
     '''
 
     # Obtains the joint position of the robot
@@ -518,17 +484,16 @@ def out_of_bounds(limits, robot):
 # Gets the frames
 def get_frames(client, camera_params, frame_h, frame_w, frame):
     '''
-       Obtains the frames for the cameras in the environment   
-                                                                       
-           - client: Pybullet client (int)                             
-           - camera_params: intrinsec and extrinsic matrices for the cameras
-        (list of two matrices)
-            - frame_h: frame height (int)
-            - frame_w: frame width (int)
-            - frame: current list of frames                                      
+        Obtains the frames for the cameras in the environment   
+        Input:                                                               
+           - client (int): Pybullet client                             
+           - camera_params (list of np.array 3x3): intrinsec and extrinsic matrices for the cameras
+            - frame_h (int): frame height 
+            - frame_w (int): frame width 
+            - frame (list of np.array, 3xHxW): current list of frames                                      
                                              
-       Returns:                                                        
-           - Two arrays, the position (XYZ) and orientation (RPY)
+        Output:                                                        
+           - frame (list of np.array, 3xHxW): list of images captured from each camera
     '''
 
     # For each camera set of matrices ...
@@ -552,14 +517,10 @@ def get_frames(client, camera_params, frame_h, frame_w, frame):
         depth_image = (depth_buffer - np.min(depth_buffer)) / (np.max(depth_buffer) - np.min(depth_buffer))  # Normalize to [0, 1]
         depth_frame = (depth_image * 255).astype(np.uint8)
 
-        
         # Merges both frames and transpose it --> (channels, gray, depth)
         frame[idx] = cv.merge([rgb_buffer, depth_frame])
         frame[idx] = np.transpose(frame[idx], (2,0,1))
 
-        # Computes images for the first one (external)
-        # break
-    
     return frame
 
 # Get information from the environment
