@@ -14,3 +14,4 @@ __pycache__
 /videos/
 *.json
 ur5_rl.egg-info
+/papers/
