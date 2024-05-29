@@ -5,7 +5,7 @@ my_models_eval
 *.zip
 pruebas.py
 
-./Dockerfile
+
 /ros_ws
 /ros2_ws
 /ur5_rl/__pycache__/
