@@ -10,11 +10,6 @@ with open('test_results_withError_2.json', 'r') as file:
 # Sort data by index
 sorted_data = sorted(json_data.items(), key=lambda x: x[1]['idx'])
 
-# for elem in sorted_data:
-#     print(elem[0])
-#     print(type(elem))
-#     elem[0] = "AAA"
-#     raise
 
 # Extract sorted keys and mean_reward values
 sorted_keys = [item[1]["idx"] for item in sorted_data]
