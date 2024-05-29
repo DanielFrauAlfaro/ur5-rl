@@ -9,5 +9,6 @@ pruebas.py
 /ros_ws
 /ur5_rl/__pycache__/
 /ur5_rl/resources/__pycache__/
+/__pycache__/
 /videos/
 *.json
