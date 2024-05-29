@@ -1,0 +1,45 @@
+<launch>
+
+  <arg name="save_files_path" value="/daniel/Desktop/evo_pipe/saved_files/" />
+  <arg name="mode" value="real"/>
+
+  <!-- Argumentos de la pinza de tres dedos -->
+  <arg name="geograspEvo_grip_tip_size" value="25" />   <!-- 25 -->
+  <arg name="geograspEvo_set_apertures" value="{{-0.036,-0.036},{0.036,0.036}}" /> <!-- {mas cercano a 0, min}(dedo negativo), {mas cercano a 0, max} (dedo positivo)-->
+  <arg name="geograspEvo_set_number_fingers" value="3" />
+  <arg name="geograspEvo_set_unique_mobility" value="0" />
+  <arg name="geograspEvo_set_grasps_track" value="5" />
+  <arg name="geograspEvo_ransac" value="false" />
+
+
+  <!-- Lanza el driver de la Realsense en ROS -->
+  <include file="$(find realsense2_camera)/launch/rs_camera_mine.launch">
+  </include>
+
+  <!-- Esqueleto del proyecto: captura las imagenes -->
+  <node name="controlSpawnPicture" pkg="experiment_settings" type="object_gestion_capture" output="screen">
+      <param name="save_files_path" value="$(arg save_files_path)" />    
+      <param name="mode" value="$(arg mode)"/>
+  </node>
+  
+  <!-- Nodo de GeoGrasp -->
+  <node name="GeoGraspEvo" pkg="experiment_settings" type="geograsp_evo" output="screen">
+    <param name="save_files_path" value="$(arg save_files_path)" />    
+    <param name="geograspEvo_grip_tip_size" value="$(arg geograspEvo_grip_tip_size)" />
+    <param name="geograspEvo_set_apertures" value="$(arg geograspEvo_set_apertures)" />
+    <param name="geograspEvo_set_number_fingers" value="$(arg geograspEvo_set_number_fingers)" />
+    <param name="geograspEvo_set_unique_mobility" value="$(arg geograspEvo_set_unique_mobility)" />
+    <param name="geograspEvo_set_grasps_track" value="$(arg geograspEvo_set_grasps_track)" />     
+    <param name="geograspEvo_ransac" value="$(arg geograspEvo_ransac)" />       
+  </node>
+
+  <!-- Nodo que utiliza el moveit -->
+  <node name="moveitGrasp" pkg="experiment_settings" type="moveit_grasp_real" output="screen">
+    <param name="save_files_path" value="$(arg save_files_path)" />
+    <param name="mode" value="$(arg mode)"/>
+  </node>
+
+  <!-- Controlador de la pinza -->
+  <node name="gripper_controller" pkg="experiment_settings" type="main_gripper_controller_real.py" output="screen"/>
+
+</launch>

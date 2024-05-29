@@ -1,0 +1,17 @@
+<launch>
+  <!--
+      Visualization of the allegro hand using rviz. Can be launched separately
+      or by including it in another launch file.
+  -->
+  <arg name="HAND" default="left"/>
+  <arg name="NUM" default='0'/>
+  <arg name="XACRO_PATH" default="$(find allegro_hand_description)/allegro_hand_description_$(arg HAND).xacro" />
+
+  <node name="rviz_$(arg NUM)"
+        pkg="rviz" type="rviz"
+        args="-d $(find experiment_settings)/config/allegro_hand_config.rviz" >
+  </node>
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(arg XACRO_PATH)'"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+</launch>

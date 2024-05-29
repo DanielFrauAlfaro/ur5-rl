@@ -1,0 +1,13 @@
+<launch>
+
+  <arg name="origin" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0"/>
+  <arg name="object_name" default="001_chips_can"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+  </include>
+
+  <param name="$(arg object_name)" command="$(find xacro)/xacro --inorder '$(find urdfs_test)/urdf/$(arg object_name)/model.urdf' "/>
+
+  <node name="spawn_gazebo_model_object" pkg="gazebo_ros" type="spawn_model" args="-urdf -param $(arg object_name) -model $(arg object_name) $(arg origin)" respawn="false" output="screen" />
+
+</launch>

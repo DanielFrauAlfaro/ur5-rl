@@ -1,0 +1,16 @@
+<launch>
+    <arg name="states_topic" default="/ur5e/joint_states"/>
+    <arg name="remap" default="false"/>
+
+
+    <include file = "$(find ur5eRobotiq4f_moveit_config)/launch/demo.launch">
+        <arg name="remap" value="$(arg remap)"/>
+        <arg name="states_topic" value="$(arg states_topic)"/>
+    </include>
+
+
+    <!-- <group ns="pingo">    
+        <include file = "$(find ur5eRobotiq3f_moveit_config)/launch/demo.launch"/>
+    </group> -->
+    
+</launch>

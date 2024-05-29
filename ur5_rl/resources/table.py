@@ -9,7 +9,7 @@ class Table:
         # Load URDF model of selected object: pybullet_URDF_objects/' + spawnables[object] + '/model.urdf',
 
         euler = [-1.57,0,-1.57]
-        orientation = p.getQuaternionFromEuler(euler)
+        orientation = p.getQuaternionFromEuler(euler, physicsClientId=client)
 
         self.id = p.loadURDF(fileName=os.path.dirname(__file__) + '/models/models/table.urdf',
                                  basePosition=position,

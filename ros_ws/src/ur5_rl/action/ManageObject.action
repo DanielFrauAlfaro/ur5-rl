@@ -1,0 +1,8 @@
+#goal definition
+bool spawn
+---
+#result definition
+bool res
+---
+#feedback
+int32  feed

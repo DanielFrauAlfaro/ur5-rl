@@ -1,0 +1,30 @@
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+ur5_controllers:
+  type: position_controllers/JointGroupPositionController
+  joints:
+     - shoulder_pan_joint
+     - shoulder_lift_joint
+     - elbow_joint
+     - wrist_1_joint
+     - wrist_2_joint
+     - wrist_3_joint
+  shoulder_pan_joint:
+    pid: {p: 2095.0, i: 0.0, d: 153.0, i_clmap_min: -100.0, i_clamp_max: 100.0}
+
+  shoulder_lift_joint:
+    pid: {p: 2090.0, i: 0.0, d: 183.0, i_clmap_min: -400.0, i_clamp_max: 400.0}
+    
+  elbow_joint:
+    pid: {p: 2100.0, i: 0.0, d: 143.0, i_clmap_min: -400.0, i_clamp_max: 400.0}
+
+  wrist_1_joint:
+    pid: {p: 125.0, i: 0.0, d: 10, i_clmap_min: -400.0, i_clamp_max: 400.0}
+
+  wrist_2_joint:
+    pid: {p: 125, i: 0.0, d: 10, i_clmap_min: -200.0, i_clamp_max: 200.0}
+
+  wrist_3_joint:
+    pid: {p: 39.0, i: 0.0, d: 4.5, i_clmap_min: -200.0, i_clamp_max: 200.0}

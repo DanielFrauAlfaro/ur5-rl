@@ -1,90 +1,129 @@
 import ur5_rl
 import gymnasium as gym
-from stable_baselines3 import SAC
+from stable_baselines3 import SAC, TD3
+from stable_baselines3.common.vec_env import VecNormalize, VecEnv, SubprocVecEnv
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.noise import NormalActionNoise
+from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback, BaseCallback
 from networks_SB import CustomCombinedExtractor
+import numpy as np
+import cv2 as cv
+import os
+import pybullet as p
+import time
 
 
+# Define GUI elements
+def user_interface():
+
+    x_gui = p.addUserDebugParameter('X', -1, 1, 0.0)
+    y_gui = p.addUserDebugParameter('Y', -1, 1, 0.0)
+    z_gui = p.addUserDebugParameter('Z', -1, 1, 0.0)
+    roll_gui = p.addUserDebugParameter('Roll', -1, 1, 0)
+    pitch_gui = p.addUserDebugParameter('Pitch', -1, 1, 0)
+    yaw_gui = p.addUserDebugParameter('Yaw', -1, 1, 0)
+    gripper_gui = p.addUserDebugParameter('Gripper', -1, 1, 0)
+
+    return [x_gui, y_gui, z_gui, roll_gui, pitch_gui, yaw_gui]
+
+# Read GUI elements
+def read_gui(gui_joints):
+    j1 = p.readUserDebugParameter(gui_joints[0])
+    j2 = p.readUserDebugParameter(gui_joints[1])
+    j3 = p.readUserDebugParameter(gui_joints[2])
+    j4 = p.readUserDebugParameter(gui_joints[3])
+    j5 = p.readUserDebugParameter(gui_joints[4])
+    j6 = p.readUserDebugParameter(gui_joints[5])
+    # g =  p.readUserDebugParameter(gui_joints[6])
+
+    return np.array([j1, j2, j3, j4, j5, j6])
+
+COMPLETE = False
 
 if __name__ == "__main__":
-    print("|| Compiling ...")
-    env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
     
-    print("\n\n")
 
-    q_space = env.observation_space["q_position"]
-    image_space = env.observation_space["image"]
+    # Test
+    print("|| Loading model for testing ...")
+    model = SAC.load("./6.0/pito.zip")       # rl_31500_5.5 --> 8 / 10
+                                                                 # rl_30000_5.5 --> 8o9 / 10
+                                                                 # rl_28500_5.5 --> 8o9 / 10
+                                                                 # rl_12000_5.5 --> 7o8 / 10
+                                                                 # rl_33000_5.2 --> 7o8 / 10
 
-    q_shape = q_space.shape
-    in_channels, frame_w, frame_h = image_space.shape
+    model.policy.eval()
+    print("|| Testing ...") # sugar, cracker
     
-    residual = False
-    channels = [in_channels, 16, 32]
-    kernel = 3
-    m_kernel = 2
-    n_layers = len(channels) - 1
-
-    out_q_features = 10
-    features_dim = 128          
-
-    # Use your custom feature extractor in the policy_kwargs
-    policy_kwargs = dict(
-        features_extractor_class=CustomCombinedExtractor,
-        features_extractor_kwargs=dict(features_dim = features_dim,
-                                       residual = residual, 
-                                       channels = channels, kernel = kernel, m_kernel = m_kernel,
-                                       n_layers = n_layers, out_q_features = out_q_features),
-        net_arch=dict(
-            pi=[features_dim, 32],  # Adjust the size of these layers based on your requirements
-            vf=[features_dim, 32],  # Adjust the size of these layers based on your requirements
-            qf=[features_dim, 32]),
-        share_features_extractor = True
-    )
-
-    # model = SAC("MultiInputPolicy", env, policy_kwargs=policy_kwargs, 
-    #             verbose=100, buffer_size = 30000,  batch_size = 256, tensorboard_log="logs/", train_freq=10,
-    #             learning_rate = 0.00073, gamma = 0.98, seed = 42,
-    #             use_sde = True, sde_sample_freq = 8)         # See logs: tensorboard --logdir logs/
     
-    # model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", progress_bar = True)
+
+    r = 0
+    vec_env = gym.make("ur5_rl/Ur5Env-v0", render_mode = "GUI")
+    obs, info = vec_env.reset()
     
-    # model.save("./models/sac_ur5_stage_1.0")
+    gui_joints = user_interface()
+
+    list_actions = []
     
-    # Testing
-    obs, info = env.reset()
+
+    t = time.time()
     while True:
-        # action, _states = model.predict(obs)
-        action = env.action_space.sample()
+        # obs["ee_position"] = np.append(obs["ee_position"], 0)
+        action, _states = model.predict(obs, deterministic = True)
+        # action = read_gui(gui_joints)
 
-        obs, reward, terminated, truncated, info = env.step(action)
+        list_actions.append(-action)
+        obs, reward, terminated, truncated, info = vec_env.step(action)
+        
+        
 
-        # env.render()
+        # print(info)
+        # print("--")
+        r += reward
+        img = vec_env.render()
+
+        # cv.imshow("AA", img)
+        # cv.waitKey(1)
 
         if terminated or truncated:
-            obs, info = env.reset()
+
+            if COMPLETE:
+
+                grasped = False
+                is_touching = False
+                cnt = 0
+
+                while len(list_actions) > 1:
+                    if not grasped:
+                        obs, reward, terminated, truncated, info = vec_env.step(np.zeros(6))
+                        is_touching, g = vec_env.unwrapped.grasping()
+
+                        grasped = cnt == 4
+
+                        if is_touching:
+                            cnt += 1
+                        else:
+                            cnt = 0
+
+                        if g >= 100:
+                            break
+
+                    else:
+                        action = list_actions.pop()
+                        print("Action: ", len(list_actions))
+                        obs, reward, terminated, truncated, info = vec_env.step(action)
+
+                    img = vec_env.render()
+
+                    # cv.imshow("AA", img)
+                    # cv.waitKey(1)
 
 
-    # print("|| Sampling ...")
-    # for j in range(100):
-    #     print("--- Epoch ", j)
-    #     obs, info = env.reset(seed=0, options={})
+            print("Tiempo: ", time.time() - t)
+            t = time.time()
+            print(r, "\n--")
+            r = 0
+            list_actions = []
 
-    #     with warnings.catch_warnings(record = True) as w:
-    #         while True:
-
-    #             # TODO: función del agente
-    #             action = env.action_space.sample()
-
-    #             env.set_warning(w)
-    #             obs_, reward, done, truncated, info = env.step(action)
-                
-    #             env.render()
-                
-    #             if truncated or done:
-    #                 break
-
-    #             obs = obs_
-
-    # print("|| Success")
-    # env.close()
-    
+            obs, info = vec_env.reset()
 
