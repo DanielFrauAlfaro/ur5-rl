@@ -1,4 +1,0 @@
-Header header
-GraspEvoContacts bestGrasp
-float32 ranking
-GraspEvoPose bestPose

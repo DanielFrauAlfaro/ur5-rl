@@ -1,8 +1,0 @@
-#goal definition
-geometry_msgs/Pose pose
----
-#result definition
-bool finish
----
-#feedback
-int32 state
