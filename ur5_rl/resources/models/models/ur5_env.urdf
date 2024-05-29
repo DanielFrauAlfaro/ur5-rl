@@ -525,21 +525,12 @@
     <origin rpy="0.0 0.0 -1.57" xyz="0.0 0.0 0.35"/>
   </joint>
 
-  <!-- <joint name="world_table_joint" type="fixed">
-    <parent link="world"/>
-    <child link="table"/>
-    <origin rpy="-1.57 0.0 -1.57" xyz="-0.2 1.0 0.74"/>
-  </joint> -->
-
-
 
     <link name="camera_link">
         <visual>
         <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.0149 -0.0175 0"/>
         <geometry>
-            <!-- <box size="${d435_cam_width} ${d435_cam_height} ${d435_cam_depth}"/> -->
             <mesh filename="./realsense_description/meshes/d435.dae"/>
-            <!--<mesh filename="package://realsense2_description/meshes/d435/d435.dae" />-->
         </geometry>
         <material name="camera_aluminum"/>
         </visual>
@@ -550,7 +541,6 @@
         </geometry>
         </collision>
         <inertial>
-        <!-- The following are not reliable values, and should not be used for modeling -->
         <mass value="0.564"/>
         <origin xyz="0 0 0"/>
         <inertia ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.000498940" iyz="0.0" izz="0.003879257"/>
@@ -1241,58 +1231,5 @@
 
 
 </robot>
-
-  <!-- <link name="robotiq_tool0"/>
-
-  <joint name="robotiq_palm_tool0" type="fixed">
-    <parent link="robotiq_palm"/>
-    <child link="robotiq_tool0"/>
-    <origin rpy="0 0 1.5707" xyz="0.0 0.0875 0.0"/>
-  </joint> -->
-
-<!-- <link name="ur_gripper">
-    <visual>
-      <geometry>
-        <mesh filename="./stl/ur_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-    <collision>
-      <geometry>
-        <mesh filename="./stl/ur_gripper.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-            <inertial>
-            <mass value="0.1" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
-        </inertial>
-  </link> -->
-
-  <!-- <joint name="camera_joint" type="fixed">
-    <origin rpy="3.1414 0.0 1.5707" xyz="0.055 0.015 0.03"/>
-    <parent link="ur_gripper"/>
-    <child link="camera_bottom_screw_frame"/>
-  </joint>
-  <link name="camera_bottom_screw_frame"/>
-  <joint name="camera_link_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0.0175 0.0125"/>
-    <parent link="camera_bottom_screw_frame"/>
-    <child link="camera_link"/>
-  </joint>
-  <joint name="ur_gripper_joint" type="fixed">
-    <parent link="wrist_3_link"/>
-    <child link="ur_gripper"/>
-    <origin rpy="1.57 -0.0 -0.785" xyz="0.08423 0.161 -0.0"/>
-  </joint>
-  <joint name="urGripper_gripper_joint" type="fixed">
-    <parent link="ur_gripper"/>
-    <child link="robotiq_palm"/>
-    <origin rpy="0.0 3.14 0.0" xyz="0.055 0.068 0.1735"/>
-  </joint> -->
-
-  
-    
-
 
 
