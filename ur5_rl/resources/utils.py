@@ -7,7 +7,7 @@ import cv2 as cv
 import time
 import copy
 # import dqrobotics
-from dq_cosas import *
+from dq import *
 import torch
 
 # Adds noise to an array
