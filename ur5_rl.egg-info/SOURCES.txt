@@ -1,6 +1,0 @@
-setup.py
-ur5_rl.egg-info/PKG-INFO
-ur5_rl.egg-info/SOURCES.txt
-ur5_rl.egg-info/dependency_links.txt
-ur5_rl.egg-info/requires.txt
-ur5_rl.egg-info/top_level.txt
