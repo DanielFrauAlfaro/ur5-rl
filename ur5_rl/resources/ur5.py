@@ -9,10 +9,15 @@ from math import pi
 import numpy as np
 
 # Class for the UR5
+'''
+Class that models kinematically the UR5e robot:
+    Parameters:
+        - client (int): Pybullet client
+'''
 class UR5e:
     def __init__(self, client):
 
-        # --- Parameters
+        # --- Parameters ---
         self.client = client    # Client ID of the Pybullet server
         
 
@@ -65,15 +70,9 @@ class UR5e:
             controllable = (jointType != p.JOINT_FIXED)
             
             list_attr[jointName] = jointID
-
-            # print("Name: ", jointName, "Joint Index:", i, "Link Index:", info[12])
-            # print("--")
             
             # If a joint is controllable ...
             if controllable:
-                
-                
-
                 # ... enables torque sensors, ...
                 p.enableJointForceTorqueSensor(bodyUniqueId=self.id, 
                                                jointIndex=jointID, 
@@ -100,9 +99,6 @@ class UR5e:
 
         self.qd = [0.1332997, 0.49, 0.48, -3.14, 0.0, -2.3]
 
-        # Starting end effector's position
-        # self.ee = [0.1332997, 0.49190053, 0.48789219, -3.14, 0.0, -2.35658978]
-
         # Gripper parameters
         self.m1 = 1.2218 / 140
         self.max_closure = 100
@@ -111,9 +107,6 @@ class UR5e:
         # Brings the robot and gripper to a starting position
         self.apply_action(self.q)
         self.apply_action_g(self.g)
-
-        
-
 
 
     # Return the client and robot's IDs
@@ -125,23 +118,22 @@ class UR5e:
         '''
         Given a cartesian action, applies the new position to the robot,
     along with the gripper action.
+        Input:
+            - action (np.array, 1x6): array of XYZ - RPY position actions
 
-            - action: array of XYZ - RPY - G position actions, where G is the gripper
-        action [0, 255] (list of length 7 --> 6 + 1)
+        Output:
+            - //
         '''
 
-        # Converts the action to a
+        # Converts the increment action to a position and orientation
         action = self.ee + action
 
-        # if action[-2] >= pi:
-        #     action[-2] = pi - 0.01 
-        # if action[-2] <= -pi:
-        #     action[-2] = -pi
-
+        # Extracts position
         x = action[0]                                 
         y = action[1]
         z = action[2]
-            
+        
+        # Extracts orientation
         roll = action[3]
         pitch = action[4]
         yaw = action[5]
@@ -152,41 +144,46 @@ class UR5e:
 
         T = T * T_
 
-        # Computes inverse kinematics
+        # Computes inverse kinematics in order to obtain joint commands
         new_q = self.__ur5.ik_LM(T,q0 = self.q)
 
-        # Applies the joint action (joint and gripper)
+        # Applies the joint action
         self.apply_action(new_q[0])
-        # self.apply_action_g(0)
 
 
     # Moves the robot to a desired position
     def apply_action(self, action):
         '''
         Applies a joint action
-
-            - action: a set of joint positions according to the ids.
-        [shoulder_pan, shoulder_lift, elbow, wrist_1, wrist_2, wrist_3] (list)
+            Input:
+                - action (np.array): a set of joint positions according to the ids.
+            [shoulder_pan, shoulder_lift, elbow, wrist_1, wrist_2, wrist_3] 
+        
+            Output:
+                - //
         '''
         
+        # Sends position commands to each joint according to the IDs
         p.setJointMotorControlArray(bodyUniqueId=self.id, 
                                     jointIndices=self.ur5_joints_id, 
                                     controlMode=p.POSITION_CONTROL,
                                     targetPositions=action,
                                     physicsClientId=self.client)
     
-    # Appliy action to the gripper
+
+    # Apply action to the gripper
     def apply_action_g(self, action):
         '''
         Applies a gripper action
-
-            - action: gripper action [0, 255] (int)
+            Input:
+                - action (int): gripper action between [0, 255]
         '''
 
-        # Computes pseudo - inverse kinematics. Transforms "g" action to closure angles 
+        # Computes pseudo - inverse kinematics. Transforms "g" [0,255] action to closure angles 
         action = min(self.m1 * action, self.max_closure)
         action = np.ones(3) * action
         
+        # Applies the angle to the joint according to its ID
         p.setJointMotorControlArray(bodyUniqueId=self.id, 
                                     jointIndices=self.gripper_joints_id, 
                                     controlMode=p.POSITION_CONTROL,
@@ -198,9 +195,11 @@ class UR5e:
     def get_observation(self):
         '''
         Gets the observation space of the robot
+        Input:
+            - //
 
-        Returns:
-            - A list of observations [q, qd, gripper, ee]
+        Output:
+            - observation (list): list of observations [q, qd, gripper, ee]
         '''
 
         self.q = []
@@ -226,16 +225,16 @@ class UR5e:
 
             g.append(aux[0])
         
-        # Obtains [0, 255] representation
+        # Obtains [0, 255] representation of gripper closure
         self.g = min(min(g) / self.m1, self.max_closure)
 
-        # End effector position and orientation
+        # End effector position and orientation (forward kinematics)
         T = self.__ur5.fkine(self.q, order='yxz')
         ee_pos = T.t
         ee_or = T.rpy('yxz')
         self.ee = [ee_pos[0], ee_pos[1], ee_pos[2], ee_or[0], ee_or[1], ee_or[2]]
         
-        # Builds and returns the message
+        # Builds message
         observation = [self.q, self.qd, self.g,  self.ee]
 
         return observation
