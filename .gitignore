@@ -13,3 +13,4 @@ pruebas.py
 __pycache__
 /videos/
 *.json
+ur5_rl.egg-info
