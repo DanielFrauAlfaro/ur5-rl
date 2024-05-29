@@ -3,7 +3,7 @@
 This repository contains code for robotic manipulation using a UR5e robot and deep reinforcement learning (DRL) with dual quaternions. Dual quaternions provide a compact and efficient representation for the position and orientation of objects in 3D space, making them suitable for robotic manipulation tasks.
 
 <video width="640" height="480" controls>
-  <source src="videos/intro.mp4" type="video/mp4">
+  <source src="media/intro.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
