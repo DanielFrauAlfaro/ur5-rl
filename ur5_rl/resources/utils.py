@@ -384,12 +384,12 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
 
     # Checks which reference system is closer and computes the reward
     if d_p < d_p_:
-        r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w])))
+        dist, d, theta = dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w])))
     else:
-        r, d, theta = dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w])))
+        dist, d, theta = dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w])))
 
     # Extract items and list them
-    r = r.item()
+    r = 1/dist.item()
     d = d.item()
     theta = theta.item()
     distance = [r, d, theta]

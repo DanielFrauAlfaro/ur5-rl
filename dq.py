@@ -249,6 +249,6 @@ def dq_distance(dq_pred, dq_real):
     theta = q_angle(dq_r).squeeze(-1)
 
     # Distance
-    distances = 1/((LAMBDA_ROT * torch.abs(theta))  + (LAMBDA_TRANS * torch.abs(d)))
+    distances = (LAMBDA_ROT * torch.abs(theta))  + (LAMBDA_TRANS * torch.abs(d))
     
     return torch.mean(distances), torch.abs(d) * LAMBDA_TRANS, torch.abs(theta) * LAMBDA_ROT

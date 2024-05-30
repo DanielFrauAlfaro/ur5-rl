@@ -238,18 +238,18 @@ class UR5Env(gym.Env):
         # Checks which reference system is the nearest and stores ...
         if d_p < d_p_:
             # Reward
-            r, __, __ = dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w])))
+            dist, __, __ = dq_distance(torch.tensor(np.array([DQ_obj])), torch.tensor(np.array([DQ_w])))
             
             # Euler rotation distance
             d_or = np.linalg.norm(np.array(euler_w) - np.array(euler))
         else:
             # Reward
-            r, __, __ = dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w])))
+            dist, __, __ = dq_distance(torch.tensor(np.array([DQ_obj_])), torch.tensor(np.array([DQ_w])))
             
             # Euler rotation distance
             d_or = np.linalg.norm(np.array(euler_w) - np.array(euler_))
 
-        return 1/r.item(), np.linalg.norm(np.array(obj_pos) - np.array(wrist_pos)), d_or
+        return dist.item(), np.linalg.norm(np.array(obj_pos) - np.array(wrist_pos)), d_or
 
 
     # Computes the combined reward
