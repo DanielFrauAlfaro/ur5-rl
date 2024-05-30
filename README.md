@@ -13,22 +13,22 @@ This projected can be executed using the provided Dockerfile. This way it is ens
 
 1. Clone this repository:
 
-    ```bash
+    
     git clone https://github.com/DanielFrauAlfaro/ur5-rl
     cd ur5-rl/
-    ```
+    
 
 2. Build the Docker image:
 
-    ```bash
+    
     sudo docker build -t docker_ur5e_rl .
-    ```
+    
 
 3. Launch Docker image:
 
-    ```bash
+    
     sudo docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_ur5e_rl --net host --cpuset-cpus="0-11" -v ~/:/ur5-rl -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --user=$(id -u $USER):$(id -g $USER) --pid=host --privileged docker_ur5e_rl
-    ```
+    
 
 ## Training
 
