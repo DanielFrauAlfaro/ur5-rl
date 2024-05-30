@@ -1,60 +1,46 @@
 # DRL for Manipulation Using a UR5e and Dual Quaternions
 
-This repository contains code for robotic manipulation using a UR5e robot and deep reinforcement learning (DRL) with dual quaternions. Dual quaternions provide a compact and efficient representation for the position and orientation of objects in 3D space, making them suitable for robotic manipulation tasks.
+This repository contains code for robotic manipulation using a UR5e robot and deep reinforcement learning (DRL) with dual quaternions. Dual quaternions provide a compact and efficient representation for the position and orientation of objects in 3D space, making them suitable for robotic manipulation tasks and distance computation for reward estimation.
 
 ![intro](https://github.com/DanielFrauAlfaro/ur5-rl/assets/98766327/2e3998f9-636a-4b82-b99c-48a1b9cbff76)
 
 
-## Setup
+## Setup and Installation
 
-### Prerequisites
-
-Ensure you have the following software and libraries installed:
-
-- Python 3.8+
-- PyTorch
-- NumPy
-- Gym
-- ROS (Robot Operating System)
-- UR5e ROS drivers
-- Additional Python libraries specified in `requirements.txt`
+This projected can be executed using the provided Dockerfile. This way it is ensured that every user can run this code without errors or problems.
 
 ### Installation
 
 1. Clone this repository:
 
     ```bash
-    git clone https://github.com/yourusername/robotic_manipulation_drl.git
-    cd robotic_manipulation_drl
+    git clone https://github.com/DanielFrauAlfaro/ur5-rl
+    cd ur5-rl/
     ```
 
-2. Install the required Python packages:
+2. Build the Docker image:
 
     ```bash
-    pip install -r requirements.txt
+    sudo docker build -t docker_ur5e_rl .
     ```
 
-3. Set up the ROS environment:
+3. Launch Docker image:
 
-    Follow the instructions for installing ROS and setting up the UR5e ROS drivers from the official [ROS documentation](http://wiki.ros.org/).
+    ```bash
+    sudo docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_ur5e_rl --net host --cpuset-cpus="0-11" -v ~/:/ur5-rl -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --user=$(id -u $USER):$(id -g $USER) --pid=host --privileged docker_ur5e_rl
+    ```
 
 ## Training
 
 To train the deep reinforcement learning model for robotic manipulation:
 
-1. Ensure your UR5e robot is properly set up and connected.
-2. Launch the ROS nodes required for controlling the UR5e.
-3. Run the training script:
-
     ```bash
-    python train.py --config configs/train_config.yaml
+    python train.py
     ```
-
-    The training configuration is specified in the `configs/train_config.yaml` file. You can adjust the hyperparameters, learning rate, and other settings in this file.
 
 4. Monitor the training process:
 
-    Training logs and checkpoints will be saved in the `logs/` and `checkpoints/` directories, respectively. Use a visualization tool like TensorBoard to monitor the training progress:
+    Training logs and checkpoints will be saved in the `logs/`. You can use a visualization tool like TensorBoard to monitor the training progress:
 
     ```bash
     tensorboard --logdir logs/
@@ -62,26 +48,13 @@ To train the deep reinforcement learning model for robotic manipulation:
 
 ## Evaluation
 
-To evaluate the trained model:
-
-1. Ensure your UR5e robot is properly set up and connected.
-2. Launch the ROS nodes required for controlling the UR5e.
-3. Run the evaluation script:
+To evaluate the trained model there are two ways of doing it; one that generates metrics of all models saved during training and another one that allows to see how the agent performs in the environment.
 
     ```bash
-    python evaluate.py --config configs/eval_config.yaml --checkpoint checkpoints/best_model.pth
+    python3 test.py             # See the agent
+    python3 loop_test.py        # Metrics over all agents
     ```
-
-    The evaluation configuration is specified in the `configs/eval_config.yaml` file. Adjust the settings as needed.
-
-4. Review the evaluation results:
-
-    The evaluation script will output the performance metrics and visualizations of the robot's manipulation tasks. Check the `results/` directory for detailed evaluation reports.
 
 ## Contributing
 
 Contributions are welcome! If you have any suggestions or improvements, please open an issue or create a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
