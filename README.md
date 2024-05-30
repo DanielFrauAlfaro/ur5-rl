@@ -20,23 +20,23 @@ This projected can be executed using the provided Dockerfile. This way it is ens
 
 2. Build the Docker image:
 
-    
+    ```
     sudo docker build -t docker_ur5e_rl .
-    
+    ```
 
 3. Launch Docker image:
 
-    
+    ```
     sudo docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_ur5e_rl --net host --cpuset-cpus="0-11" -v ~/:/ur5-rl -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --user=$(id -u $USER):$(id -g $USER) --pid=host --privileged docker_ur5e_rl
-    
+    ```
 
 ## Training
 
 To train the deep reinforcement learning model for robotic manipulation:
 
-    ```bash
+    
     sudo docker build -t docker_ur5e_rl .
-    ```
+    
 
 Training logs and checkpoints will be saved in the `logs/`. You can use a visualization tool like TensorBoard to monitor the training progress:
 
@@ -48,10 +48,10 @@ Training logs and checkpoints will be saved in the `logs/`. You can use a visual
 
 To evaluate the trained model there are two ways of doing it; one that generates metrics of all models saved during training and another one that allows to see how the agent performs in the environment.
 
-    ```bash
+    
     python3 test.py             # See the agent
     python3 loop_test.py        # Metrics over all agents
-    ```
+    
 
 ## Contributing
 
