@@ -4,6 +4,14 @@ This repository contains code for robotic manipulation using a UR5e robot and de
 
 ![intro](https://github.com/DanielFrauAlfaro/ur5-rl/assets/98766327/2e3998f9-636a-4b82-b99c-48a1b9cbff76)
 
+## Repository content
+
+This project implements the environment for a DRL application following [Gymnasium](https://gymnasium.farama.org/index.html) framework. The training and evaluation files are provided.
+
+    - `train.py`: 
+    - `test.py`: 
+
+
 
 ## Setup and Installation
 
@@ -29,6 +37,7 @@ This projected can be executed using the provided Dockerfile. This way it is ens
     ```
     sudo docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_ur5e_rl --net host --cpuset-cpus="0-11" -v ~/:/ur5-rl -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --user=$(id -u $USER):$(id -g $USER) --pid=host --privileged docker_ur5e_rl
     ```
+
 
 ## Training
 
