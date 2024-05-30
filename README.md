@@ -33,11 +33,9 @@ This projected can be executed using the provided Dockerfile. This way it is ens
 ## Training
 
 To train the deep reinforcement learning model for robotic manipulation:
-
     ```bash
-    python train.py
+    sudo docker build -t docker_ur5e_rl .
     ```
-
 
 Training logs and checkpoints will be saved in the `logs/`. You can use a visualization tool like TensorBoard to monitor the training progress:
 
