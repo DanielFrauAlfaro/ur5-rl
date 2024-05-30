@@ -4,15 +4,6 @@ This repository contains code for robotic manipulation using a UR5e robot and de
 
 ![intro](https://github.com/DanielFrauAlfaro/ur5-rl/assets/98766327/2e3998f9-636a-4b82-b99c-48a1b9cbff76)
 
-## Repository content
-
-This project implements the environment for a DRL application following [Gymnasium](https://gymnasium.farama.org/index.html) framework. The training and evaluation files are provided:
-        - `train.py`: training script. Saves models in the directory `/models/`.
-        
-        - `test.py`: script for testing the a single agent using GUI for visualization.
-        
-        - `loop_test.py`: script for testing all agents in a directory. Must have the number of steps from which was saved.
-
 ## Setup and Installation
 
 This projected can be executed using the provided Dockerfile. This way it is ensured that every user can run this code without errors or problems.
