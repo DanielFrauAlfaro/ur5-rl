@@ -13,10 +13,10 @@ This projected can be executed using the provided Dockerfile. This way it is ens
 
 1. Clone this repository:
 
-    
+    ```
     git clone https://github.com/DanielFrauAlfaro/ur5-rl
     cd ur5-rl/
-    
+    ```
 
 2. Build the Docker image:
 
