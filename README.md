@@ -40,7 +40,7 @@ To train the deep reinforcement learning model for robotic manipulation:
 
 Training logs and checkpoints will be saved in the `logs/`. You can use a visualization tool like TensorBoard to monitor the training progress:
 
-    ```bash
+    ```
     tensorboard --logdir logs/
     ```
 
