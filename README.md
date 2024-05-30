@@ -8,10 +8,10 @@ This repository contains code for robotic manipulation using a UR5e robot and de
 
 This project implements the environment for a DRL application following [Gymnasium](https://gymnasium.farama.org/index.html) framework. The training and evaluation files are provided.
 
-    - `train.py`: 
+    - goadasdfa
     - `test.py`: 
 
-
+    
 
 ## Setup and Installation
 
