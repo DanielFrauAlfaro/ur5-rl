@@ -38,9 +38,8 @@ To train the deep reinforcement learning model for robotic manipulation:
     python train.py
     ```
 
-4. Monitor the training process:
 
-    Training logs and checkpoints will be saved in the `logs/`. You can use a visualization tool like TensorBoard to monitor the training progress:
+Training logs and checkpoints will be saved in the `logs/`. You can use a visualization tool like TensorBoard to monitor the training progress:
 
     ```bash
     tensorboard --logdir logs/
