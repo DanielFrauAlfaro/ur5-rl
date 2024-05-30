@@ -33,6 +33,7 @@ This projected can be executed using the provided Dockerfile. This way it is ens
 ## Training
 
 To train the deep reinforcement learning model for robotic manipulation:
+
     ```bash
     sudo docker build -t docker_ur5e_rl .
     ```
