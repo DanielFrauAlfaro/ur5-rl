@@ -223,32 +223,45 @@ def dq_distance(dq_pred, dq_real):
     => "Distance" between two dual quaternions: weighted sum of screw motion axis magnitude and rotation angle.
     '''
 
-    # Inverse of predicted
-    dq_pred_inv = dq_quaternion_conjugate(dq_pred)  # inverse is quat. conj. because it's normalized
+    # # Inverse of predicted
+    # dq_pred_inv = dq_quaternion_conjugate(dq_pred)  # inverse is quat. conj. because it's normalized
     
-    # Quaternion difference
-    dq_diff = dq_mul(dq_pred_inv, dq_real)
+    # # Quaternion difference
+    # dq_diff = dq_mul(dq_pred_inv, dq_real)
     
-    # Extract real and imaginary part of the difference
-    dq_diff_rot = dq_diff[..., :4]  # Rotation part
-    dq_diff_trans = dq_diff[..., 4:]  # Translation part
+    # # Extract real and imaginary part of the difference
+    # dq_diff_rot = dq_diff[..., :4]  # Rotation part
+    # dq_diff_trans = dq_diff[..., 4:]  # Translation part
 
-    # Rotate the translation part using the rotation quaternion
-    dq_diff_trans_rotated = dq_rotate_vector(dq_diff_rot, dq_diff_trans)
+    # # Rotate the translation part using the rotation quaternion
+    # dq_diff_trans_rotated = dq_rotate_vector(dq_diff_rot, dq_diff_trans)
 
-    # Obtain the norm
-    d = torch.linalg.norm(dq_diff_trans_rotated, dim=-1)
+    # # Obtain the norm
+    # d = torch.linalg.norm(dq_diff_trans_rotated, dim=-1)
 
-    # Reassign the rotated quaternion
-    dq_diff[:,4:] = dq_diff_trans_rotated[:,:]
+    # # Reassign the rotated quaternion
+    # dq_diff[:,4:] = dq_diff_trans_rotated[:,:]
 
-    # Split the dual quaternion to obtain both parts
-    dq_r, dq_d = torch.split(dq_diff, [4, 4], dim=-1)
+    # # Split the dual quaternion to obtain both parts
+    # dq_r, dq_d = torch.split(dq_diff, [4, 4], dim=-1)
 
-    # Obtain theta
-    theta = q_angle(dq_r).squeeze(-1)
+    # # Obtain theta
+    # theta = q_angle(dq_r).squeeze(-1)
 
-    # Distance
-    distances = (LAMBDA_ROT * torch.abs(theta))  + (LAMBDA_TRANS * torch.abs(d))
-    
-    return torch.mean(distances), torch.abs(d) * LAMBDA_TRANS, torch.abs(theta) * LAMBDA_ROT
+    # # Distance
+    # distances = (LAMBDA_ROT * torch.abs(theta))  + (LAMBDA_TRANS * torch.abs(d))
+
+    dq_pred_inv = dq_quaternion_conjugate(dq_pred)
+
+    res = dq_mul(dq_real, dq_pred_inv).squeeze(0)
+
+    res[0] = abs(res[0])
+    res[0] -= 1
+
+    rotation_mod = torch.norm(res[4:]).item()
+
+    translation_mod = torch.norm(res[:4]).item()
+
+    distance = translation_mod + rotation_mod
+
+    return distance, translation_mod, rotation_mod
