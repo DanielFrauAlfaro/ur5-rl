@@ -1,6 +1,5 @@
 logs
 *.pyc
-models
 my_models_eval
 *.zip
 pruebas.py
