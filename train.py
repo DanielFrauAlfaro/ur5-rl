@@ -17,7 +17,6 @@ env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
 n_eval_envs = 1
 
-# Esto es uyna pruebas
 
 # --- Main ---
 if __name__ == "__main__":
