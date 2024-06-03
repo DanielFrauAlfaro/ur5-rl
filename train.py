@@ -15,7 +15,7 @@ import torch
 
 env_id = "ur5_rl/Ur5Env-v0"
 n_training_envs = 1
-n_eval_envs = 1
+n_eval_envs = 0
 
 
 # --- Main ---
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     
     # Training 
     print("|| Training ...")
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback, eval_callback], progress_bar = True)
+    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save(checkpoint_log_dir + "best_model.zip")
 
 
