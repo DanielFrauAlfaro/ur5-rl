@@ -26,7 +26,7 @@ if __name__ == "__main__":
     vec_env  = make_vec_env(env_id, n_envs=n_training_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": False})
 
     # Evaluation environments
-    eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
+    # eval_env = make_vec_env(env_id, n_envs=n_eval_envs, vec_env_cls = SubprocVecEnv, seed=0, env_kwargs={"render_mode": "DIRECT", "show": True})
 
 
     # Observation space
@@ -64,10 +64,10 @@ if __name__ == "__main__":
     # --- Callbacks ---
     save_freq = 1500
 
-    eval_log_dir = "./models_eval/"
-    eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
-                             log_path="./logs/", eval_freq=max(save_freq // n_training_envs, 1),
-                             deterministic=True, render=False)
+    # eval_log_dir = "./models_eval/"
+    # eval_callback = EvalCallback(eval_env, best_model_save_path="./models_eval/",
+    #                          log_path="./logs/", eval_freq=max(save_freq // n_training_envs, 1),
+    #                          deterministic=True, render=False)
     
     checkpoint_log_dir = "./models/"
     checkpoint_callback = CheckpointCallback(
@@ -85,10 +85,10 @@ if __name__ == "__main__":
     
     # Training 
     print("|| Training ...")
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback, eval_callback], progress_bar = True)
+    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save(checkpoint_log_dir + "best_model.zip")
 
 
     # Close enviroments
     vec_env.close()
-    eval_env.close()
+    # eval_env.close()
