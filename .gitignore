@@ -4,6 +4,7 @@ logs
 ./models
 *.zip
 pruebas.py
+ur5.py
 
 
 /ros_ws
