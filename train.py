@@ -85,7 +85,8 @@ if __name__ == "__main__":
     
     # Training 
     print("|| Training ...")
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback, eval_callback], progress_bar = True)
+    model.set_parameters("./5.0_aux/rl_model_43500_steps.zip")
+    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save(checkpoint_log_dir + "best_model.zip")
 
 
