@@ -1,10 +1,10 @@
 logs
 *.pyc
 ./models
-my_models_eval
+./my_models_eval
 *.zip
 pruebas.py
-ur5.py
+
 
 /ros_ws
 /ros2_ws
