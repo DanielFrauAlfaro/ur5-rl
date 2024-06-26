@@ -58,7 +58,7 @@ if __name__ == "__main__":
         min_len = min(len(data[key]["rewards"][0]), len(data[key]["rewards"][1]), min_len)
         max_len = max(len(data[key]["rewards"][0]), len(data[key]["rewards"][1]), max_len)
 
-
+    # PARTE DE CORRECCION
     for key, value in data.items():
         prev_rewards = [np.array(r[:min_len]) for r in data[key]["rewards"]]
         data[key]["std"] = np.std(prev_rewards[0] - prev_rewards[1])
