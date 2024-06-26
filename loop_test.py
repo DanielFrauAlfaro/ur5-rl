@@ -157,6 +157,8 @@ if __name__ == "__main__":
                     error_or += or_error
                     error_dq += dq_error
 
+                    end_error = dq_error
+
                     break
 
         # Save results
@@ -165,7 +167,8 @@ if __name__ == "__main__":
             "mean_reward" : r / num_tests,
             "distance_error": error_pos / num_tests,
             "orientation_error": error_or / num_tests,
-            "dq_error": error_dq / num_tests
+            "dq_error": error_dq / num_tests,
+            "end_error": end_error
         }
 
         print(f"   -- Mean Reward: {r / num_tests}")
