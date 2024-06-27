@@ -59,6 +59,6 @@ ENV NVIDIA_DRIVER_CAPABILITIES all
 
 WORKDIR /ur5_rl_docker/Desktop/ur5-rl/
 
-# LANZAMIENTO: sudo docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_rl --net host --cpuset-cpus="0-11" -v ~/:/ur5_rl_docker -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --runtime=nvidia --user=$(id -u $USER):$(id -g $USER) --pid=host --privileged docker_rl
+# Launch: sudo docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_rl --net host --cpuset-cpus="0-11" -v ~/:/ur5_rl_docker -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --runtime=nvidia --user=$(id -u $USER):$(id -g $USER) --pid=host --privileged docker_rl
 
 
