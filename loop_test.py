@@ -148,16 +148,14 @@ if __name__ == "__main__":
                     # Perform a simple grasp
                     grasp(vec_env, list_actions, render)
 
-                    # Reset environment
-                    obs, info = vec_env.reset()
-
                     # Save metrics
                     dq_error, d_error, or_error = vec_env.unwrapped.get_error()
                     error_pos += d_error
                     error_or += or_error
                     error_dq += dq_error
 
-                    end_error = dq_error
+                    # Reset environment
+                    obs, info = vec_env.reset()
 
                     break
 
@@ -167,8 +165,7 @@ if __name__ == "__main__":
             "mean_reward" : r / num_tests,
             "distance_error": error_pos / num_tests,
             "orientation_error": error_or / num_tests,
-            "dq_error": error_dq / num_tests,
-            "end_error": end_error
+            "dq_error": error_dq / num_tests
         }
 
         print(f"   -- Mean Reward: {r / num_tests}")
