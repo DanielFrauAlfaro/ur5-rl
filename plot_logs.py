@@ -96,9 +96,9 @@ for idx, value in enumerate(data.items()):
 
 
 
-plt.xlabel('Time (hrs)', fontsize=15)
-plt.ylabel('Reward', fontsize=15)
-plt.legend()
+plt.xlabel('Time (hrs)', fontsize=28)
+plt.ylabel('Reward', fontsize=28)
+plt.legend(fontsize='xx-large')
 plt.xticks(rotation=0)  # Rotate x-axis labels for better visibility
 plt.title('')
 plt.grid(True)  # Add background grid
