@@ -80,13 +80,13 @@ if __name__ == "__main__":
     
     # Model declaration
     model = SAC("MultiInputPolicy", vec_env, policy_kwargs=policy_kwargs, learning_starts = 5000,
-                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 42, learning_rate = 0.0003,
+                verbose=100, buffer_size = 15000, tensorboard_log="logs/", seed = 75, learning_rate = 0.0003,
                 train_freq=3)         # See logs: tensorboard --logdir logs/
     
     # Training 
     print("|| Training ...")
     model.set_parameters("./5.0_aux/rl_model_43500_steps.zip")
-    model.learn(total_timesteps=100000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
+    model.learn(total_timesteps=60000, log_interval=5, tb_log_name= "Test", callback = [checkpoint_callback], progress_bar = True)
     model.save(checkpoint_log_dir + "best_model.zip")
 
 
