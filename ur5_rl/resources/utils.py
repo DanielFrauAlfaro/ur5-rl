@@ -312,13 +312,13 @@ def approx_reward_EUC(client, object, dist_obj_wrist, robot_id):
 
     
     # Obtains the object and wrist positions
-    obj_pos, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
-    wrist_pos, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)
+    obj_pos = get_object_pos(object=object, client = client)
+    wrist_pos = get_wrist_pos(client = client, robot_id=robot_id)
 
 
-    d = np.linalg.norm(wrist_pos[:-1] - obj_pos[:-1])
-    theta = [abs(np.dot(r_w, r_obj)/(np.linalg.norm(r_w)*np.linalg.norm(r_obj))) for r_w, r_obj in zip(DQ_w, DQ_obj)]
-    theta_ = [abs(np.dot(r_w, r_obj)/(np.linalg.norm(r_w)*np.linalg.norm(r_obj))) for r_w, r_obj in zip(DQ_w, DQ_obj_)]
+    d = np.linalg.norm(wrist_pos[0] - obj_pos[0])
+    theta = [abs(np.dot(r_w, r_obj)/(np.linalg.norm(r_w)*np.linalg.norm(r_obj))) for r_w, r_obj in zip(wrist_pos[1], obj_pos[1])]
+    theta_ = [abs(np.dot(r_w, r_obj)/(np.linalg.norm(r_w)*np.linalg.norm(r_obj))) for r_w, r_obj in zip(wrist_pos[1], obj_pos[2])]
 
     theta = max(sum(theta), sum(theta_)) / len(theta)
 
