@@ -131,5 +131,3 @@ if __name__ == "__main__":
             # Reset environment
             obs, info = vec_env.reset()
             
-            break
-    
