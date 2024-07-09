@@ -14,6 +14,10 @@ RUN mkdir config && echo "ros ALL=(ALL) NOPASSWD: ALL" > config/99_aptget
 RUN cp config/99_aptget /etc/sudoers.d/99_aptget
 RUN chmod 0440 /etc/sudoers.d/99_aptget && chown root:root /etc/sudoers.d/99_aptget
 
+# Change HOME environment variable
+ENV HOME /home/daniel
+RUN mkdir -p ${HOME}/ros_ws/src
+
 # Install pip
 RUN apt-get update
 RUN apt-get install -y python3-pip
@@ -52,11 +56,16 @@ RUN python3 -m pip install --user dqrobotics --upgrade
 RUN apt-get update
 RUN apt-get install -y ncurses-term
 
+# PYYAML
+RUN pip3 install pyyaml
+
 # GPU configuration
 RUN export CUDA_VISIBLE_DEVICES=[0]
 ENV NVIDIA_VISIBLE_DEVICES ${NVIDIA_VISIBLE_DEVICES:-all}
 ENV NVIDIA_DRIVER_CAPABILITIES all 
 
+RUN echo 'export PS1="\[\033[1;33m\]\u@\h\[\033[0m\]:\[\033[1;35m\]\w\[\033[0m\]\$"' >> ~/.bashrc
+# RUN source ~/.bashrc
 WORKDIR /ur5_rl_docker/Desktop/ur5-rl/
 
 # Launch: sudo docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --rm -it --name docker_rl --net host --cpuset-cpus="0-11" -v ~/:/ur5_rl_docker -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev --runtime=nvidia --user=$(id -u $USER):$(id -g $USER) --pid=host --privileged docker_rl
