@@ -131,9 +131,9 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         torch.nn.init.xavier_uniform_(self.vector_extractor[1].weight)
         
         # Obtains the output dimensions of the flatten convoutioanl extractor layers
-        with torch.no_grad():
+        with torch.no_grad(): 
             n_flatten = self.image_extractor_1(
-                torch.tensor(observation_space.sample()["image"][:2], dtype=torch.float32, device = self.device)
+                torch.tensor(observation_space.sample()["image"][:channels[0]], dtype=torch.float32, device = self.device)
             )
 
         # Obtains the features dimensions combined
