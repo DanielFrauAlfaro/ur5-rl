@@ -14,22 +14,22 @@ Class for spawning the object in the simulation.
 
 '''
 class Object:
-    def __init__(self, client, object=0, position=[0, 1, 0.5], orientation=[0, 0, 0, 1]):
+    def __init__(self, client, objects):
         
         # List of object directories
-        spawnables = ("002_master_chef_can", "005_tomato_soup_can", 
-                      "sugar_box", "cracker_box", 
-                      "cleanser", 
-                      "conditioner", "repellent",                "potato_chip_1", "021_bleach_cleanser", "pen_container_1", "orion_pie")
+        self.spawnables = tuple(objects)
+
+        self.client = client
         
-        # Select object
-        self.name = spawnables[object]
+        
+    def spawn(self, object_chosen = 0, rand_position=[0, 1, 0.5], rand_orientation=[0, 0, 0, 1]):
+
+        self.name = self.spawnables[object_chosen]
 
         # Load URDF model of selected object
-        self.id = p.loadURDF(fileName=os.path.dirname(__file__) + '/models/pybullet_URDF_objects/' + spawnables[object] + '/model.urdf',
-                                 basePosition=position,
-                                 baseOrientation=orientation, 
-                                 physicsClientId=client)
+        self.id = p.loadURDF(fileName=os.path.dirname(__file__) + '/models/pybullet_URDF_objects/' + self.spawnables[object_chosen] + '/model.urdf',
+                                 basePosition = rand_position,
+                                 baseOrientation = rand_orientation, 
+                                 physicsClientId = self.client)
         
-
     

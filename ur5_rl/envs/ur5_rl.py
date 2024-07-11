@@ -15,17 +15,22 @@ import random
 # Gym environment
 class UR5Env(gym.Env):
     # Environment Metadata
-    metadata = {'render_modes': ['DIRECT', 'GUI'],
+    metadata = {'render_modes': ['human', 'rgb_array'],
                 'render_fps': 60,
                 'show': False}  
   
-    def __init__(self, render_mode="DIRECT", show = False):    
+    def __init__(self, render_mode="human", data = {}): 
+        self.__data = data  
+
+        # Checks if the selected render mode is within the possibilities
+        assert render_mode is None or render_mode in self.metadata["render_modes"]
+        self.render_mode = render_mode
 
         # --- Observation limit values ---
-        self._q_limits = [np.array([-1.5, -3.1415, -3.1415, -3.1415, -3.1415, -6.2831]), np.array([1.5, 0.0, 0.0, 3.1415, 3.1415, 6.2831])]
-        self._qd_limits = [np.ones(6) * -20, np.ones(6) * 20]
-        self._qdd_limits = [np.ones(6) * -5000, np.ones(6) * 5000]
-        self._ee_limits = [[-1, -1, -1, -pi, -pi, -pi], [1, 1, 1, pi, pi, pi]]
+        self._q_limits = np.array(data["q_limit"])
+        self._qd_limits = np.array(data["qd_limit"])
+        self._qdd_limits = np.array(data["qdd_limit"])
+        self._ee_limits = np.array(data["ee_limit"])
 
         self._limits = [self._q_limits,  
                        self._qd_limits,  
@@ -34,27 +39,35 @@ class UR5Env(gym.Env):
 
         # --- Action limits ---
         # Joint actions scalers
-        self.max_action_original = 0.0666
-        self.max_action_or_original = 0.12
+        self.max_action_original = data["max_action_pos"]
+        self.max_action_or_original = data["max_action_or"]
 
         self.max_action = self.max_action_original
         self.max_action_or = self.max_action_or_original
 
         # Yaw scaler
-        self.max_action_yaw = 2.5
-        self._action_limits = [-np.ones(6), np.ones(6)]
+        self.max_action_yaw = data["max_action_yaw"]
+        self._action_limits = np.array(data["action_limits"])
 
         # Frame height and width
-        self.frame_h = 160
-        self.frame_w = 160
+        self.frame_h = data["img_size"][0]
+        self.frame_w = data["img_size"][1]
+        self.n_cameras = data["n_cameras"]
+        self.n_channels = self.n_cameras * len(data["cam_mode"])
 
         '''
         Box space in action space:
             - Robot joints and gripper: 6 continous robot joints
 
         ''' 
-        self.action_space = gym.spaces.box.Box(low=self._action_limits[0],
-                               high= self._action_limits[1], dtype=np.float32)
+        if data["action_space"] == "Box":
+            self.action_space = gym.spaces.box.Box(low=self._action_limits[0],
+                                high= self._action_limits[1], dtype=np.float32)
+            
+        else:
+            print(data["action_space"])
+            print("--- ERROR: " + data["action_space"] +" action space is no supported.")
+            raise
         
         
         '''
@@ -63,41 +76,62 @@ class UR5Env(gym.Env):
             - Camera image: grayscale and depth
         '''
         # Dictionary indices
-        self._indices = ["ee_position", "image"]
+        self._indices = data["observations"]
 
-        self.observation_space = gym.spaces.Dict({
-            self._indices[0]: gym.spaces.box.Box(low=np.float32(np.array(self._ee_limits[0])), 
-                               high= np.float32(np.array(self._ee_limits[1])), dtype=np.float32),
+        if len(self._indices) > 0:
+
+            if "ee_position" in self._indices and "image" in self._indices:
+                self.observation_space = gym.spaces.Dict({
+                    "ee_position": gym.spaces.box.Box(low=np.float32(np.array(self._ee_limits[0])), 
+                                    high= np.float32(np.array(self._ee_limits[1])), dtype=np.float32),
 
 
-            self._indices[1]: gym.spaces.box.Box(low=0, high=255, shape=(6, self.frame_w, self.frame_h), dtype=np.float16)
-        })
+                    "image": gym.spaces.box.Box(low=0, high=255, shape=(self.n_channels, self.frame_w, self.frame_h), dtype=np.float16)
+                })
+
+
+            elif "image" in self._indices:
+                self.observation_space = gym.spaces.Dict({
+                    "image": gym.spaces.box.Box(low=0, high=255, shape=(self.n_channels, self.frame_w, self.frame_h), dtype=np.float16)
+                })
+
+
+            elif "ee_position" in self._indices:
+                self.observation_space = gym.spaces.Dict({
+                    "ee_position": gym.spaces.box.Box(low=np.float32(np.array(self._ee_limits[0])), 
+                                    high= np.float32(np.array(self._ee_limits[1])), dtype=np.float32)
+                })
+
+
+            else:
+                print(f"--- ERROR: {self._indices} are not a supported type of observations.")
+                raise
+        
+        else:
+            print("--- ERROR: No observations selected.")
+            raise
 
         # Time limit of the episode (in steps)
-        self._step_limit = 40
+        self._step_limit = data["steps_limit"]
         self.global_steps = 0
         self.steps = 0
 
-
-        # Checks if the selected render mode is within the possibilities
-        assert render_mode is None or render_mode in self.metadata["render_modes"]
-        
-        # Show variable for render during training
-        self.show = show
-
         # Start seed
         self.np_random, __ = gym.utils.seeding.np_random()
-        np.random.seed(0)
+        np.random.seed(data["seed"])
 
         # Client in Pybullet simulation
         self._client = 0
-        if render_mode == "DIRECT":
+        if data["connect"] == "DIRECT":
             self._client = p.connect(p.DIRECT)
-        elif render_mode == "GUI":
+        elif data["connect"] == "GUI":
             self._client = p.connect(p.GUI)
         
-        # Object initial coordinates for spawning
-        self.obj_pos = [0.2, 0.55, 0.9]
+        # Object spawning range
+        self.__obj_position  = [data["spawining_obj_zone_min"], data["spawining_obj_zone_max"]]
+
+        # Object class
+        self._object = Object(self._client, data["objects"])
 
         # Images to be rendered
         self.frame = [np.ones((self.frame_w, self.frame_h), dtype=np.int16), 
@@ -105,22 +139,19 @@ class UR5Env(gym.Env):
                       np.ones((self.frame_w, self.frame_h), dtype=np.int16)]
 
         # Camera Parameters
-        self.fov = 10
-        self.near_plane = 0.02
-        self.far_plane = 5.0
-        self.aspect = 1
+        self.fov = data["camera_fov"]
+        self.near_plane = data["camera_near_plane"]
+        self.far_plane = data["camera_far_plane"]
+        self.aspect = data["aspect"]
 
 
         # --- Cameras ---
         # Camera positions variables: [[Position], [Orientation]]
         # Coordinates of the cameras
-        self.cameras_coord = [[[0.05, 0.95, 1.05], [0.6, 0.0, -pi/2]],                                  # Frontal
-                              [[0.7, 0.55, 1.05], [0.0, 0.0, -pi]],                                     # Side
-                              [[0.048, 0.353, 1.1712], [-1.62160814, -0.78472898,  1.57433526]]]        # Wrist
-
+        self.cameras_coord = data["cameras_coord"]
 
         # Sample STD for camera
-        self.std_cam = 0.05
+        self.std_cam = data["std_cam"]
 
         # Link of the camera in the URDF
         self.camera_link = 22
@@ -145,7 +176,25 @@ class UR5Env(gym.Env):
         self.g = 0
 
         # Threshold for which there is a collision between two elements
-        self.col_thres = 6
+        self.col_thres = data["collision_thres"]
+
+        # Flags for activate truncated penalisation and/or termination bonus
+        self.__term_bonus = data["term_bonus"]
+        self.__trunc_penalisation = data["trunc_penalisation"]
+
+        # Flags for selecting the reward function
+        self.__rew_type = data["reward"]
+
+        # Flag for image normalisation
+        self.__norm_img = data["norm_image"]
+
+        # Camera mode
+        self.__camera_mode = data["cam_mode"]
+
+        # Z Offset
+        self.__z_offset = data["object_z_offset"]
+
+        
 
     # Resample camera parameters
     def resample_cameras(self):
@@ -228,7 +277,7 @@ class UR5Env(gym.Env):
         # Obtain position and orientation in:
         #    - cartesian position, Euler angles, dual quaternion
         # For the object, both reference systems are returned
-        obj_pos, euler, euler_, DQ_obj, DQ_obj_ = get_object_pos(object=self._object, client = self._client)
+        obj_pos, euler, euler_, DQ_obj, DQ_obj_ = get_object_pos(object=self._object, client = self._client, z_offset = self.__z_offset)
         wrist_pos, euler_w, DQ_w = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
         # Angular distance using quaternion
@@ -267,11 +316,21 @@ class UR5Env(gym.Env):
         r = 0
 
         # Object approximation reward
-        r, self._dist_obj_wrist = approx_reward(client = self._client, object = self._object, 
-                                                dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id)
+        if self.__rew_type == "DQ":
+            r, self._dist_obj_wrist = approx_reward(client = self._client, object = self._object, 
+                                                    dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id, z_offset = self.__z_offset)
+        elif self.__rew_type == "Euler":
+            r, self._dist_obj_wrist = approx_reward_EUC(client = self._client, object = self._object, 
+                                                    dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id, z_offset = self.__z_offset)
+        
+        else:
+            r, self._dist_obj_wrist = approx_reward(client = self._client, object = self._object, 
+                                                    dist_obj_wrist = self._dist_obj_wrist, robot_id = self._ur5.id, z_offset = self.__z_offset)
+            print(f"--- WARNING: {self.__rew_type} is not a supported type. Using Dual Quaternions reward.")
 
         # Collision reward
-        # r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
+        if self.__data["collision_rew"]:
+            r += collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
             
         return r
 
@@ -295,7 +354,7 @@ class UR5Env(gym.Env):
         col_r = collision_reward(client = self._client, collisions_to_check = self.collisions_to_check, mask = self.mask)
 
         # Object and wirst position
-        obj_pos, __, __, __, __ = get_object_pos(object=self._object, client = self._client)
+        obj_pos, __, __, __, __ = get_object_pos(object=self._object, client = self._client, z_offset = self.__z_offset)
         wrist_pos, __, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
         # Flag terminated
@@ -324,38 +383,37 @@ class UR5Env(gym.Env):
 
         # Gets starting observation of the robot
         observation = self._ur5.get_observation()       # [q, qd, gripper, ee]
-        
-        # Stores joint velocities
-        self.qd = observation[1]
 
         # Arranges observation vectors into a dictionary
         obs = {}
 
         # Assigns robot observation to the dictionary
-        obs[self._indices[0]] = np.array(observation[-1], dtype="float32")
+        if "ee_position" in self._indices:
+            obs["ee_position"] = np.array(observation[-1], dtype="float32")
 
-        # Obtains camera frames
-        self.frame = get_frames(client = self._client, camera_params = self.camera_params,
-                                frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, )
+        if "image" in self._indices:
+            # Obtains camera frames
+            self.frame = get_frames(client = self._client, camera_params = self.camera_params,
+                                    frame_h = self.frame_h, frame_w = self.frame_w, frame = self.frame, cam_mode = self.__camera_mode)
+            
+            # Stores the camera frames
+            images = []
 
-        # Stores the normalized camera frames
-        normalized_image_0_0 = (self.frame[0][0] - np.min(self.frame[0][0])) / (np.max(self.frame[0][0]) - np.min(self.frame[0][0]))
-        normalized_image_1_0 = (self.frame[0][1] - np.min(self.frame[0][1])) / (np.max(self.frame[0][1]) - np.min(self.frame[0][1]))
+            for camera in self.frame:
+                for channel in camera: 
+                    if self.__norm_img:
+                        images.append((channel - np.min(channel)) / (np.max(channel) - np.min(channel)))
+                    else:
+                        images.append(channel)
 
-        normalized_image_0_1 = (self.frame[1][0] - np.min(self.frame[1][0])) / (np.max(self.frame[1][0]) - np.min(self.frame[1][0]))
-        normalized_image_1_1 = (self.frame[1][1] - np.min(self.frame[1][1])) / (np.max(self.frame[1][1]) - np.min(self.frame[1][1]))
+            # Merges channels in a single image
+            merged = cv.merge(images)
 
-        normalized_image_0_2 = (self.frame[2][0] - np.min(self.frame[2][0])) / (np.max(self.frame[2][0]) - np.min(self.frame[2][0]))
-        normalized_image_1_2 = (self.frame[2][1] - np.min(self.frame[2][1])) / (np.max(self.frame[2][1]) - np.min(self.frame[2][1]))
-
-        # Merges channels in a single image
-        merged = cv.merge([normalized_image_0_0, normalized_image_1_0, normalized_image_0_1, normalized_image_1_1, normalized_image_0_2, normalized_image_1_2])
-        
-        # Transpose
-        merged = np.transpose(merged, (2,0,1))
-        
-        # Store observation to match original typing
-        obs[self._indices[-1]] = merged.astype(np.float16)
+            # Transpose
+            merged = np.transpose(merged, (2,0,1))
+            
+            # Store observation to match original typing
+            obs[self._indices[-1]] = merged.astype(np.float16)
 
         return obs
 
@@ -400,7 +458,7 @@ class UR5Env(gym.Env):
         
 
         # --- Debugger ---
-        if self.show:
+        if self.render_mode == "human":
             cv.imshow("Station " + str(self._client), self.frame[0][0])
             cv.waitKey(1)
 
@@ -412,20 +470,20 @@ class UR5Env(gym.Env):
         terminated, truncated = self.get_terminal()
 
         # Extra penalisation if truncated
-        if truncated:
+        if truncated and self.__trunc_penalisation:
             reward -= 0
             if out_of_bounds(self._limits, self._ur5):
                 reward -= 10
         
         # Bonus if terminated
-        if reward > 0 and terminated:
+        if reward > 0 and terminated and self.__term_bonus:
             reward += reward*0.5
 
         # Get the new state after the action
         obs = self.get_observation()
 
         # Wrist and object position for extra-information
-        obj_pos, __, __, __, __ = get_object_pos(object=self._object, client = self._client)
+        obj_pos, __, __, __, __ = get_object_pos(object=self._object, client = self._client, z_offset = self.__z_offset)
         wrist_pos, __, __ = get_wrist_pos(client = self._client, robot_id=self._ur5.id)
 
         # Extra information 
@@ -436,6 +494,7 @@ class UR5Env(gym.Env):
         # terminated --> terminated     --> terminal state, task complete
         # truncated --> truncated       --> time limit reached or observation out of bounds
         # 'info' --> info               --> extra useful information
+
         return obs, reward, terminated, truncated, info
 
 
@@ -477,16 +536,15 @@ class UR5Env(gym.Env):
         
         # --- Create Entities ---
         # Random object position and orientation
-        pos, orn = np.random.uniform([[0.05, 0.5, 0.85], [-pi, -pi/2, -3.1415]], 
-                                     [[0.275,  0.62, 0.85], [pi,  -pi/2,  3.1415]])
+        pos, orn = np.random.uniform(self.__obj_position[0], self.__obj_position[0])
 
         rand_orientation = p.getQuaternionFromEuler(orn, physicsClientId=self._client)
         
                 
         # Creates a object, a table and the robot        
-        object_chosen = random.randint(0,6) # 0,9
+        object_chosen = random.randint(self.__data["n_objects"][0], self.__data["n_objects"][1])
         
-        self._object = Object(self._client, object=object_chosen, position=pos, orientation=rand_orientation)
+        self._object.spawn(object_chosen = object_chosen, rand_position = pos, rand_orientation = rand_orientation)
         self._ur5 = UR5(self._client)
         self._table = Table(self._client)  
 
@@ -520,7 +578,7 @@ class UR5Env(gym.Env):
         # Resets internal values
         __, self._dist_obj_wrist = approx_reward(client = self._client, object = self._object,  # Object - Wrist distance
                                                  dist_obj_wrist = self._dist_obj_wrist, 
-                                                 robot_id = self._ur5.id)
+                                                 robot_id = self._ur5.id, z_offset = self.__z_offset)
         
         self._t_act = time.time()       # Timer
         __ = self.seed(seed = seed)     # Seed

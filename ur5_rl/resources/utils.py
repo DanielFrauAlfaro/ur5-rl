@@ -164,7 +164,7 @@ def get_dualQuaternion(q_r, q_t):
 
 
 # Getter for the object position
-def get_object_pos(client, object):
+def get_object_pos(client, object, z_offset):
     '''
         Obtains the position and orientantion of a given object class   
         Input:                                                               
@@ -194,9 +194,9 @@ def get_object_pos(client, object):
 
     # Correct cracker_box position
     if "cracker" in object.name:
-        pos[-1] += 0.26
+        pos[-1] += z_offset + 0.045
     else:
-        pos[-1] += 0.215
+        pos[-1] += z_offset
 
     # Correct axis
     x_axis_local = np.array([0, 0, -1])
@@ -295,7 +295,7 @@ def get_wrist_pos(client, robot_id):
 
 
 # Computes the reward according the approximation to the object
-def approx_reward_EUC(client, object, dist_obj_wrist, robot_id):
+def approx_reward_EUC(client, object, dist_obj_wrist, robot_id, z_offset):
     '''
        Computes the reward due to approximation to the object  
                                                                        
@@ -312,7 +312,7 @@ def approx_reward_EUC(client, object, dist_obj_wrist, robot_id):
 
     
     # Obtains the object and wrist positions
-    obj_pos = get_object_pos(object=object, client = client)
+    obj_pos = get_object_pos(object=object, client = client, z_offset = z_offset)
     wrist_pos = get_wrist_pos(client = client, robot_id=robot_id)
 
 
@@ -359,7 +359,7 @@ def approx_reward_EUC(client, object, dist_obj_wrist, robot_id):
 
 
 # Computes the reward according the approximation to the object in DQ
-def approx_reward(client, object, dist_obj_wrist, robot_id):
+def approx_reward(client, object, dist_obj_wrist, robot_id, z_offset):
     '''
         Computes the reward due to approximation to the object using DQ 
         Input:                                                
@@ -375,7 +375,7 @@ def approx_reward(client, object, dist_obj_wrist, robot_id):
     '''
 
     # Obtains the object and wrist positions
-    obj_pos, __, __, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client)
+    obj_pos, __, __, DQ_obj, DQ_obj_ = get_object_pos(object=object, client = client, z_offset = z_offset)
     wrist_pos, __, DQ_w = get_wrist_pos(client = client, robot_id=robot_id)
 
     # Angular distance using quaternion
@@ -475,14 +475,14 @@ def out_of_bounds(limits, robot):
     for idx, limit in enumerate(limits[:2]):
         if True in list(limit[0] > qs[idx]) or  \
            True in list(limit[1] < qs[idx]):
-            print("Limites ", idx)
+
             return True
 
     return False
 
 
 # Gets the frames
-def get_frames(client, camera_params, frame_h, frame_w, frame):
+def get_frames(client, camera_params, frame_h, frame_w, frame, cam_mode):
     '''
         Obtains the frames for the cameras in the environment   
         Input:                                                               
@@ -505,20 +505,38 @@ def get_frames(client, camera_params, frame_h, frame_w, frame):
                                  projectionMatrix = camera[1], 
                                  physicsClientId = client)
         
+        # List for storing channels
+        camera = []
+
         # RGB buffer
         rgb_buffer = camera_info[2]
 
-        # Gray conversion
-        rgb_buffer = cv.cvtColor(rgb_buffer, cv.COLOR_BGR2GRAY)
+        # RGB or Gray mode
+        if "rgb" in cam_mode:
+            # BGR to RGB
+            rgb_buffer = cv.cvtColor(rgb_buffer, cv.COLOR_BGR2RGB)
 
-        # Processed depth image
-        depth_buffer = np.reshape(camera_info[3], (frame_h, frame_w))
+            # (160, 160, 3) to (3, 160, 160)
+            rgb_buffer = np.transpose(rgb_buffer, (2,0,1))
+
+            # Appends channels
+            camera = [channel for channel in rgb_buffer]
         
-        depth_image = (depth_buffer - np.min(depth_buffer)) / (np.max(depth_buffer) - np.min(depth_buffer))  # Normalize to [0, 1]
-        depth_frame = (depth_image * 255).astype(np.uint8)
+        elif "g" in cam_mode:
+            camera.append(cv.cvtColor(rgb_buffer, cv.COLOR_BGR2GRAY))
+
+        # Depth image
+        if "d" in cam_mode:
+            
+            depth_buffer = np.reshape(camera_info[3], (frame_h, frame_w))
+            
+            depth_image = (depth_buffer - np.min(depth_buffer)) / (np.max(depth_buffer) - np.min(depth_buffer))  # Normalize to [0, 1]
+            depth_frame = (depth_image * 255).astype(np.uint8)
+
+            camera.append(depth_frame)
 
         # Merges both frames and transpose it --> (channels, gray, depth)
-        frame[idx] = cv.merge([rgb_buffer, depth_frame])
+        frame[idx] = cv.merge(camera)
         frame[idx] = np.transpose(frame[idx], (2,0,1))
 
     return frame
