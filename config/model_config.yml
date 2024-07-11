@@ -1,0 +1,5 @@
+# General model parameters
+model: "sac"            # "sac", "ppo", "ddpg", ...
+buffer_size: 15000
+tau: 0.0005
+train_freq: 3

@@ -1,32 +1,33 @@
 # General parameters
-render_mode: "rgb_array"   # ---> CORREGIR ESTO EN EL ENTORNO PARA QUE LO ACEPTE
-reward: "DQ"
+render_mode: "human"   # ---> CORREGIR ESTO EN EL ENTORNO PARA QUE LO ACEPTE
+reward: "DQ" # "DQ", "Euler"
 steps_limit: 40
 seed: 0
+n_envs: 1
 
 # Limits
 q_limit: [[-1.5, -3.1416, -3.1416, -3.1416, -3.1416, -6.2831], [1.5, 0.0, 0.0, 3.1416, 3.1416, 6.2831]]
-qd_limit: [[-20, -20, 20, -20, -20, -20], [20, 20, 20, 20, 20, 20]]
+qd_limit: [[-20, -20, -20, -20, -20, -20], [20, 20, 20, 20, 20, 20]]
 qdd_limit: [[-5000, -5000, 5000, -5000, -5000, -5000], [5000, 5000, 5000, 5000, 5000, 5000]]
-ee_limits: [[-1, -1, -1, -3.1416, -3.1416, -3.1416], [1, 1, 1, 3.1416, 3.1416, 3.1416]]
+ee_limit: [[-1, -1, -1, -3.1416, -3.1416, -3.1416], [1, 1, 1, 3.1416, 3.1416, 3.1416]]
 
 # Action parameters
 action_space: "Box"
 max_action_pos: 0.0666
 max_action_or: 0.12
 max_action_yaw: 2.5
-action_limits: [[-1, -1, 1, -1, -1, -1], [1, 1, 1, 1, 1, 1]]
+action_limits: [[-1, -1, -1, -1, -1, -1], [1, 1, 1, 1, 1, 1]]
 
 # Observations parameters
-observations: ["pos", "img"]
-n_cams: 3
-cam_mode: "gd"
+observations: ["ee_position", "image"] # "ee_position", "image"
+n_cameras: 3
+cam_mode: "rgbd"
 img_size: [160, 160]
 norm_image: True
 seq_len: 1
 
 # General camera parameters
-cameras_coord: [[[0.05, 0.95, 1.05], [0.6, 0.0, -1.571]], [[0.7, 0.55, 1.05], [0.0, 0.0, -3.1416]], [[0.048, 0.353, 1.1712], [-1.62160814, -0.78472898,  1.57433526]]]  # Checked in the simulation by hand
+cameras_coord: [[[0.05, 0.95, 1.05], [0.6, 0.0, -1.571]], [[0.7, 0.55, 1.05], [0.0, 0.0, -3.1416]], [[0.048, 0.353, 1.1712], [-1.62160814, -0.78472898,  1.57433526]]]  # Checked in the simulation by hand, frontal, side, wrist
 std_cam: 0.05
 
 # Collision parameters
@@ -39,11 +40,12 @@ term_bonus: 0   # reward + reward * term_bonus
 
 # Objects parameters
 objects: ["002_master_chef_can", "005_tomato_soup_can", "sugar_box", "cracker_box", "cleanser", "conditioner", repellent", "potato_chip_1", "021_bleach_cleanser", "pen_container_1", "orion_pie"] 
-spawining_obj_zone: [[[0.05, 0.5, 0.85], [-3.1416, -1.571, -3.1415]], [[0.275,  0.62, 0.85], [3.1416,  -1.571,  3.1415]]]
-n_objects: [0, 6]
+spawining_obj_zone_min: [[0.05, 0.5, 0.85], [-3.1416, -1.571, -3.1415]]
+spawining_obj_zone_max: [[0.275,  0.62, 0.85], [3.1416,  -1.571,  3.1415]]
+n_objects: [0, 4]
 object_z_offset: 0.215
 
 # Specific parameters file
-sim_conf: "./config/sim_config.yaml"
-agent_config: "./config/agent_config.yaml"
-model_config: "./config/model_config.yaml"
+sim_config: "./config/sim_config.yml"
+agent_config: "./config/agent_config.yml"
+model_config: "./config/model_config.yml"

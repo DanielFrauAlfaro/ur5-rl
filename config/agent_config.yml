@@ -1,0 +1,37 @@
+# General agent parameters
+train_steps: 60000
+log_interval: 5
+learning_starts: 5000
+verbose: 100
+logs_dir: "logs/"
+seed: 75
+learning_rate: 0.0003
+batch_size: 256
+n_training_envs: 1
+logs_name: "Train"
+
+# Checkpoints
+save_checkpoints: True
+save_dir: "./models/"
+save_buffer: False
+save_vec: False
+save_freq: 1500
+name_prefix: "rl_model"
+
+# Pretrained model
+pretrained_model: ""      # Assign "" if training from scratch
+
+# Agent arquitecture
+residual: True
+channels: [16, 32, 32, 48]    # The first layer is the channels according to the length of "cam_mode" in "config.yml"
+kernel: 3
+pool_kernel: 3
+vector_features: 100
+features_dim: 256
+mapping_arch: [64, 32]
+share_feature_extractor: True
+
+# Execution mode
+mode: "train"       # "train", "test", "grasp", "loop"
+loop_dir: ""
+
