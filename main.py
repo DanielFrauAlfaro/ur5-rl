@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # states = e.reset()
 
     trainer = Trainer(vec_env=vec_env, data=params_parser.get_data())
-
+    trainer.train()
 
 
     
