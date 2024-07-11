@@ -1,5 +1,5 @@
 # General agent parameters
-train_steps: 60000
+train_timesteps: 60000
 log_interval: 5
 learning_starts: 5000
 verbose: 100
